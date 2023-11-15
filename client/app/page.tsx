@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +10,7 @@ import {
 export default function Home() {
   return (
     <>
-      <div className="text-white content-center text-3xl mb-5 ml-5 mr-5 ">
+      <div className="text-white content-center text-3xl mb-5 ml-5 mr-5 mt-8 ">
         <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
       </div>
       <div className="mb-5 ml-5 mr-5">
@@ -17,9 +18,9 @@ export default function Home() {
       </div>
       <div>
         {" "}
-        <button className="text-white w-full bg-cyan-950	shadow-lg mb-5 ">
+        <Button className="text-white w-full bg-cyan-950	shadow-lg  ">
           استكشف المشاريع
-        </button>{" "}
+        </Button>{" "}
       </div>
 
       <div>
@@ -30,7 +31,7 @@ export default function Home() {
           وتوجيه شامل، ودعم لا مثيل له:
         </p>
         <Accordion
-          className=" text-white mb-10 ml-5 "
+          className=" text-white mb-10 ml-2 mr-1"
           type="single"
           collapsible
         >
