@@ -20,7 +20,7 @@ module.exports = {
         'primaryDark': '#090D1F',
         'secondaryDark': '#1E293B',
         'inputbg': '#212A3E',
-        'cbtn': '#27374D',
+        'cbtn': '#445069',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

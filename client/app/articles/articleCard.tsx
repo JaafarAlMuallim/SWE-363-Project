@@ -32,7 +32,7 @@ export default function ArticleCard(props: { article: Article }) {
           width={320}
           height={320}
         />
-        <div className="my-2 text-xl font-semibold text-right text-purple-600">
+        <div className="my-2 text-xl font-semibold text-right text-purple-500">
           <p>{props.article.date}</p>
         </div>
         <div className="my-3 text-2xl font-semibold text-right text-white">
