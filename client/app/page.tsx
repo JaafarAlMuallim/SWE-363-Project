@@ -14,7 +14,7 @@ export default function Home() {
         <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
       </div>
       <div className="mb-5 ml-5 mr-5">
-        <img src="/land-page-picture.png" alt="" width="500" height="500" />
+        <Image src="/land-page-picture.png" alt="" width="500" height="500" />
       </div>
       <div>
         {" "}
