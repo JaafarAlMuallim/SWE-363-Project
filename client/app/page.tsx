@@ -1,4 +1,3 @@
-"use client";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,24 +6,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/Accordion";
-export default function Home() {
+export default async function Home() {
   return (
-    <>
-      <div className="text-white content-center text-3xl mb-5 ml-5 mr-5 mt-8 ">
+    <div className="flex flex-col items-center justify-center">
+      <div className="text-white text-3xl mx-5 mt-10">
         <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
       </div>
-      <div className="mb-5 ml-5 mr-5">
+      <div className="ml-5 mr-5">
         <Image src="/land-page-picture.png" alt="" width="500" height="500" />
       </div>
+      <Button className="text-white bg-cbtn shadow-lg my-10 w-64">
+        استكشف المشاريع
+      </Button>
       <div>
-        {" "}
-        <Button className="text-white w-full bg-cyan-950	shadow-lg  ">
-          استكشف المشاريع
-        </Button>{" "}
-      </div>
-
-      <div>
-        {" "}
         <p className="text-white content-center mb-5 ml-5 mr-2">
           مرحبًا بك في منصتنا المبتكرة المخصصة للشركات الناشئة، حيث تتحقق
           الأحلام الريادية. إليك لماذا يجب عليك اختيارنا للحصول على رؤى فريدة،
@@ -69,6 +63,6 @@ export default function Home() {
           </AccordionItem>
         </Accordion>
       </div>
-    </>
+    </div>
   );
 }
