@@ -22,7 +22,7 @@ export default function RootLayout({
         className={`${cairo.className} bg-gradient-to-br from-primaryDark to-secondaryDark`}
       >
         <Navbar />
-        <main className="flex flex-col justify-center items-center">
+        <main className="h-screen flex flex-col justify-center items-center">
           {children}
         </main>
       </body>
