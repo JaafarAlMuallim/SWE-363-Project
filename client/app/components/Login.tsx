@@ -15,8 +15,8 @@ export default function Login() {
     return (
         <Card className="w-96 bg-white bg-opacity-10 text-white shadow-lg">
             <CardHeader>
-            <CardTitle>تسجيل الدخول</CardTitle>
-            <CardDescription className="text-gray-400">فضلا ادخل بياناتك</CardDescription>
+                <CardTitle>تسجيل الدخول</CardTitle>
+                <CardDescription className="text-gray-400">فضلا ادخل بياناتك</CardDescription>
             </CardHeader>
             <CardContent>
             <form>
