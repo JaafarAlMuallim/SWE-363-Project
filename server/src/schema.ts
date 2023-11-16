@@ -1,4 +1,4 @@
-import { InferSelectModel, relations } from "drizzle-orm";
+import { InferModel, sql, relations } from "drizzle-orm";
 import {
   pgEnum,
   pgTable,
@@ -6,6 +6,9 @@ import {
   boolean,
   text,
   uuid,
+  bigint,
+  date,
+  serial,
 } from "drizzle-orm/pg-core";
 export const roleEnum = pgEnum("role", ["admin", "user", "reviewer"]);
 export const statusEnum = pgEnum("status", ["success", "failure"]);
@@ -16,23 +19,35 @@ export const articleStatus = pgEnum("article_status", [
 ]);
 
 export const users = pgTable("users", {
-  user_id: uuid("user_id").primaryKey(),
-  name: varchar("name", { length: 50 }),
-  username: varchar("username", { length: 50 }),
-  email: varchar("email", { length: 50 }),
-  password: varchar("password", { length: 50 }),
-  role: roleEnum("role"),
-  verified: boolean("verified"),
+  user_id: uuid("user_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 255 }).notNull(),
+  username: varchar("username", { length: 50 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  password: varchar("password", { length: 50 }).notNull(),
+  role: roleEnum("role").notNull(),
+  verified: boolean("verified").default(false),
   x_account: varchar("x_account", { length: 255 }),
   linkdin_account: varchar("linkding_account", { length: 255 }),
   website: varchar("website", { length: 255 }),
   user_image: varchar("user_image", { length: 255 }),
 });
+export const prefs = pgTable("prefs", {
+  pref_id: uuid("pref_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  pref: text("pref").notNull(),
+});
 
 export const user_prefs = pgTable("user_prefs", {
-  pref_id: uuid("pref_id").primaryKey(),
-  user_id: uuid("user_id").references(() => users.user_id),
-  pref: text("pref_id"),
+  id: uuid("id").primaryKey(),
+  pref_id: uuid("pref_id")
+    .references(() => prefs.pref_id)
+    .notNull(),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
 });
 
 export const userPrefsRelations = relations(users, ({ many }) => ({
@@ -40,33 +55,46 @@ export const userPrefsRelations = relations(users, ({ many }) => ({
 }));
 
 export const orgs = pgTable("orgs", {
-  org_id: uuid("org_id").primaryKey(),
+  org_id: uuid("org_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: varchar("name", { length: 50 }),
   founding_date: varchar("founding_date", { length: 50 }),
-  description: text("description"),
+  description: text("description").notNull(),
   website: varchar("website", { length: 255 }),
   org_image: varchar("org_image", { length: 255 }),
   hq_location: varchar("hq_location", { length: 250 }),
-  org_status: statusEnum("org_status"),
+  org_status: statusEnum("org_status").notNull(),
 });
 
 export const org_founders = pgTable("org_founders", {
-  org_id: uuid("org_id")
+  founder_id: uuid("founder_id")
     .primaryKey()
-    .references(() => orgs.org_id),
+    .default(sql`gen_random_uuid()`),
+  org_id: uuid("org_id").references(() => orgs.org_id),
   founder: varchar("founder", { length: 255 }),
 });
 
 export const interviews = pgTable("interviews", {
-  interview_id: uuid("interview_id").primaryKey(),
-  user_id: uuid("user_id").references(() => users.user_id),
-  org_id: uuid("org_id").references(() => orgs.org_id),
+  interview_id: uuid("interview_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  org_id: uuid("org_id")
+    .references(() => orgs.org_id)
+    .notNull(),
   interview_date: varchar("interview_date", { length: 50 }),
 });
 
 export const interview_questions = pgTable("interview_questions", {
-  question_id: uuid("question_id").primaryKey(),
-  interview_id: uuid("interview_id").references(() => interviews.interview_id),
+  question_id: uuid("question_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  interview_id: uuid("interview_id")
+    .references(() => interviews.interview_id)
+    .notNull(),
   question: text("question"),
   answer: text("answer"),
 });
@@ -80,28 +108,49 @@ export const orgsRelations = relations(orgs, ({ many }) => ({
 }));
 
 export const article = pgTable("article", {
-  article_id: uuid("article_id").primaryKey(),
-  user_id: uuid("user_id").references(() => users.user_id),
-  org_id: uuid("org_id").references(() => orgs.org_id),
-  title: varchar("title", { length: 255 }),
+  article_id: uuid("article_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  org_id: uuid("org_id")
+    .references(() => orgs.org_id)
+    .notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
   subtitle: varchar("subtitle", { length: 255 }),
-  content: text("content"),
-  article_image: varchar("article_image", { length: 50 }),
+  content: text("content").notNull(),
+  article_image: varchar("article_image", { length: 255 }),
   date: varchar("date", { length: 50 }),
   article_status: articleStatus("article_status"),
+  views: bigint("views", { mode: "number" }).default(0),
+  bookmarks: bigint("bookmarks", { mode: "number" }).default(0),
+  likes: bigint("likes", { mode: "number" }).default(0),
 });
 
 export const article_tags = pgTable("article_tags", {
-  tag_id: uuid("tag_id").primaryKey(),
-  article_id: uuid("article_id").references(() => article.article_id),
-  tag: text("tag_id"),
+  tag_id: uuid("tag_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  article_id: uuid("article_id")
+    .references(() => article.article_id)
+    .notNull(),
+  tag: text("tag"),
 });
 
 export const comment = pgTable("comment", {
-  comment_id: uuid("comment_id").primaryKey(),
-  article_id: uuid("article_id").references(() => article.article_id),
-  user_id: uuid("user_id").references(() => users.user_id),
-  content: text("content"),
+  comment_id: uuid("comment_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  article_id: uuid("article_id")
+    .references(() => article.article_id)
+    .notNull(),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  content: text("content").notNull(),
+  date: date("date").notNull(),
+  comment_likes: bigint("comment_likes", { mode: "number" }).default(0),
 });
 
 export const articleRelations = relations(article, ({ many }) => ({
@@ -112,96 +161,13 @@ export const articleRelations = relations(article, ({ many }) => ({
 export type Role = "admin" | "user" | "reviewer";
 export type Status = "success" | "failure";
 export type ArticleStatus = "published" | "draft" | "deleted";
-export type User = InferSelectModel<typeof users>;
-export type UserPrefs = InferSelectModel<typeof user_prefs>;
-export type Org = InferSelectModel<typeof orgs>;
-export type OrgFounders = InferSelectModel<typeof org_founders>;
-export type Interview = InferSelectModel<typeof interviews>;
-export type InterviewQuestions = InferSelectModel<typeof interview_questions>;
-export type Article = InferSelectModel<typeof article>;
-export type ArticleTags = InferSelectModel<typeof article_tags>;
-export type Comment = InferSelectModel<typeof comment>;
-// export type User = {
-//   user_id: string;
-//   name: string;
-//   username: string;
-//   email: string;
-//   password: string;
-//   role: Role;
-//   verified: boolean;
-//   x_account: string;
-//   linkdin_account: string;
-//   website: string;
-//   user_image: string;
-// };
-// export type UserPrefs = {
-//   pref_id: string;
-//   user_id: string;
-//   pref: string;
-// };
-// export type Org = {
-//   org_id: string;
-//   name: string;
-//   founding_date: string;
-//   description: string;
-//   website: string;
-//
-//   org_image: string;
-//   hq_location: string;
-//   org_status: Status;
-// };
-// export type OrgFounders = {
-//   org_id: string;
-//   founder: string;
-// };
-// export type Interview = {
-//   interview_id: string;
-//
-//   user_id: string;
-//   org_id: string;
-//   interview_date: string;
-// };
-// export type InterviewQuestions = {
-//   question_id: string;
-//
-//   interview_id: string;
-//   question: string;
-//   answer: string;
-// };
-// export type Article = {
-//   article_id: string;
-//
-//   user_id: string;
-//   org_id: string;
-//   title: string;
-//   subtitle: string;
-//   content: string;
-//   article_image: string;
-//   date: string;
-//   article_status: ArticleStatus;
-// };
-// export type ArticleTags = {
-//   tag_id: string;
-//   article_id: string;
-//   tag: string;
-// };
-// export type Comment = {
-//   comment_id: string;
-//   article_id: string;
-//   user_id: string;
-//   content: string;
-// };
-// export type ArticleWithRelations = Article & {
-//   article_tags: ArticleTags[];
-//   comment: Comment[];
-// };
-// export type InterviewWithRelations = Interview & {
-//   interview_questions: InterviewQuestions[];
-// };
-// export type OrgWithRelations = Org & {
-//   org_founders: OrgFounders[];
-//   interviews: Interview[];
-// };
-// export type UserWithRelations = User & {
-//   user_prefs: UserPrefs[];
-// };
+export type UserPrefs = InferModel<typeof user_prefs>;
+export type Org = InferModel<typeof orgs>;
+export type OrgFounders = InferModel<typeof org_founders>;
+export type Interview = InferModel<typeof interviews>;
+export type InterviewQuestions = InferModel<typeof interview_questions>;
+export type Article = InferModel<typeof article>;
+export type ArticleTags = InferModel<typeof article_tags>;
+export type Comment = InferModel<typeof comment>;
+export type User = InferModel<typeof users>;
+export type Pref = InferModel<typeof prefs>;
