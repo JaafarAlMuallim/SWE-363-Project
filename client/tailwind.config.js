@@ -21,6 +21,8 @@ module.exports = {
         'secondaryDark': '#1E293B',
         'inputbg': '#212A3E',
         'cbtn': '#445069',
+        'crd': '#4F709C',
+        'crd2': '#213555',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
