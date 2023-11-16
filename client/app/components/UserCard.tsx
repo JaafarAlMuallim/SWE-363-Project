@@ -18,7 +18,7 @@ export const UserCard = ({
 }: Probs) => {
   return (
     <>
-      <div className="bg-sky-500 p-5 w-1/2 rounded max-w-lg flex flex-col gap-2 m-3">
+      <div className="bg-gradient-to-br from-crd to-crd2 p-5 w-64 rounded-lg flex flex-col gap-2 m-3">
         <Image
           src={iconPath}
           alt="Bukha's image"
@@ -33,8 +33,8 @@ export const UserCard = ({
               <Image
                 src={"/twitter-x-logo-42554.png"}
                 alt="twitter"
-                width={75}
-                height={75}
+                width={45}
+                height={45}
               ></Image>
             </a>
           )}
@@ -43,8 +43,8 @@ export const UserCard = ({
               <Image
                 src={"/linkedin-square-icon.png"}
                 alt="twitter"
-                width={75}
-                height={75}
+                width={45}
+                height={45}
               ></Image>
             </a>
           )}
