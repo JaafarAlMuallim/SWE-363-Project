@@ -5,7 +5,7 @@ import { UserCard } from "../components/UserCard";
 
 const AboutUsPage = () => {
   return (
-    <div className="bg-black">
+    <div className="h-screen">
       <section className="bg-sky-500 text-center p-5  relative">
         <div className="bg-no-repeat bg-center bg-[url(/AboutUsbackgroundIcon.png)] absolute inset-0 opacity-40 " />
         <div className="flex flex-col items-center gap-4 relative">
