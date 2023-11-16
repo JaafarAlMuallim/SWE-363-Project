@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1700124908841,
+      "tag": "0000_sour_zodiak",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1700127553079,
+      "tag": "0001_famous_doomsday",
+      "breakpoints": true
+    }
+  ]
+}
