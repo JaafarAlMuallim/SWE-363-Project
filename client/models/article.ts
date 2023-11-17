@@ -7,4 +7,5 @@ export default interface Article {
   date?: string;
   image?: string;
   tags?: string[];
+  likes?: number;
 }
