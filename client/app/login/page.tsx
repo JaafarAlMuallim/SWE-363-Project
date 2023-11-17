@@ -4,6 +4,7 @@ import Login from "../components/Login";
 
 export default function Auth() {
   return (
+    <div className="flex flex-col justify-center items-center h-screen">
     <Tabs defaultValue="login" dir="rtl" className="w-[350px]">
       <TabsList className="grid w-full grid-cols-2 bg-secondaryDark">
         <TabsTrigger value="login">تسجيل دخول</TabsTrigger>
@@ -15,6 +16,7 @@ export default function Auth() {
       <TabsContent value="register" className="flex justify-center">
         <Register />
       </TabsContent>
-    </Tabs>
+      </Tabs>
+      </div>
   );
 }

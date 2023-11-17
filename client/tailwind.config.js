@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+
+const withMT = require("@material-tailwind/react/utils/withMT");
+
+module.exports = withMT({
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -21,6 +24,8 @@ module.exports = {
         'secondaryDark': '#1E293B',
         'inputbg': '#212A3E',
         'cbtn': '#445069',
+        'crd': '#4F709C',
+        'crd2': '#213555',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -77,4 +82,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+})

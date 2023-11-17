@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Article from "@/models/article";
-import ArticleCard from "./articleCard";
+import ArticleCard from "../components/ArticleCard";
 const articles: Article[] = [
   {
     id: 1,
@@ -10,6 +10,7 @@ const articles: Article[] = [
     date: "الاثنين، 21 سبتمبر 2023",
     tags: ["تقنية", "مطاعم", "توصيل"],
     image: "next.svg",
+    likes: 4,
   },
   {
     id: 2,
@@ -19,6 +20,7 @@ const articles: Article[] = [
     date: "الاثنين، 21 سبتمبر 2023",
     tags: ["تقنية", "مطاعم", "توصيل"],
     image: "next.svg",
+    likes: 89,
   },
 ];
 export default async function Articles() {
@@ -37,7 +39,7 @@ export default async function Articles() {
       <div className="my-8 text-2xl font-semibold text-right mx-10 text-white">
         <p>اخر المقالات</p>
       </div>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col h-screen gap-10">
         {articles.map((article) => {
           return <ArticleCard article={article} key={article.id} />;
         })}
