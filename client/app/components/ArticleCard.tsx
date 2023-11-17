@@ -8,8 +8,8 @@ export default function ArticleCard(props: { article: Article }) {
         <Link href={`/articles/${props.article.id}`}>
             <div className="block w-80 text-white rounded-lg bg-cover shadow-lg bg-[url(/test.jpg)]">
                 <div className="flex flex-col backdrop-brightness-50 rounded-lg">
-                    <div className="w-full flex items-center justify-between p-6">
-                        <Label className="mb-1 text-lg font-bold leading-tight text-white shadwo-xl">
+                    <div className="w-full flex items-center justify-between p-4">
+                        <Label className="mb-1 text-base font-bold leading-tight text-white shadwo-xl">
                             {props.article.title}
                         </Label>
                         <div className="flex flex-col justify-center items-center">
