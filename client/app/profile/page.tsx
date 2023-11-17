@@ -1,6 +1,10 @@
+"use client"
+
 import { Label } from "@/components/ui/label"
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
+import { Avatar } from "@material-tailwind/react";
+
 const articles: Article[] = [
     {
       id: 1,
@@ -26,9 +30,10 @@ const articles: Article[] = [
 
 export default function Profile() {
     return (
-        <div className="h-screen text-white flex flex-col items-center">
-            <div className="flex flex-col w-64 m-8 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-                <img src="bukha.png" className="m-4" />
+        <div className="h-screen w-screen text-white flex flex-col items-center">
+            <div className="flex flex-col justify-center items-center w-64 m-8 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
+                {/* <img src="bukha.png" className="m-4" /> */}
+                <Avatar src="bukha.png" alt="avatar" size="xxl" className="m-4 shadow-lg" withBorder={true} variant="circular"/>
                 <Label className="font-bold text-xl m-2" dir="ltr">@Ahmed</Label>
                 <Label className="font-bold text-2xl m-2">أحمد عبدالعال</Label>
                 <Label className="text-lg m-2">كاتب | مبرمج</Label>
@@ -50,7 +55,7 @@ export default function Profile() {
                 </div>
             </div>
             
-            <div className="w-full m-8 gap-10 h-8 flex flex-col items-center">
+            <div className="w-full m-8 gap-8 h-8 flex flex-col items-center">
                 {articles.map((article) => {
                     return <ArticleCard article={article} key={article.id} />;
                 })}
