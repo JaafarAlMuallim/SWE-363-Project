@@ -1,6 +1,6 @@
 {
-  "id": "95cecf9e-ca1e-4593-8cb3-a0eff2c4c024",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "923c954b-43ed-464e-9de8-7cd406e376f8",
+  "prevId": "95cecf9e-ca1e-4593-8cb3-a0eff2c4c024",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -545,7 +545,7 @@
         },
         "username": {
           "name": "username",
-          "type": "varchar(50)",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -557,7 +557,7 @@
         },
         "password": {
           "name": "password",
-          "type": "varchar(50)",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
