@@ -23,9 +23,9 @@ export const users = pgTable("users", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   name: varchar("name", { length: 255 }).notNull(),
-  username: varchar("username", { length: 50 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
-  password: varchar("password", { length: 50 }).notNull(),
+  username: varchar("username", { length: 255 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: varchar("password", { length: 250 }).notNull(),
   role: roleEnum("role").notNull(),
   verified: boolean("verified").default(false),
   x_account: varchar("x_account", { length: 255 }),
