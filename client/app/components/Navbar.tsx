@@ -1,7 +1,11 @@
-import { buttonVariants } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { Sriracha } from "next/font/google";
+const sriracha = Sriracha({
+  subsets: ["latin"],
+  weight: "400"
+});
 
 const Navbar = () => {
   return (
@@ -9,7 +13,7 @@ const Navbar = () => {
       <div className="container flex items-center justify-between">
         <Menu />
         {/* <Link className={buttonVariants()} href='/sign-in'><Menu /></Link> */}   
-        <Link href="/" className="text-2xl">
+        <Link href="/" className={`${sriracha.className} text-2xl`}>
           Pitfall
         </Link>
       </div>
