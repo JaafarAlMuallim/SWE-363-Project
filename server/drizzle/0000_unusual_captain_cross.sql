@@ -69,7 +69,8 @@ CREATE TABLE IF NOT EXISTS "org_founders" (
 CREATE TABLE IF NOT EXISTS "orgs" (
 	"org_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(50),
-	"founding_date" varchar(50),
+	"founding_date" varchar(255),
+	"main_sector" varchar(255),
 	"description" text NOT NULL,
 	"website" varchar(255),
 	"org_image" varchar(255),
@@ -91,15 +92,17 @@ CREATE TABLE IF NOT EXISTS "user_prefs" (
 CREATE TABLE IF NOT EXISTS "users" (
 	"user_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(255) NOT NULL,
-	"username" varchar(50) NOT NULL,
+	"username" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
-	"password" varchar(50) NOT NULL,
+	"password" varchar(250) NOT NULL,
 	"role" "role" NOT NULL,
 	"verified" boolean DEFAULT false,
 	"x_account" varchar(255),
 	"linkding_account" varchar(255),
 	"website" varchar(255),
-	"user_image" varchar(255)
+	"user_image" varchar(255),
+	CONSTRAINT "users_username_unique" UNIQUE("username"),
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 DO $$ BEGIN
