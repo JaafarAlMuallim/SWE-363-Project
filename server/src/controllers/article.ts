@@ -6,7 +6,7 @@ type ArticleData = Omit<Article, "article_id">;
 export async function getArticles(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const articles = await db.query.article.findMany({
@@ -21,11 +21,11 @@ export async function getArticles(
 export async function getArticleById(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const foundArticle = await db.query.article.findFirst({
-      with: { article_tags: true },
+      with: { article_tags: true, comment: true },
       where: eq(article.article_id, req.params.id),
     });
     res.send(foundArticle);
@@ -37,7 +37,7 @@ export async function getArticleById(
 export async function saveArticle(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const articleData: ArticleData = {
@@ -71,7 +71,7 @@ export async function saveArticle(
 export async function updateArticle(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const articleData: ArticleData = {
@@ -101,7 +101,7 @@ export async function updateArticle(
 export async function deleteArticle(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const deleteArticleTags = await db
@@ -121,7 +121,7 @@ export async function deleteArticle(
 export async function getArticleByTag(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const foundArticle = await db.query.article.findMany({
