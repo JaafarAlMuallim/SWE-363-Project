@@ -1,3 +1,25 @@
 import express from "express";
+import {
+  createOrg,
+  getAllSectors,
+  getFailedOrgs,
+  getOrg,
+  getOrgArticles,
+  getOrgBySector,
+  getOrgFounders,
+  getOrgInterviews,
+  getOrgs,
+  getSuccessfulOrgs,
+  updateOrg,
+} from "../controllers/org";
 const router = express.Router();
-// import { org } from "../controllers/org";
+router.route("/").get(getOrgs).post(createOrg);
+router.route("/successful").get(getSuccessfulOrgs);
+router.route("/failed").get(getFailedOrgs);
+router.route("/sectors").get(getAllSectors);
+router.route("/sector/:sector").get(getOrgBySector);
+router.route("/:id").get(getOrg).put(updateOrg);
+router.route("/:id/founders").get(getOrgFounders);
+router.route("/:id/interviews").get(getOrgInterviews);
+router.route("/:id/articles").get(getOrgArticles);
+export { router as orgRoute };

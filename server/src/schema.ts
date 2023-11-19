@@ -58,7 +58,8 @@ export const orgs = pgTable("orgs", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   name: varchar("name", { length: 50 }),
-  founding_date: varchar("founding_date", { length: 50 }),
+  founding_date: varchar("founding_date", { length: 255 }),
+  main_sector: varchar("main_sector", { length: 255 }),
   description: text("description").notNull(),
   website: varchar("website", { length: 255 }),
   org_image: varchar("org_image", { length: 255 }),
@@ -181,6 +182,17 @@ export const interviewRelations = relations(interviews, ({ one, many }) => ({
   }),
   interview_questions: many(interview_questions),
 }));
+
+export const orgRelations = relations(orgs, ({ many }) => ({
+  org_founders: many(org_founders),
+}));
+export const orgFounderRelations = relations(org_founders, ({ one }) => ({
+  org: one(orgs, {
+    fields: [org_founders.org_id],
+    references: [orgs.org_id],
+  }),
+}));
+
 export const interviewQuestionsRelations = relations(
   interview_questions,
   ({ one }) => ({
