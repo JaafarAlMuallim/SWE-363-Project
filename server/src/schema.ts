@@ -182,6 +182,17 @@ export const interviewRelations = relations(interviews, ({ one, many }) => ({
   }),
   interview_questions: many(interview_questions),
 }));
+
+export const orgRelations = relations(orgs, ({ many }) => ({
+  org_founders: many(org_founders),
+}));
+export const orgFounderRelations = relations(org_founders, ({ one }) => ({
+  org: one(orgs, {
+    fields: [org_founders.org_id],
+    references: [orgs.org_id],
+  }),
+}));
+
 export const interviewQuestionsRelations = relations(
   interview_questions,
   ({ one }) => ({
@@ -189,7 +200,7 @@ export const interviewQuestionsRelations = relations(
       fields: [interview_questions.interview_id],
       references: [interviews.interview_id],
     }),
-  }),
+  })
 );
 export const userPrefRelations = relations(users, ({ many }) => ({
   user_prefs: many(user_prefs),

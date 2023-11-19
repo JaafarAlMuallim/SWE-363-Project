@@ -1,22 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { and, eq } from "drizzle-orm";
+import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import {
-  orgs,
-  org_founders,
-  Org,
-  OrgFounders,
-  article,
-  interviews,
-} from "../schema";
-import { eq } from "drizzle-orm";
+import { Org, article, org_founders, orgs } from "../schema";
 type OrgData = Omit<Org, "org_id">;
 
 export async function getOrgs(req: Request, res: Response, next: NextFunction) {
   try {
-    const orgs = await db.query.orgs.findMany({
+    const allOrgs = await db.query.orgs.findMany({
       with: { org_founders: true },
     });
-    res.send(orgs);
+    res.send(allOrgs);
   } catch (e) {
     next(e);
   }
@@ -37,7 +30,7 @@ export async function getOrg(req: Request, res: Response, next: NextFunction) {
 export async function getOrgFounders(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const founders = await db.query.org_founders.findMany({
@@ -52,7 +45,7 @@ export async function getOrgFounders(
 export async function getAllSectors(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const sectors = await db
@@ -69,12 +62,12 @@ export async function getAllSectors(
 export async function getOrgBySector(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const orgsBySector = await db.query.orgs.findMany({
       with: { org_founders: true },
-      where: eq(orgs.main_sector, req.params.sector),
+      where: and(eq(orgs.main_sector, req.params.sector), eq(article.article_status, "published")),
     });
     res.send(orgsBySector);
   } catch (e) {
@@ -85,7 +78,7 @@ export async function getOrgBySector(
 export async function createOrg(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const orgData: OrgData = {
@@ -113,7 +106,7 @@ export async function createOrg(
 export async function updateOrg(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const orgData: OrgData = {
@@ -140,14 +133,14 @@ export async function updateOrg(
 export async function getSuccessfulOrgs(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const successfulOrgs = await db.query.orgs.findMany({
       with: { org_founders: true },
       where: eq(orgs.org_status, "success"),
     });
-    res.send(orgs);
+    res.send(successfulOrgs);
   } catch (e) {
     next(e);
   }
@@ -156,14 +149,14 @@ export async function getSuccessfulOrgs(
 export async function getFailedOrgs(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const failedOrgs = await db.query.orgs.findMany({
       with: { org_founders: true },
       where: eq(orgs.org_status, "failure"),
     });
-    res.send(orgs);
+    res.send(failedOrgs);
   } catch (e) {
     next(e);
   }
@@ -172,7 +165,7 @@ export async function getFailedOrgs(
 export async function getOrgInterviews(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const interviews = await db.query.interviews.findMany({
@@ -188,7 +181,7 @@ export async function getOrgInterviews(
 export async function getOrgArticles(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const articles = await db.query.article.findMany({
@@ -206,7 +199,7 @@ export async function getOrgArticles(
 export async function getOrgInterviewsBySector(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const interviews = await db.query.interviews.findMany({
