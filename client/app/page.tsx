@@ -22,7 +22,7 @@ export default async function Home() {
         <p className="text-white content-center mb-5 ml-5 mr-2">
           مرحبًا بك في منصتنا المبتكرة المخصصة للشركات الناشئة، حيث تتحقق
           الأحلام الريادية. إليك لماذا يجب عليك اختيارنا للحصول على رؤى فريدة،
-          وتوجيه شامل، ودعم لا مثيل له:
+          وتوجيه شامل، ودعم لا مثيل له
         </p>
         <Accordion
           className=" text-white mb-10 ml-2 mr-1"
@@ -30,7 +30,7 @@ export default async function Home() {
           collapsible
         >
           <AccordionItem value="item-1">
-            <AccordionTrigger>تركيز خاص على الشركات الناشئة:</AccordionTrigger>
+            <AccordionTrigger>تركيز خاص على الشركات الناشئة</AccordionTrigger>
             <AccordionContent>
               نختص بشكل حصري في مجتمع الشركات الناشئة، مما يضمن أن يكون محتوانا
               مركزًا بشكل كامل على التحديات، والفرص، والاتجاهات التي تهم أكثر
@@ -38,7 +38,7 @@ export default async function Home() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger>مركز موارد شامل:</AccordionTrigger>
+            <AccordionTrigger>مركز موارد شامل</AccordionTrigger>
             <AccordionContent>
               يعتبر موقعنا مركزًا شاملاً للموارد، حيث يوفر مجموعة غنية من
               المقالات والدلائل والأدوات التي تغطي كل جانب من جوانب رحلة الشركة
@@ -46,7 +46,7 @@ export default async function Home() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger>تحليلات ورؤى من قبل الخبراء:</AccordionTrigger>
+            <AccordionTrigger>تحليلات ورؤى من قبل الخبراء</AccordionTrigger>
             <AccordionContent>
               استفد من حكمة رواد الأعمال ذوي الخبرة، والخبراء في الصناعة، ورؤوس
               الأفكار الذين يسهمون بمحتوى حصري، مما يوفر لك آراءً قيمة
@@ -54,7 +54,7 @@ export default async function Home() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
-            <AccordionTrigger>الاتصال بالمجتمع:</AccordionTrigger>
+            <AccordionTrigger>الاتصال بالمجتمع</AccordionTrigger>
             <AccordionContent>
               انضم إلى مجتمع نابض بالحياة من عشاق ريادة الأعمال. شارك في
               المناقشات، وشارك التجارب، وقم ببناء اتصالات ذات مغزى مع رواد
