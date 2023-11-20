@@ -33,3 +33,12 @@ export async function login(req, res) {
     }
   });
 }
+
+
+export async function devUsers(req, res) { 
+  const devUsers = await db
+    .select()
+    .from(users)
+    .where(eq(users.role, "admin"));
+  res.send(devUsers);
+}
