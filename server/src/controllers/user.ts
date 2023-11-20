@@ -21,11 +21,11 @@ export async function signUp(req, res) {
 }
 
 export async function login(req, res) {
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, req.body.email));
-  bcrypt.compare(req.body.password, user[0].password, function (err, result) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, req.body.email),
+  });
+
+  bcrypt.compare(req.body.password, user.password, function (err, result) {
     if (result == true) {
       res.send(user);
     } else {
@@ -34,11 +34,7 @@ export async function login(req, res) {
   });
 }
 
-
-export async function devUsers(req, res) { 
-  const devUsers = await db
-    .select()
-    .from(users)
-    .where(eq(users.role, "admin"));
+export async function devUsers(req, res) {
+  const devUsers = await db.select().from(users).where(eq(users.role, "admin"));
   res.send(devUsers);
 }
