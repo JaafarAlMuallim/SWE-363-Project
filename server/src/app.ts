@@ -2,9 +2,17 @@ import express from "express";
 import { articleRoute } from "./routes/article";
 import { orgRoute } from "./routes/org";
 import { userRoute } from "./routes/user";
+import cors from "cors";
+
 const app = express();
 const port = 8080;
+const allowedOrigins = ["http://localhost:3000"];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins,
+};
 app.use(express.json());
+app.use(cors(options));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
