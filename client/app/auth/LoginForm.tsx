@@ -3,11 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+// import bcrypt from "bcrypt";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail((email) => e.target.value);
     console.log(email);
@@ -16,6 +19,12 @@ export default function LoginForm() {
     setPassword((password) => e.target.value);
     console.log(password);
   };
+
+  async function hashedPassword(password: string) {
+    // const encryptedPassword = await bcrypt.hash(password, 10);
+    // return encryptedPassword;
+  }
+  
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,7 +81,7 @@ export default function LoginForm() {
             onChange={handlePassword}
           />
         </div>
-        <button type="submit">submit</button>
+        <Button className="w-full bg-cbtn shadow-lg mt-2">دخول</Button>
       </div>
     </form>
   );

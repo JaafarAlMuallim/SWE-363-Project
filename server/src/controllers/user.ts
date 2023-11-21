@@ -24,14 +24,21 @@ export async function login(req, res) {
   const user = await db.query.users.findFirst({
     where: eq(users.email, req.body.email),
   });
+  
+  if (req.body.password === user.password) {
+    res.send(user);
+  }
+  else {
+    res.send("Incorrect password");
+  }
 
-  bcrypt.compare(req.body.password, user.password, function (err, result) {
-    if (result == true) {
-      res.send(user);
-    } else {
-      res.send("Incorrect password");
-    }
-  });
+  // bcrypt.compare(encryptedPassword, user.password, function (err, result) {
+  //   if (result == true) {
+  //     res.send(user);
+  //   } else {
+  //     res.send("Incorrect password");
+  //   }
+  // });
 }
 
 export async function devUsers(req, res) {
