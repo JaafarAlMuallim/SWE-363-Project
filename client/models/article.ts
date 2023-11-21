@@ -1,11 +1,17 @@
+import Tag from "./tag";
+
 export default interface Article {
-  id?: number;
+  article_id?: string;
+  user_id?: string;
+  org_id?: string;
   title: string;
   content: string;
   subtitle?: string;
-  author?: string;
   date?: string;
-  image?: string;
-  tags?: string[];
+  article_image?: string;
+  article_tags?: Tag[];
   likes?: number;
+  views?: number;
+  bookmarks?: boolean;
+  article_status?: string;
 }

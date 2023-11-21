@@ -4,7 +4,7 @@ import React from "react";
 import { Sriracha } from "next/font/google";
 const sriracha = Sriracha({
   subsets: ["latin"],
-  weight: "400"
+  weight: "400",
 });
 
 const Navbar = () => {
@@ -12,7 +12,7 @@ const Navbar = () => {
     <div className="bg-opacity-0 py-2 border-b border-s-zinc-200 w-full text-white">
       <div className="container flex items-center justify-between">
         <Menu />
-        {/* <Link className={buttonVariants()} href='/sign-in'><Menu /></Link> */}   
+        {/* <Link className={buttonVariants()} href='/sign-in'><Menu /></Link> */}
         <Link href="/" className={`${sriracha.className} text-2xl`}>
           Pitfall
         </Link>
