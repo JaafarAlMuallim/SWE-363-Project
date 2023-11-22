@@ -1,9 +1,11 @@
 "use client"
-import { Bookmark, Home, Menu, Newspaper, Users } from "lucide-react";
+import { Bookmark, Home, Menu, Moon, Newspaper, Sun, Users } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { Avatar } from "@material-tailwind/react";
 import { Sriracha } from "next/font/google";
+import { Switch } from "@/components/ui/switch";
+import { set } from "date-fns";
 const sriracha = Sriracha({
   subsets: ["latin"],
   weight: "400",
@@ -11,6 +13,15 @@ const sriracha = Sriracha({
 
 const Navbar = () => {
   const [active, setActive] = useState(false);
+  const [local_theme, setTheme] = useState("light");
+  const [chk, setChk] = useState(true);
+  const handleThemeChange = () => {
+    setTheme(local_theme =>
+      local_theme === 'dark' ? 'light' : 'dark'
+    );
+    document.documentElement.setAttribute('local_theme', local_theme);
+    setChk(!chk);
+  }
 
   return (
     <>
@@ -32,6 +43,10 @@ const Navbar = () => {
                       variant="circular"
                     />
                   </Link>
+                </li>
+                <li className="flex gap-1 p-2">
+                  <Switch dir="ltr" checked={chk} onCheckedChange={handleThemeChange}/>
+                  {chk == true ? <Moon /> : <Sun />}
                 </li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={'/'}>الرئيسية<Home className="mx-2"/></Link></li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={`/articles`}>المقالات<Newspaper className="mx-2"/></Link></li>
@@ -58,7 +73,7 @@ const Navbar = () => {
           active ? 'lg:translate-x-2/3 translate-x-2/4 ' : 'translate-x-full'
         } transition-all duration-500 ease-in-out bg-secondaryDark text-white bg-opacity-90`}
       >
-        <nav className="list-none ml-4 mt-4 flex flex-col justify-end items-end gap-8">
+        <nav className="list-none ml-4 mt-4 flex flex-col justify-end items-end gap-20">
           <ul className="flex flex-col justify-center items-center gap-8 list-none">
             <li>
               <Link onClick={() => setActive(!active)} href={`/profile`}>
@@ -77,7 +92,11 @@ const Navbar = () => {
             <li><Link className="flex" onClick={() => setActive(!active)} href={'/'}>الرئيسية<Home className="mx-2"/></Link></li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/articles`}>المقالات<Newspaper className="mx-2"/></Link></li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>الصفحات المرجعية <Bookmark className="mx-2"/></Link></li>
-            <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>عنا <Users className="mx-2"/></Link></li>
+            <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>عنا <Users className="mx-2" /></Link></li>
+            <li className="flex gap-1 p-2">
+              <Switch dir="ltr" checked={chk} onCheckedChange={handleThemeChange}/>
+              {chk == true ? <Moon /> : <Sun />}
+            </li>
           </ul>
         </nav>
       </div>

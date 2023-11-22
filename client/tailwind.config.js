@@ -3,7 +3,7 @@
 const withMT = require("@material-tailwind/react/utils/withMT");
 
 module.exports = withMT({
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -20,12 +20,21 @@ module.exports = withMT({
     },
     extend: {
       colors: {
-        'primaryDark': '#090D1F',
-        'secondaryDark': '#1E293B',
-        'inputbg': '#212A3E',
-        'cbtn': '#445069',
-        'crd': '#4F709C',
-        'crd2': '#213555',
+        // 'primaryDark': '#090D1F',
+        // 'secondaryDark': '#1E293B',
+        // 'inputbg': '#212A3E',
+        // 'cbtn': '#445069',
+        // 'crd': '#4F709C',
+        // 'crd2': '#213555',
+
+        primaryDark: "var(--color-primaryDark)",
+        secondaryDark: "var(--color-secondaryDark)",
+        inputbg: "var(--color-inputbg)",
+        cbtn: "var(--color-cbtn)",
+        crd: "var(--color-crd)",
+        crd2: "var(--color-crd2)",
+
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
