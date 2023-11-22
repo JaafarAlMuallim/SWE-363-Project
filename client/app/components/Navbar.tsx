@@ -3,10 +3,6 @@ import { Bookmark, Home, Menu, Newspaper, Users } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { Avatar } from "@material-tailwind/react";
-import { Menu } from "lucide-react";
-import Link from "next/link";
-import React, { useState } from "react";
-import { Avatar } from "@material-tailwind/react";
 import { Sriracha } from "next/font/google";
 const sriracha = Sriracha({
   subsets: ["latin"],
@@ -22,7 +18,7 @@ const Navbar = () => {
         <div className="container">
             {/* Large screens */}
             <nav className="hidden md:flex items-center justify-between">
-              <ul className="list-none flex items-center gap-8">
+              <ul className="list-none flex items-center gap-4">
                 <li>
                   <Link href={`/profile`} className="link link-underline link-underline-black p-4">
                     Ahmed@
@@ -39,10 +35,10 @@ const Navbar = () => {
                 </li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={'/'}>الرئيسية<Home className="mx-2"/></Link></li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={`/articles`}>المقالات<Newspaper className="mx-2"/></Link></li>
-                <li><Link className="flex link link-underline link-underline-black p-2" href={`/bookmarks`}>العلامات المرجعية <Bookmark className="mx-2"/></Link></li>
+                <li><Link className="flex link link-underline link-underline-black p-2" href={`/bookmarks`}>الصفحات المرجعية <Bookmark className="mx-2"/></Link></li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={`/about-us`}>عنا <Users className="mx-2"/></Link></li>
               </ul>
-              <Link href="/" className="text-2xl">
+              <Link href="/" className={`${sriracha.className} text-2xl`}>
                 Pitfall
               </Link>
             </nav>
@@ -50,7 +46,7 @@ const Navbar = () => {
             <div className="flex items-center justify-between md:hidden ">
               <Menu className="scale-150" onClick={() => setActive(!active)} />
               {/* <Link className={buttonVariants()} href='/sign-in'><Menu /></Link> */}
-              <Link href="/" className="text-2xl">
+              <Link href="/" className={`${sriracha.className} text-2xl`}>
                 Pitfall
               </Link>
             </div>
@@ -80,7 +76,7 @@ const Navbar = () => {
             </li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={'/'}>الرئيسية<Home className="mx-2"/></Link></li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/articles`}>المقالات<Newspaper className="mx-2"/></Link></li>
-            <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>العلامات المرجعية <Bookmark className="mx-2"/></Link></li>
+            <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>الصفحات المرجعية <Bookmark className="mx-2"/></Link></li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>عنا <Users className="mx-2"/></Link></li>
           </ul>
         </nav>

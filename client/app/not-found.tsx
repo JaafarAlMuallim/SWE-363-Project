@@ -11,7 +11,7 @@ export default function Custom404() {
                 </div>
             </center>
             <center className="mt-6">
-                <a href="#" className="text-white px-16 py-2 text-xl bg-cbtn rounded-lg shadow-lg">رجوع </a>
+                <a href="/" className="text-white px-16 py-2 text-xl bg-cbtn rounded-lg shadow-lg">رجوع </a>
             </center>
         </div>
     )
