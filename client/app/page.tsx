@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/Accordion";
+import Link from "next/link";
 export default async function Home() {
   return (
     <div className="flex flex-col items-center justify-center">
@@ -15,9 +16,11 @@ export default async function Home() {
       <div className="ml-5 mr-5">
         <Image src="/land-page-picture.png" alt="" width="500" height="500" />
       </div>
-      <Button className="text-white bg-cbtn shadow-lg my-10 w-64">
-        استكشف المشاريع
-      </Button>
+      <Link href="/articles">
+        <Button className="text-white bg-cbtn shadow-lg my-10 w-64">
+          استكشف المشاريع
+        </Button>
+      </Link>
       <div>
         <p className="text-white content-center mb-5 ml-5 mr-2">
           مرحبًا بك في منصتنا المبتكرة المخصصة للشركات الناشئة، حيث تتحقق

@@ -1,5 +1,5 @@
 {
-  "id": "95cecf9e-ca1e-4593-8cb3-a0eff2c4c024",
+  "id": "4db63e54-25f9-4f46-befa-af1535df7991",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -408,7 +408,13 @@
         },
         "founding_date": {
           "name": "founding_date",
-          "type": "varchar(50)",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "main_sector": {
+          "name": "main_sector",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
@@ -545,7 +551,7 @@
         },
         "username": {
           "name": "username",
-          "type": "varchar(50)",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -557,7 +563,7 @@
         },
         "password": {
           "name": "password",
-          "type": "varchar(50)",
+          "type": "varchar(250)",
           "primaryKey": false,
           "notNull": true
         },
@@ -602,7 +608,22 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        },
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
     }
   },
   "enums": {

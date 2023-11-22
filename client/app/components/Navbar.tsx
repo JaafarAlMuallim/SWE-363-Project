@@ -3,6 +3,15 @@ import { Bookmark, Home, Menu, Newspaper, Users } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { Avatar } from "@material-tailwind/react";
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
+import { Avatar } from "@material-tailwind/react";
+import { Sriracha } from "next/font/google";
+const sriracha = Sriracha({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 const Navbar = () => {
   const [active, setActive] = useState(false);

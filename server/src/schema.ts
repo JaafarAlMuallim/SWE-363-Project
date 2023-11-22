@@ -1,14 +1,13 @@
-import { InferModel, sql, relations } from "drizzle-orm";
+import { InferModel, relations, sql } from "drizzle-orm";
 import {
+  bigint,
+  boolean,
+  date,
   pgEnum,
   pgTable,
-  varchar,
-  boolean,
   text,
   uuid,
-  bigint,
-  date,
-  serial,
+  varchar,
 } from "drizzle-orm/pg-core";
 export const roleEnum = pgEnum("role", ["admin", "user", "reviewer"]);
 export const statusEnum = pgEnum("status", ["success", "failure"]);
@@ -59,7 +58,8 @@ export const orgs = pgTable("orgs", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   name: varchar("name", { length: 50 }),
-  founding_date: varchar("founding_date", { length: 50 }),
+  founding_date: varchar("founding_date", { length: 255 }),
+  main_sector: varchar("main_sector", { length: 255 }),
   description: text("description").notNull(),
   website: varchar("website", { length: 255 }),
   org_image: varchar("org_image", { length: 255 }),
@@ -98,9 +98,6 @@ export const interview_questions = pgTable("interview_questions", {
   question: text("question"),
   answer: text("answer"),
 });
-export const interviewRelations = relations(interviews, ({ many }) => ({
-  interview_questions: many(interview_questions),
-}));
 
 export const orgsRelations = relations(orgs, ({ many }) => ({
   org_founders: many(org_founders),
@@ -153,11 +150,81 @@ export const comment = pgTable("comment", {
   comment_likes: bigint("comment_likes", { mode: "number" }).default(0),
 });
 
-export const articleRelations = relations(article, ({ many }) => ({
+export const articleRelations = relations(article, ({ one, many }) => ({
   article_tags: many(article_tags),
   comment: many(comment),
+  user: one(users, {
+    fields: [article.user_id],
+    references: [users.user_id],
+  }),
 }));
 
+export const commentRelations = relations(comment, ({ one }) => ({
+  user: one(users, {
+    fields: [comment.user_id],
+    references: [users.user_id],
+  }),
+}));
+export const userRelations = relations(users, ({ one, many }) => ({
+  article: many(article),
+  comment: many(comment),
+  user_prefs: many(user_prefs),
+  interview: many(interviews),
+}));
+export const interviewRelations = relations(interviews, ({ one, many }) => ({
+  user: one(users, {
+    fields: [interviews.user_id],
+    references: [users.user_id],
+  }),
+  org: one(orgs, {
+    fields: [interviews.org_id],
+    references: [orgs.org_id],
+  }),
+  interview_questions: many(interview_questions),
+}));
+
+export const orgRelations = relations(orgs, ({ many }) => ({
+  org_founders: many(org_founders),
+}));
+export const orgFounderRelations = relations(org_founders, ({ one }) => ({
+  org: one(orgs, {
+    fields: [org_founders.org_id],
+    references: [orgs.org_id],
+  }),
+}));
+
+export const interviewQuestionsRelations = relations(
+  interview_questions,
+  ({ one }) => ({
+    interview: one(interviews, {
+      fields: [interview_questions.interview_id],
+      references: [interviews.interview_id],
+    }),
+  })
+);
+export const userPrefRelations = relations(users, ({ many }) => ({
+  user_prefs: many(user_prefs),
+}));
+export const prefRelations = relations(prefs, ({ many }) => ({
+  user_prefs: many(user_prefs),
+}));
+export const tagsRelations = relations(article_tags, ({ one }) => ({
+  article: one(article, {
+    fields: [article_tags.article_id],
+    references: [article.article_id],
+  }),
+}));
+
+export type ArticleData = InferModel<typeof article>;
+export type CommentData = InferModel<typeof comment>;
+export type UserData = InferModel<typeof users>;
+export type PrefData = InferModel<typeof prefs>;
+export type UserPrefData = InferModel<typeof user_prefs>;
+export type OrgData = InferModel<typeof orgs>;
+export type OrgFounderData = InferModel<typeof org_founders>;
+export type InterviewData = InferModel<typeof interviews>;
+export type InterviewQuestionData = InferModel<typeof interview_questions>;
+export type ArticleTagData = InferModel<typeof article_tags>;
 export type Role = "admin" | "user" | "reviewer";
 export type Status = "success" | "failure";
 export type ArticleStatus = "published" | "draft" | "deleted";

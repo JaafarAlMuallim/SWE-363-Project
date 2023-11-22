@@ -1,33 +1,33 @@
 import Image from "next/image";
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
-const articles: Article[] = [
-  {
-    id: 1,
-    title: "العنوان",
-    subtitle: "وصف مختصر عن المقالة من الكاتب",
-    content: "المحتوى",
-    date: "الاثنين، 21 سبتمبر 2023",
-    tags: ["تقنية", "مطاعم", "توصيل"],
-    image: "next.svg",
-    likes: 4,
-  },
-  {
-    id: 2,
-    title: "العنوان",
-    subtitle: "وصف مختصر عن المقالة من الكاتب",
-    content: "المحتوى",
-    date: "الاثنين، 21 سبتمبر 2023",
-    tags: ["تقنية", "مطاعم", "توصيل"],
-    image: "next.svg",
-    likes: 89,
-  },
-];
+// const articles: Article[] = [
+//   {
+//     id: 1,
+//     title: "العنوان",
+//     subtitle: "وصف مختصر عن المقالة من الكاتب",
+//     content: "المحتوى",
+//     date: "الاثنين، 21 سبتمبر 2023",
+//     tags: ["تقنية", "مطاعم", "توصيل"],
+//     image: "next.svg",
+//     likes: 4,
+//   },
+//   {
+//     id: 2,
+//     title: "العنوان",
+//     subtitle: "وصف مختصر عن المقالة من الكاتب",
+//     content: "المحتوى",
+//     date: "الاثنين، 21 سبتمبر 2023",
+//     tags: ["تقنية", "مطاعم", "توصيل"],
+//     image: "next.svg",
+//     likes: 89,
+//   },
+// ];
 export default async function Articles() {
-  // fetch data from server
+  const res = await fetch("http://localhost:8080/article");
+  const articles = (await res.json()) as Article[];
 
   return (
-    // TODO: map through the elements and show them
     <>
       <div>
         <hr className="w-screen" />
@@ -41,7 +41,7 @@ export default async function Articles() {
       </div>
       <div className="flex flex-col h-screen gap-10">
         {articles.map((article) => {
-          return <ArticleCard article={article} key={article.id} />;
+          return <ArticleCard article={article} key={article.article_id} />;
         })}
       </div>
     </>
