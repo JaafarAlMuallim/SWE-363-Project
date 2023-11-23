@@ -80,7 +80,11 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form method="POST" onSubmit={handleSubmit}>
+      <form
+        method="POST"
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4"
+      >
         <FormField
           name="email"
           control={form.control}
