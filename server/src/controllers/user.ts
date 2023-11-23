@@ -16,7 +16,7 @@ export async function signUp(req, res) {
     role: "user",
     verified: false,
   };
-  const insertedData = await db.insert(users).values([user]);
+  const insertedData = await db.insert(users).values([user]).returning();
   res.send(insertedData);
 }
 
@@ -24,11 +24,10 @@ export async function login(req, res) {
   const user = await db.query.users.findFirst({
     where: eq(users.email, req.body.email),
   });
-  
+
   if (req.body.password === user.password) {
     res.send(user);
-  }
-  else {
+  } else {
     res.send("Incorrect password");
   }
 
