@@ -54,6 +54,7 @@ export default function RegisterForm() {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         email: form.getValues("email"),
         password: form.getValues("password"),

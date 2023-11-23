@@ -1,27 +1,6 @@
 import Article from "@/models/article";
 import Image from "next/image";
 
-const articles: Article[] = [
-  {
-    id: 1,
-    title: "العنوان",
-    subtitle: "وصف مختصر عن المقالة من الكاتب",
-    content: "المحتوى",
-    date: "الاثنين، 21 سبتمبر 2023",
-    tags: ["تقنية", "مطاعم", "توصيل"],
-    image: "next.svg",
-  },
-  {
-    id: 2,
-    title: "العنوان",
-    subtitle: "وصف مختصر عن المقالة من الكاتب",
-    content: "المحتوى",
-    date: "الاثنين، 21 سبتمبر 2023",
-    tags: ["تقنية", "مطاعم", "توصيل"],
-    image: "next.svg",
-  },
-];
-
 const colors = [
   "bg-red-300 text-red-600",
   "bg-pink-300 text-pink-600",
@@ -41,24 +20,25 @@ const colors = [
   "bg-amber-300 text-amber-600",
   "bg-gray-300 text-gray-600",
 ];
-export default function Article({
+export default async function Article({
   params,
 }: {
   params: { article_id: string };
 }) {
   console.log(params.article_id);
-  // fetch the article with the id of params.article_id
-  let article: Article;
-  if (params.article_id === "1") {
-    article = articles[0];
-  } else {
-    article = articles[1];
-  }
+  const res = await fetch(
+    `http://localhost:8080/article/${params.article_id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+  const article = (await res.json()) as Article;
 
   return (
     <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
       <Image
-        src={`../${article.image!}`}
+        src={`../${article.article_image!}`}
         alt={"Image"}
         width={400}
         height={400}
@@ -68,7 +48,7 @@ export default function Article({
       <p>{article.content}</p>
       <p>{article.date}</p>
       <section className="flex justify-center gap-2">
-        {article.tags!.map((tag, index) => {
+        {article.article_tags!.map((tag, index) => {
           const randomColor = colors[Math.floor(Math.random() * colors.length)];
           colors.splice(colors.indexOf(randomColor), 1);
           console.log(colors);
@@ -78,7 +58,7 @@ export default function Article({
               key={index}
               className={`${randomColor} px-4 py-1 rounded-full inline w-24 text-center`}
             >
-              {tag}
+              {tag.tag}
             </div>
           );
         })}
