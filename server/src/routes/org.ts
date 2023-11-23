@@ -12,8 +12,10 @@ import {
   getSuccessfulOrgs,
   updateOrg,
 } from "../controllers/org";
+import { isLoggedIn } from "../middleware";
+import wrapAsync from "../utils";
 const router = express.Router();
-router.route("/").get(getOrgs).post(createOrg);
+router.route("/").get(getOrgs).post(isLoggedIn, wrapAsync(createOrg));
 router.route("/successful").get(getSuccessfulOrgs);
 router.route("/failed").get(getFailedOrgs);
 router.route("/sectors").get(getAllSectors);
