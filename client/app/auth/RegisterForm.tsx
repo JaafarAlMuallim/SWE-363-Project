@@ -170,7 +170,7 @@ export default function RegisterForm() {
             </FormItem>
           )}
         />
-        <Button className="w-full bg-cbtn shadow-lg mt-2">دخول</Button>
+        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">دخول</Button>
       </form>
     </Form>
   );
