@@ -156,7 +156,7 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel htmlFor="password" className="text-content">
-                الرقم السري
+                كلمة المرور
               </FormLabel>
               <FormControl>
                 <Input
