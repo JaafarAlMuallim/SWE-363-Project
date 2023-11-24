@@ -31,12 +31,12 @@ export default async function Articles() {
     <>
       <div>
         <hr className="w-screen" />
-        <div className="my-2 text-white text-5xl text-center font-semibold">
+        <div className="my-2 text-content text-5xl text-center font-semibold">
           <span>المقالات</span>
         </div>
         <hr />
       </div>
-      <div className="my-8 text-2xl font-semibold text-right mx-10 text-white">
+      <div className="my-8 text-2xl font-semibold text-right mx-10 text-content">
         <p>اخر المقالات</p>
       </div>
       <div className="flex flex-col h-screen gap-10">

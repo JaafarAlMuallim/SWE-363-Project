@@ -33,7 +33,11 @@ module.exports = withMT({
         cbtn: "var(--color-cbtn)",
         crd: "var(--color-crd)",
         crd2: "var(--color-crd2)",
-
+        content: "var(--color-content)",
+        gcontent: "var(--color-gcontent)",
+        gcontent2: "var(--color-gcontent2)",
+        special: "var(--color-special)",
+        special2: "var(--color-special2)",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

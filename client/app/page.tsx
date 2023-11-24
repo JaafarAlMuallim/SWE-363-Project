@@ -9,26 +9,26 @@ import {
 import Link from "next/link";
 export default async function Home() {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="text-white text-3xl mx-5 mt-10">
+    <div className="flex flex-col items-center justify-center text-content">
+      <div className=" text-3xl mx-5 mt-10">
         <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
       </div>
       <div className="ml-5 mr-5">
         <Image src="/land-page-picture.png" alt="" width="500" height="500" />
       </div>
       <Link href="/articles">
-        <Button className="text-white bg-cbtn shadow-lg my-10 w-64">
+        <Button className=" bg-cbtn text-content shadow-lg my-10 w-64">
           استكشف المشاريع
         </Button>
       </Link>
       <div>
-        <p className="text-white content-center mb-5 ml-5 mr-2">
+        <p className=" content-center mb-5 ml-5 mr-2">
           مرحبًا بك في منصتنا المبتكرة المخصصة للشركات الناشئة، حيث تتحقق
           الأحلام الريادية. إليك لماذا يجب عليك اختيارنا للحصول على رؤى فريدة،
           وتوجيه شامل، ودعم لا مثيل له
         </p>
         <Accordion
-          className=" text-white mb-10 ml-2 mr-1"
+          className="  mb-10 ml-2 mr-1"
           type="single"
           collapsible
         >

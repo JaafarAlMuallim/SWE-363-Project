@@ -72,19 +72,19 @@ export default function RegisterForm() {
                 id="name"
                 type="text"
                 placeholder="محمد علي"
-                className="bg-inputbg"
+                className="bg-inputbg placeholder:text-gcontent"
                 onChange={handleName}
                 />
             </div>
             <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="username">اسم الحساب</Label>
-            <Input
-            id="username"
-            type="username"
-            placeholder="mohammedAli123"
-            className="bg-inputbg"
-            onChange={handleUsername}
-            />
+                <Label htmlFor="username">اسم الحساب</Label>
+                <Input
+                id="username"
+                type="username"
+                placeholder="mohammedAli123"
+                className="bg-inputbg placeholder:text-gcontent"
+                onChange={handleUsername}
+                />
             </div>
             <div className="flex flex-col justify-end space-y-1.5">
                 <Label htmlFor="email">البريد الالكتروني</Label>
@@ -92,7 +92,7 @@ export default function RegisterForm() {
                 id="email"
                 type="email"
                 placeholder="example@gmail.com"
-                className="bg-inputbg"
+                className="bg-inputbg placeholder:text-gcontent"
                 onChange={handleEmail}
                 />
             </div>
@@ -102,12 +102,12 @@ export default function RegisterForm() {
                 id="password"
                 type="password"
                 placeholder="ادخل كلمة المرور"
-                className="bg-inputbg"
+                className="bg-inputbg placeholder:text-gcontent"
                 onChange={handlePassword}
                 />
             </div>
         </div>
-        <Button className="w-full bg-cbtn shadow-lg mt-6">دخول</Button>
+        <Button className="w-full bg-cbtn text-content shadow-lg mt-6">دخول</Button>
     </form>
     );
 }

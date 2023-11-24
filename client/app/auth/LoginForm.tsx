@@ -60,14 +60,14 @@ export default function LoginForm() {
 
   return (
     <form method="POST" onSubmit={handleSubmit}>
-      <div className="grid w-full items-center gap-4">
+      <div className="grid w-full items-center gap-4 text-content">
         <div className="flex flex-col justify-end space-y-1.5">
           <Label htmlFor="email">البريد الالكتروني</Label>
           <Input
             id="email"
             type="email"
             placeholder="example@gmail.com"
-            className="bg-inputbg"
+            className="bg-inputbg placeholder:text-gcontent"
             onChange={handleEmail}
           />
         </div>
@@ -77,11 +77,11 @@ export default function LoginForm() {
             id="password"
             type="password"
             placeholder="ادخل كلمة المرور"
-            className="bg-inputbg"
+            className="bg-inputbg placeholder:text-gcontent"
             onChange={handlePassword}
           />
         </div>
-        <Button className="w-full bg-cbtn shadow-lg mt-2">دخول</Button>
+        <Button className="w-full bg-cbtn text-content shadow-lg mt-2">دخول</Button>
       </div>
     </form>
   );

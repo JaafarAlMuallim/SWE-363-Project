@@ -25,7 +25,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="sticky top-0 z-10 bg-secondaryDark py-4 border-b w-full text-white">
+      <div className="sticky top-0 z-10 bg-secondaryDark py-4 border-b w-full text-content">
         <div className="container">
             {/* Large screens */}
             <nav className="hidden md:flex items-center justify-between">
@@ -44,9 +44,8 @@ const Navbar = () => {
                     />
                   </Link>
                 </li>
-                <li className="flex gap-1 p-2">
-                  <Switch dir="ltr" checked={chk} onCheckedChange={handleThemeChange}/>
-                  {chk == true ? <Moon /> : <Sun />}
+                <li>
+                  <button onClick={handleThemeChange} className="p-2">{chk == true ? <Sun /> : <Moon />}</button>       
                 </li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={'/'}>الرئيسية<Home className="mx-2"/></Link></li>
                 <li><Link className="flex link link-underline link-underline-black p-2" href={`/articles`}>المقالات<Newspaper className="mx-2"/></Link></li>
@@ -71,7 +70,7 @@ const Navbar = () => {
       <div
         className={`fixed w-full h-screen z-10 ${
           active ? 'lg:translate-x-2/3 translate-x-2/4 ' : 'translate-x-full'
-        } transition-all duration-500 ease-in-out bg-secondaryDark text-white bg-opacity-90`}
+        } transition-all duration-500 ease-in-out bg-secondaryDark text-content bg-opacity-90`}
       >
         <nav className="list-none ml-4 mt-4 flex flex-col justify-end items-end gap-20">
           <ul className="flex flex-col justify-center items-center gap-8 list-none">
@@ -93,9 +92,8 @@ const Navbar = () => {
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/articles`}>المقالات<Newspaper className="mx-2"/></Link></li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>الصفحات المرجعية <Bookmark className="mx-2"/></Link></li>
             <li><Link className="flex" onClick={() => setActive(!active)} href={`/about-us`}>عنا <Users className="mx-2" /></Link></li>
-            <li className="flex gap-1 p-2">
-              <Switch dir="ltr" checked={chk} onCheckedChange={handleThemeChange}/>
-              {chk == true ? <Moon /> : <Sun />}
+            <li>
+              <button onClick={handleThemeChange} className="px-4">{chk == true ? <Sun /> : <Moon />}</button> 
             </li>
           </ul>
         </nav>
