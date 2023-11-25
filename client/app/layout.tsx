@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Cairo } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import { useContext } from "react";
+import React from "react";
 const inter = Inter({ subsets: ["latin"] });
 const cairo = Cairo({ subsets: ["arabic"] });
+const local_theme = "dark";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar">
+    <html lang="ar" local_theme={local_theme}>
       <body
         dir="rtl"
         className={`${cairo.className} bg-gradient-to-br from-primaryDark to-secondaryDark`}

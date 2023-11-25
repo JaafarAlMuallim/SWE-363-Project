@@ -88,21 +88,22 @@ export default function RegisterForm() {
       <form
         method="POST"
         onSubmit={handleSubmit}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 text-content"
       >
         <FormField
           name="name"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="name" className="text-white">
+              <FormLabel htmlFor="name" className="text-content">
                 الاسم
               </FormLabel>
               <FormControl>
                 <Input
-                  className="bg-inputbg"
+                  className="bg-inputbg placeholder:text-gcontent"
                   type="text"
                   onChange={field.onChange}
+                  placeholder="الاسم"
                 />
               </FormControl>
               <FormMessage />
@@ -114,14 +115,15 @@ export default function RegisterForm() {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="username" className="text-white">
+              <FormLabel htmlFor="username" className="text-content">
                 اسم الحساب
               </FormLabel>
               <FormControl>
                 <Input
-                  className="bg-inputbg"
+                  className="bg-inputbg placeholder:text-gcontent"
                   type="text"
                   onChange={field.onChange}
+                  placeholder="mohammedAli123"
                 />
               </FormControl>
               <FormMessage />
@@ -133,11 +135,16 @@ export default function RegisterForm() {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="email" className="text-white">
+              <FormLabel htmlFor="email" className="text-content">
                 البريد الالكتروني
               </FormLabel>
               <FormControl>
-                <Input className="bg-inputbg" onChange={field.onChange} />
+                <Input
+                  className="bg-inputbg placeholder:text-gcontent"
+                  onChange={field.onChange}
+                  placeholder="example@gmail.com"
+                />
+                  
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -148,21 +155,22 @@ export default function RegisterForm() {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="password" className="text-white">
-                الرقم السري
+              <FormLabel htmlFor="password" className="text-content">
+                كلمة المرور
               </FormLabel>
               <FormControl>
                 <Input
-                  className="bg-inputbg"
+                  className="bg-inputbg placeholder:text-gcontent"
                   type="password"
                   onChange={field.onChange}
+                  placeholder="ادخل كلمة المرور"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full bg-cbtn shadow-lg mt-2">دخول</Button>
+        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">دخول</Button>
       </form>
     </Form>
   );
