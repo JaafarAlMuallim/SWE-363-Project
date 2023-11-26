@@ -1,19 +1,19 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import bcrypt from "bcryptjs";
 import {
   Form,
   FormControl,
-  FormLabel,
-  FormItem,
   FormField,
+  FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import bcrypt from "bcryptjs";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 export default function RegisterForm() {
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
@@ -64,19 +64,17 @@ export default function RegisterForm() {
     })
       .then((res) => {
         if (res.ok) {
-          return res.json();
+          res.json().then((data) => {
+            if (data.user_id) {
+              localStorage.setItem("token", data.user_id);
+              router.push("/");
+            }
+          });
         } else {
           return res.json().then((data) => {
-            let errorMessage = "Register failed!";
+            let errorMessage = "Authentication failed!";
             throw new Error(errorMessage);
           });
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data[0].user_id) {
-          localStorage.setItem("token", data[0].user_id);
-          router.push("/");
         }
       })
       .catch((err) => {
@@ -145,7 +143,6 @@ export default function RegisterForm() {
                   onChange={field.onChange}
                   placeholder="example@gmail.com"
                 />
-                  
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -171,7 +168,9 @@ export default function RegisterForm() {
             </FormItem>
           )}
         />
-        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">دخول</Button>
+        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">
+          دخول
+        </Button>
       </form>
     </Form>
   );

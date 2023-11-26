@@ -6,5 +6,5 @@ import { signUp, login, devUsers } from "../controllers/user";
 import wrapAsync from "../utils";
 router.route("/signup").post(wrapAsync(signUp));
 router.route("/login").post(wrapAsync(login));
-router.route("/about").get(devUsers);
+router.route("/about").get(wrapAsync(devUsers));
 export { router as userRoute };

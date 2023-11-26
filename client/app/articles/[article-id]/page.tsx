@@ -31,7 +31,7 @@ export default async function Article({
     {
       method: "GET",
       credentials: "include",
-    },
+    }
   );
   const article = (await res.json()) as Article;
 

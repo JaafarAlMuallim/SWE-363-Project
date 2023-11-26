@@ -18,6 +18,6 @@ router
   .put(isLoggedIn, isArticleAuthor, wrapAsync(updateArticle))
   .delete(isLoggedIn, canDeleteArticle, wrapAsync(deleteArticle));
 
-router.route("/articleTags").get(getArticleByTag);
+router.route("/articleTags").get(wrapAsync(getArticleByTag));
 
 export { router as articleRoute };

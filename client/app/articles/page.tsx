@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
 // const articles: Article[] = [

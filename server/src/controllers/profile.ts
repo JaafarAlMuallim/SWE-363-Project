@@ -1,6 +1,6 @@
-import db from "../db";
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
+import db from "../db";
 import { users } from "../schema";
 
 export async function getUserProfile(
