@@ -10,7 +10,7 @@ const sriracha = Sriracha({
 export default function Auth() {
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <Label className={`${sriracha.className} text-white text-8xl m-8`}>
+      <Label className={`${sriracha.className} text-transparent bg-clip-text bg-gradient-to-tl from-special to-special2 text-8xl m-8`}>
         Pitfall
       </Label>
       <Tabs defaultValue="login" dir="rtl" className="w-[350px]">

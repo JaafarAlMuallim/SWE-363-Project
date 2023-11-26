@@ -25,8 +25,8 @@ export const UserCard = ({
           width={800}
           height={800}
         ></Image>
-        <div className="text-3xl text-white">{name}</div>
-        <div className="text-2xl text-white">{role}</div>
+        <div className="text-3xl text-content">{name}</div>
+        <div className="text-2xl text-content">{role}</div>
         <div className="flex flex-row content-center justify-center gap-4">
           {twitter && (
             <a href={twitter}>
