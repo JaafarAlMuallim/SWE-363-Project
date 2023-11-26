@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
 // const articles: Article[] = [
@@ -24,7 +23,10 @@ import ArticleCard from "../components/ArticleCard";
 //   },
 // ];
 export default async function Articles() {
-  const res = await fetch("http://localhost:8080/article");
+  const res = await fetch("http://localhost:8080/article", {
+    method: "GET",
+    credentials: "include",
+  });
   const articles = (await res.json()) as Article[];
 
   return (

@@ -1,19 +1,19 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import bcrypt from "bcryptjs";
 import {
   Form,
   FormControl,
-  FormLabel,
-  FormItem,
   FormField,
+  FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import bcrypt from "bcryptjs";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 export default function LoginForm() {
   const loginSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
@@ -44,33 +44,30 @@ export default function LoginForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const encryptedPassword = bcrypt.hashSync(form.getValues("password"), 10);
-    console.log(encryptedPassword);
     fetch("http://localhost:8080/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         email: form.getValues("email"),
-        password: encryptedPassword,
+        password: form.getValues("password"),
       }),
     })
       .then((res) => {
         if (res.ok) {
-          return res.json();
+          res.json().then((data) => {
+            if (data.user_id) {
+              localStorage.setItem("token", data.user_id);
+              router.push("/");
+            }
+          });
         } else {
           return res.json().then((data) => {
             let errorMessage = "Authentication failed!";
             throw new Error(errorMessage);
           });
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.user_id) {
-          localStorage.setItem("token", data.user_id);
-          router.push("/");
         }
       })
       .catch((err) => {
@@ -94,7 +91,11 @@ export default function LoginForm() {
                 البريد الالكتروني
               </FormLabel>
               <FormControl>
-                <Input className="bg-inputbg placeholder:text-gcontent" onChange={field.onChange} placeholder="example@gmail.com"/>
+                <Input
+                  className="bg-inputbg placeholder:text-gcontent"
+                  onChange={field.onChange}
+                  placeholder="example@gmail.com"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +121,9 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
-        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">دخول</Button>
+        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">
+          دخول
+        </Button>
       </form>
     </Form>
   );
