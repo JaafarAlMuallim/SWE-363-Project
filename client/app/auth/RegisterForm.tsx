@@ -67,6 +67,7 @@ export default function RegisterForm() {
           res.json().then((data) => {
             if (data.user_id) {
               localStorage.setItem("token", data.user_id);
+              sessionStorage.setItem("token", data.user_id);
               router.push("/");
             }
           });

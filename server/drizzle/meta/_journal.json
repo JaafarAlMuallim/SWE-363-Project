@@ -8,6 +8,13 @@
       "when": 1700390253354,
       "tag": "0000_unusual_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1701291544600,
+      "tag": "0001_next_pride",
+      "breakpoints": true
     }
   ]
 }

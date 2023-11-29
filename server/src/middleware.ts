@@ -7,6 +7,7 @@ export async function isLoggedIn(
   if (req.session.user) {
     next();
   } else {
+    console.log("You must be logged in");
     res.status(401).send("You must be logged in");
   }
 }

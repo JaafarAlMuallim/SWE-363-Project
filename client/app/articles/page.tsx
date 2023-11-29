@@ -1,27 +1,5 @@
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
-// const articles: Article[] = [
-//   {
-//     id: 1,
-//     title: "العنوان",
-//     subtitle: "وصف مختصر عن المقالة من الكاتب",
-//     content: "المحتوى",
-//     date: "الاثنين، 21 سبتمبر 2023",
-//     tags: ["تقنية", "مطاعم", "توصيل"],
-//     image: "next.svg",
-//     likes: 4,
-//   },
-//   {
-//     id: 2,
-//     title: "العنوان",
-//     subtitle: "وصف مختصر عن المقالة من الكاتب",
-//     content: "المحتوى",
-//     date: "الاثنين، 21 سبتمبر 2023",
-//     tags: ["تقنية", "مطاعم", "توصيل"],
-//     image: "next.svg",
-//     likes: 89,
-//   },
-// ];
 export default async function Articles() {
   const res = await fetch("http://localhost:8080/article", {
     method: "GET",

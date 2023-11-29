@@ -17,8 +17,11 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
     role: "user",
     verified: false,
   };
-  const insertedData = await db.insert(users).values([user]).returning();
+  const { password, ...rest } = users;
+  const insertedData = await db.insert(rest).values([user]).returning();
   req.session.user = insertedData[0];
+  console.log(req.session.user);
+  console.log(insertedData[0]);
   res.send(insertedData[0]);
 }
 
@@ -27,8 +30,9 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     where: eq(users.email, req.body.email),
   });
   if (bcrypt.compareSync(req.body.password, user.password)) {
-    req.session.user = user;
-    res.send(user);
+    const { password, ...userWithoutPassword } = user;
+    req.session.user = userWithoutPassword;
+    res.send(userWithoutPassword);
   } else {
     res.send({ message: "Incorrect password" });
   }
@@ -44,6 +48,10 @@ export async function devUsers(
       .select()
       .from(users)
       .where(eq(users.role, "admin"));
+    // get all users without passwords
+    devUsers.forEach((user) => {
+      delete user.password;
+    });
     res.send(devUsers);
   } catch (e) {
     next(e);

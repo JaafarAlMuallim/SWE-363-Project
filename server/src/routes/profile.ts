@@ -6,26 +6,18 @@ import {
   updateUserProfilePassword,
   updateVerifiedStatus,
   updateRole,
+  getOtherUserProfile,
 } from "../controllers/profile";
 import { isLoggedIn } from "../middleware";
 import wrapAsync from "../utils";
 const router = express.Router();
-router.get("/profile/:id", isLoggedIn, wrapAsync(getUserProfile));
-router.put("/profile/:id", isLoggedIn, wrapAsync(updateUserProfile));
-router.patch(
-  "/profile/image/:id",
-  isLoggedIn,
-  wrapAsync(updateUserProfileImage),
-);
-router.patch(
-  "/profile/password/:id",
-  isLoggedIn,
-  wrapAsync(updateUserProfilePassword),
-);
-router.patch(
-  "/profile/verfied/:id",
-  isLoggedIn,
-  wrapAsync(updateVerifiedStatus),
-);
-router.patch("/profile/role/:id", isLoggedIn, wrapAsync(updateRole));
+router
+  .route("/")
+  .get(isLoggedIn, wrapAsync(getUserProfile))
+  .put(isLoggedIn, wrapAsync(updateUserProfile));
+router.get("/:username", wrapAsync(getOtherUserProfile));
+router.patch("/image/:id", isLoggedIn, wrapAsync(updateUserProfileImage));
+router.patch("/password/:id", isLoggedIn, wrapAsync(updateUserProfilePassword));
+router.patch("/verfied/:id", isLoggedIn, wrapAsync(updateVerifiedStatus));
+router.patch("/role/:id", isLoggedIn, wrapAsync(updateRole));
 export { router as profileRoute };
