@@ -1,26 +1,32 @@
 "use client";
 import { Label } from "@/components/ui/label";
-import Article from "@/models/article";
-import ArticleCard from "../components/ArticleCard";
-import { Avatar } from "@material-tailwind/react";
+import User from "@/models/user";
+import { useEffect, useState } from "react";
 
-export default function Profile() {
+export default function Profile({ params }: { params: { username: string } }) {
+  const [profile, setProfile] = useState<User | null>(null);
+  useEffect(() => {
+    fetch(`http://localhost:8080/profile/`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        data;
+        setProfile(data);
+        console.log(data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <div className="h-screen w-screen text-content flex flex-col items-center">
       <div className="flex flex-col justify-center items-center w-64 m-8 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-        <Avatar
-          src="bukha.png"
-          alt="avatar"
-          size="xxl"
-          className="m-4 shadow-lg"
-          withBorder={true}
-          variant="circular"
-        />
         <Label className="font-bold text-xl m-2" dir="ltr">
-          @Ahmed
+          @{profile?.username}
         </Label>
-        <Label className="font-bold text-2xl m-2">أحمد عبدالعال</Label>
-        <Label className="text-lg m-2">كاتب | مبرمج</Label>
+        <Label className="font-bold text-2xl m-2">{profile?.name}</Label>
+        <Label className="text-lg m-2">{profile?.role}</Label>
       </div>
 
       <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-gcontent2">
@@ -37,11 +43,6 @@ export default function Profile() {
           <Label className="m-1 text-gcontent2">مقال</Label>
         </div>
       </div>
-      {/* <div className="w-full m-8 gap-8 h-8 flex flex-col items-center">
-        {articles.map((article) => {
-          return <ArticleCard article={article} key={article.article_id} />;
-        })}
-      </div>*/}
     </div>
   );
 }
