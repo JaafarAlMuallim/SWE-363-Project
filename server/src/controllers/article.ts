@@ -12,6 +12,7 @@ export async function getArticles(
     const articles = await db.query.article.findMany({
       with: { article_tags: true },
     });
+    console.log(articles);
     res.send(articles);
   } catch (e) {
     next(e);

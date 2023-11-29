@@ -9,7 +9,7 @@ import { User } from "./schema";
 
 declare module "express-session" {
   interface SessionData {
-    user: User;
+    user: Omit<User, "password">;
   }
 }
 
@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 const secret = process.env.SECRET_KEY || "DEV_SECRET_KEY";
 const config = {
+  key: "user_sid",
   secret,
   resave: false,
   saveUninitialized: true,
@@ -37,6 +38,7 @@ const config = {
   },
 };
 app.use((req: Request, res: Response, next: NextFunction) => {
+  res.locals.session = req.session;
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });

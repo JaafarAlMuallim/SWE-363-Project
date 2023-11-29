@@ -32,6 +32,23 @@ export const users = pgTable("users", {
   website: varchar("website", { length: 255 }),
   user_image: varchar("user_image", { length: 255 }),
 });
+
+export const user_follow = pgTable("user_follow", {
+  follow_id: uuid("follow_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  follow_user_id: uuid("follow_user_id")
+    .references(() => users.user_id)
+    .notNull(),
+});
+
+export const user_followRelations = relations(users, ({ many }) => ({
+  user_follow: many(user_follow),
+}));
+
 export const prefs = pgTable("prefs", {
   pref_id: uuid("pref_id")
     .primaryKey()
@@ -200,7 +217,7 @@ export const interviewQuestionsRelations = relations(
       fields: [interview_questions.interview_id],
       references: [interviews.interview_id],
     }),
-  })
+  }),
 );
 export const userPrefRelations = relations(users, ({ many }) => ({
   user_prefs: many(user_prefs),

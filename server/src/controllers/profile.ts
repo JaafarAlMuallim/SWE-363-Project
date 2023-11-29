@@ -9,10 +9,12 @@ export async function getUserProfile(
   next: NextFunction,
 ) {
   try {
+    console.log(req.session.user);
     const user = await db.query.users.findFirst({
-      where: eq(users.user_id, req.params.id),
+      where: eq(users.user_id, req.session.user.user_id),
     });
-    res.send(user);
+    const { password, ...userWithoutPassword } = user;
+    res.send(userWithoutPassword);
   } catch (e) {
     next(e);
   }
@@ -77,7 +79,7 @@ export async function updateUserProfilePassword(
       })
       .where(eq(users.user_id, req.params.id))
       .returning();
-    res.send(user);
+    res.send({ message: "Success" });
   } catch (e) {
     next(e);
   }
@@ -114,6 +116,21 @@ export async function updateRole(
       })
       .where(eq(users.user_id, req.params.id))
       .returning();
+    res.send(user);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getOtherUserProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.username, req.params.username),
+    });
     res.send(user);
   } catch (e) {
     next(e);
