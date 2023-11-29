@@ -5,7 +5,7 @@ import { GoHeartFill } from "react-icons/go";
 
 export default function ArticleCard(props: { article: Article }) {
   return (
-    <Link href={`/articles/${props.article.article_id}`}>
+    <Link href={`/articles/${props.article.title}`}>
       <div className="block w-80 text-white rounded-lg bg-cover shadow-lg bg-[url(/test.jpg)]">
         <div className="flex flex-col backdrop-brightness-50 rounded-lg">
           <div className="w-full flex items-center justify-between p-4">
