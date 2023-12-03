@@ -134,3 +134,35 @@ export async function getArticleByTag(
     next(e);
   }
 }
+
+
+export async function changeArticleStatus(
+  req: Request,
+  res: Response,
+  next : NextFunction
+) {
+  
+  try{
+  
+    // const foundArticle = await db.query.article.findFirst({
+    //   with: { article_tags: true },
+    //   where: eq(article_tags.tag_id, req.params.id),
+    // });
+
+    
+    const updatedArticle = await db
+      .update(article)
+      .set({
+        article_status: req.body.article_status
+      })
+      .where(eq(article.article_id, req.params.id))
+      .returning();
+
+      res.send(updatedArticle);
+  
+
+  }
+  catch(e){
+    next(e);
+  }
+}
