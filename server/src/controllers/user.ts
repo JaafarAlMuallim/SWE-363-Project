@@ -1,12 +1,13 @@
 import bcrypt from "bcrypt";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { User, users } from "../schema";
+import { User, users, user_follow, UserFollow } from "../schema";
 type UserType = Omit<
   User,
   "user_id" | "x_account" | "linkdin_account" | "website" | "user_image"
 >;
+type UserFollowType = Omit<UserFollow, "follow_id">;
 export async function signUp(req: Request, res: Response, next: NextFunction) {
   const encryptedPassword = await bcrypt.hash(req.body.password, 10);
   const user: UserType = {
@@ -18,10 +19,8 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
     verified: false,
   };
   const { password, ...rest } = users;
-  const insertedData = await db.insert(rest).values([user]).returning();
+  const insertedData = await db.insert(users).values([user]).returning();
   req.session.user = insertedData[0];
-  console.log(req.session.user);
-  console.log(insertedData[0]);
   res.send(insertedData[0]);
 }
 
@@ -55,5 +54,91 @@ export async function devUsers(
     res.send(devUsers);
   } catch (e) {
     next(e);
+  }
+}
+
+export async function followUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = req.session.user;
+    const followedUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.params.id),
+    });
+
+    console.log("currentUser", currentUser);
+    console.log("followedUser", followedUser);
+
+    const userFollow: UserFollowType = {
+      user_id: currentUser.user_id,
+      follow_user_id: followedUser.user_id,
+    };
+    console.log("userFollow", userFollow);
+    const addFollow = await db
+      .insert(user_follow)
+      .values([userFollow])
+      .returning();
+    console.log(addFollow);
+    res.send(addFollow);
+  } catch (e) {
+    res.send(e);
+  }
+}
+export async function unfollowUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = req.session.user;
+    const followedUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.params.id),
+    });
+    const userFollow: UserFollowType = {
+      user_id: currentUser.user_id,
+      follow_user_id: followedUser.user_id,
+    };
+    const removeFollow = await db
+      .delete(user_follow)
+      .where(
+        and(
+          eq(user_follow.user_id, currentUser.user_id),
+          eq(user_follow.follow_user_id, followedUser.user_id),
+        ),
+      )
+      .returning();
+    res.send(removeFollow);
+  } catch (e) {
+    res.send(e);
+  }
+}
+
+export async function isFollowingUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = req.session.user;
+    const followedUser = await db.query.users.findFirst({
+      where: eq(users.username, req.params.id),
+    });
+    console.log("currentUser", currentUser);
+    console.log("followedUser", followedUser);
+    const userFollow: UserFollowType = {
+      user_id: currentUser.user_id,
+      follow_user_id: followedUser.user_id,
+    };
+    const isFollowing = await db.query.user_follow.findFirst({
+      where: and(
+        eq(user_follow.user_id, currentUser.user_id),
+        eq(user_follow.follow_user_id, followedUser.user_id),
+      ),
+    });
+    res.send(isFollowing);
+  } catch (e) {
+    next();
   }
 }
