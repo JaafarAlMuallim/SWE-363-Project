@@ -9,7 +9,6 @@ export async function getUserProfile(
   next: NextFunction,
 ) {
   try {
-    console.log(req.session.user);
     const user = await db.query.users.findFirst({
       where: eq(users.user_id, req.session.user.user_id),
     });

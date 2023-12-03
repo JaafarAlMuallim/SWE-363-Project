@@ -255,3 +255,4 @@ export type ArticleTags = InferModel<typeof article_tags>;
 export type Comment = InferModel<typeof comment>;
 export type User = InferModel<typeof users>;
 export type Pref = InferModel<typeof prefs>;
+export type UserFollow = InferModel<typeof user_follow>;
