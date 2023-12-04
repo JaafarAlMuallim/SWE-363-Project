@@ -28,6 +28,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   const user = await db.query.users.findFirst({
     where: eq(users.email, req.body.email),
   });
+  console.log(user);
   if (bcrypt.compareSync(req.body.password, user.password)) {
     const { password, ...userWithoutPassword } = user;
     req.session.user = userWithoutPassword;
@@ -140,5 +141,19 @@ export async function isFollowingUser(
     res.send(isFollowing);
   } catch (e) {
     next();
+  }
+}
+
+export async function logout(req: Request, res: Response, next: NextFunction) {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send({ message: "Logged out" });
+      }
+    });
+  } catch (e) {
+    next(e);
   }
 }
