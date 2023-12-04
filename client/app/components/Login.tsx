@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import LoginForm from "../auth/LoginForm";
 import { FaGoogle } from "react-icons/fa";
+import LoginForm from "../auth/LoginForm";
 
 export default function Login() {
   return (
@@ -27,9 +27,9 @@ export default function Login() {
           او باستخدام
         </div>
         <Button className="w-[300px] bg-cbtn text-content m-3 shadow-lg flex gap-2">
-           Google<FaGoogle />
+          Google
+          <FaGoogle />
         </Button>
-       
       </div>
     </Card>
   );

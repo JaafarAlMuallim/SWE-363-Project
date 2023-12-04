@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import bcrypt from "bcryptjs";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SessionContext } from "@/store/sessionStore";
+import { useContext } from "react";
 export default function RegisterForm() {
+  const ctx = useContext(SessionContext);
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
     password: z
@@ -41,46 +42,14 @@ export default function RegisterForm() {
     },
   });
 
-  async function hashedPassword(password: string) {
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    return encryptedPassword;
-  }
-  const router = useRouter();
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetch("http://localhost:8080/user/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        email: form.getValues("email"),
-        password: form.getValues("password"),
-        name: form.getValues("name"),
-        username: form.getValues("username"),
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            if (data.user_id) {
-              localStorage.setItem("token", data.user_id);
-              sessionStorage.setItem("token", data.user_id);
-              router.push("/");
-            }
-          });
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = "Authentication failed!";
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    ctx!.signup({
+      email: form.getValues("email"),
+      password: form.getValues("password"),
+      name: form.getValues("name"),
+      username: form.getValues("username"),
+    });
   };
 
   return (

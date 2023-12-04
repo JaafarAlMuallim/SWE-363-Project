@@ -48,6 +48,13 @@ app.use("/article", articleRoute);
 app.use("/org", orgRoute);
 app.use("/profile", profileRoute);
 app.get("/", async (req, res) => {});
+app.get("/session", async (req, res) => {
+  if (req.session.user) {
+    res.json(req.session.user);
+  } else {
+    res.json({ message: "no session found" });
+  }
+});
 app.get("*", async (req, res) => {
   res.status(404).send("404 Not Found");
 });
