@@ -29,6 +29,11 @@ export async function getArticleById(
       with: { article_tags: true, comment: true },
       where: eq(article.article_id, req.params.id),
     });
+    await db
+      .update(article)
+      .set({ views: foundArticle.views + 1 })
+      .where(eq(article.article_id, req.params.id));
+    console.log(foundArticle);
     res.send(foundArticle);
   } catch (e) {
     next(e);
@@ -59,11 +64,46 @@ export async function saveArticle(
       .values([articleData])
       .returning();
     for (const tag of req.body.tags) {
-      const newArticleTag = await db
+      await db
         .insert(article_tags)
         .values([{ article_id: newArticle[0].article_id, tag: tag }]);
     }
     res.send(newArticle);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function publishArticle(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const data = await db
+      .update(article)
+      .set({ article_status: "published" })
+      .where(eq(article.article_id, req.params.id));
+    res.send(data);
+  } catch (e) {
+    next(e);
+  }
+}
+export async function updateLikes(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentArticle = await db.query.article.findFirst({
+      where: eq(article.article_id, req.params.id),
+    });
+
+    const data = await db
+      .update(article)
+      .set({ likes: currentArticle.likes + 1 })
+      .where(eq(article.article_id, req.params.id));
+    res.send(data);
   } catch (e) {
     next(e);
   }
@@ -105,7 +145,7 @@ export async function deleteArticle(
   next: NextFunction,
 ) {
   try {
-    const deleteArticleTags = await db
+    await db
       .delete(article_tags)
       .where(eq(article_tags.article_id, req.params.id));
 
@@ -135,6 +175,50 @@ export async function getArticleByTag(
   }
 }
 
+export async function getDrafted(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const draftedArticles = await db.query.article.findMany({
+      where: eq(article.article_status, "draft"),
+      with: { article_tags: true },
+    });
+    res.send(draftedArticles);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getPublished(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const publishedArticles = await db.query.article.findMany({
+      where: eq(article.article_status, "published"),
+      with: { article_tags: true },
+    });
+    res.send(publishedArticles);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getInReview(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const inReviewArticles = await db.query.article.findMany({
+      where: eq(article.article_status, "in_review"),
+      with: { article_tags: true },
+    });
+    res.send(inReviewArticles);
+  } catch (e) {
 
 export async function changeArticleStatus(
   req: Request,
@@ -143,13 +227,7 @@ export async function changeArticleStatus(
 ) {
   
   try{
-  
-    // const foundArticle = await db.query.article.findFirst({
-    //   with: { article_tags: true },
-    //   where: eq(article_tags.tag_id, req.params.id),
-    // });
-
-    
+ 
     const updatedArticle = await db
       .update(article)
       .set({

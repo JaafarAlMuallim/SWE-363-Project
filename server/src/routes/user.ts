@@ -17,6 +17,7 @@ router.route("/login").post(wrapAsync(login));
 router.route("/about").get(wrapAsync(devUsers));
 router.route("/logout").post(wrapAsync(logout));
 router.route("/follow/:id").post(wrapAsync(followUser));
+//router.route("/bookmark/:id").post(wrapAsync(bookmark));
 router.route("/unfollow/:id").post(wrapAsync(unfollowUser));
 router.route("/following/:id").get(wrapAsync(isFollowingUser));
 export { router as userRoute };

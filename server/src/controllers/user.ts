@@ -2,39 +2,56 @@ import bcrypt from "bcrypt";
 import { and, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { User, users, user_follow, UserFollow } from "../schema";
+import {
+  User,
+  users,
+  user_follow,
+  UserFollow,
+  article,
+  UserBookmark,
+  user_bookmarks,
+} from "../schema";
 type UserType = Omit<
   User,
   "user_id" | "x_account" | "linkdin_account" | "website" | "user_image"
 >;
+type UserBookmarkType = Omit<UserBookmark, "bookmark_id">;
 type UserFollowType = Omit<UserFollow, "follow_id">;
 export async function signUp(req: Request, res: Response, next: NextFunction) {
-  const encryptedPassword = await bcrypt.hash(req.body.password, 10);
-  const user: UserType = {
-    name: req.body.name,
-    email: req.body.email,
-    password: encryptedPassword,
-    username: req.body.username,
-    role: "user",
-    verified: false,
-  };
-  const { password, ...rest } = users;
-  const insertedData = await db.insert(users).values([user]).returning();
-  req.session.user = insertedData[0];
-  res.send(insertedData[0]);
+  try {
+    const encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    const user: UserType = {
+      name: req.body.name,
+      email: req.body.email,
+      password: encryptedPassword,
+      username: req.body.username,
+      role: "user",
+      verified: false,
+    };
+    const insertedData = await db.insert(users).values([user]).returning();
+    const { password, ...rest } = insertedData[0];
+    req.session.user = rest;
+    res.send(rest);
+  } catch (e) {
+    next(e);
+  }
 }
 
 export async function login(req: Request, res: Response, next: NextFunction) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, req.body.email),
-  });
-  console.log(user);
-  if (bcrypt.compareSync(req.body.password, user.password)) {
-    const { password, ...userWithoutPassword } = user;
-    req.session.user = userWithoutPassword;
-    res.send(userWithoutPassword);
-  } else {
-    res.send({ message: "Incorrect password" });
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, req.body.email),
+    });
+    console.log(user);
+    if (bcrypt.compareSync(req.body.password, user.password)) {
+      const { password, ...userWithoutPassword } = user;
+      req.session.user = userWithoutPassword;
+      res.send(userWithoutPassword);
+    } else {
+      res.send({ message: "Incorrect password" });
+    }
+  } catch (e) {
+    next(e);
   }
 }
 
@@ -84,7 +101,7 @@ export async function followUser(
     console.log(addFollow);
     res.send(addFollow);
   } catch (e) {
-    res.send(e);
+    next(e);
   }
 }
 export async function unfollowUser(
@@ -97,10 +114,6 @@ export async function unfollowUser(
     const followedUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.params.id),
     });
-    const userFollow: UserFollowType = {
-      user_id: currentUser.user_id,
-      follow_user_id: followedUser.user_id,
-    };
     const removeFollow = await db
       .delete(user_follow)
       .where(
@@ -112,7 +125,7 @@ export async function unfollowUser(
       .returning();
     res.send(removeFollow);
   } catch (e) {
-    res.send(e);
+    next(e);
   }
 }
 
@@ -128,10 +141,6 @@ export async function isFollowingUser(
     });
     console.log("currentUser", currentUser);
     console.log("followedUser", followedUser);
-    const userFollow: UserFollowType = {
-      user_id: currentUser.user_id,
-      follow_user_id: followedUser.user_id,
-    };
     const isFollowing = await db.query.user_follow.findFirst({
       where: and(
         eq(user_follow.user_id, currentUser.user_id),
@@ -140,7 +149,7 @@ export async function isFollowingUser(
     });
     res.send(isFollowing);
   } catch (e) {
-    next();
+    next(e);
   }
 }
 
@@ -153,6 +162,30 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
         res.send({ message: "Logged out" });
       }
     });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function bookMarkArticle(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = req.session.user;
+    const currentArticle = await db.query.article.findFirst({
+      where: eq(article.article_id, req.params.id),
+    });
+    const userArticle: UserBookmarkType = {
+      user_id: currentUser.user_id,
+      article_id: currentArticle.article_id,
+    };
+    const addArticle = await db
+      .insert(user_bookmarks)
+      .values([userArticle])
+      .returning();
+    res.send(addArticle);
   } catch (e) {
     next(e);
   }

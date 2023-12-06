@@ -1,12 +1,15 @@
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
-export default async function Articles() {
-  const res = await fetch("http://localhost:8080/article/published", {
+
+export default async function ReviewArticle() {
+  const response = await fetch("http://localhost:8080/article/drafted", {
     method: "GET",
-    credentials: "include",
-    next: { revalidate: 120 },
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
   });
-  const articles = (await res.json()) as Article[];
+  const draftedArticles: Article[] = await response.json();
 
   return (
     <>
@@ -21,7 +24,7 @@ export default async function Articles() {
         <p>اخر المقالات</p>
       </div>
       <div className="flex flex-col h-screen gap-10">
-        {articles.map((article) => {
+        {draftedArticles.map((article) => {
           return <ArticleCard article={article} key={article.article_id} />;
         })}
       </div>
