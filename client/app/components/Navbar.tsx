@@ -29,7 +29,6 @@ export default function Navbar() {
     document.documentElement.setAttribute("local_theme", local_theme);
     setChk(!chk);
   };
-  if (ctx!.loading) return <div>loading...</div>;
   return (
     <>
       <div className="sticky top-0 z-10 bg-secondaryDark py-4 border-b w-full text-content">

@@ -6,6 +6,7 @@ import {
   getArticles,
   saveArticle,
   updateArticle,
+  updateLikes,
 } from "../controllers/article";
 import { canDeleteArticle, isArticleAuthor, isLoggedIn } from "../middleware";
 import wrapAsync from "../utils";
@@ -17,6 +18,7 @@ router
   .get(getArticleById)
   .put(isLoggedIn, isArticleAuthor, wrapAsync(updateArticle))
   .delete(isLoggedIn, canDeleteArticle, wrapAsync(deleteArticle));
+router.route("/like/:id").patch(wrapAsync(updateLikes));
 
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
 

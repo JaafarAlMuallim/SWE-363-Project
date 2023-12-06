@@ -15,6 +15,8 @@ export const articleStatus = pgEnum("article_status", [
   "published",
   "draft",
   "deleted",
+  "rejected",
+  "in_review",
 ]);
 
 export const users = pgTable("users", {
@@ -142,6 +144,18 @@ export const article = pgTable("article", {
   likes: bigint("likes", { mode: "number" }).default(0),
 });
 
+export const user_bookmarks = pgTable("user_bookmarks", {
+  bookmark_id: uuid("bookmark_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  article_id: uuid("article_id")
+    .references(() => article.article_id)
+    .notNull(),
+});
+
 export const article_tags = pgTable("article_tags", {
   tag_id: uuid("tag_id")
     .primaryKey()
@@ -177,6 +191,10 @@ export const articleRelations = relations(article, ({ one, many }) => ({
 }));
 
 export const commentRelations = relations(comment, ({ one }) => ({
+  article: one(article, {
+    fields: [comment.article_id],
+    references: [article.article_id],
+  }),
   user: one(users, {
     fields: [comment.user_id],
     references: [users.user_id],
@@ -232,6 +250,10 @@ export const tagsRelations = relations(article_tags, ({ one }) => ({
   }),
 }));
 
+export const userArticleRelations = relations(users, ({ many }) => ({
+  article: many(article),
+}));
+
 export type ArticleData = InferModel<typeof article>;
 export type CommentData = InferModel<typeof comment>;
 export type UserData = InferModel<typeof users>;
@@ -256,3 +278,5 @@ export type Comment = InferModel<typeof comment>;
 export type User = InferModel<typeof users>;
 export type Pref = InferModel<typeof prefs>;
 export type UserFollow = InferModel<typeof user_follow>;
+export type UserBookmark = InferModel<typeof user_bookmarks>;
+export type UserFollowData = InferModel<typeof user_follow>;

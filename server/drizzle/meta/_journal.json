@@ -15,6 +15,20 @@
       "when": 1701291544600,
       "tag": "0001_next_pride",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1701782345275,
+      "tag": "0002_faithful_ender_wiggin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1701786130973,
+      "tag": "0003_broken_starjammers",
+      "breakpoints": true
     }
   ]
 }

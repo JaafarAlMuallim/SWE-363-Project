@@ -29,6 +29,11 @@ export async function getArticleById(
       with: { article_tags: true, comment: true },
       where: eq(article.article_id, req.params.id),
     });
+    await db
+      .update(article)
+      .set({ views: foundArticle.views + 1 })
+      .where(eq(article.article_id, req.params.id));
+    console.log(foundArticle);
     res.send(foundArticle);
   } catch (e) {
     next(e);
@@ -59,11 +64,46 @@ export async function saveArticle(
       .values([articleData])
       .returning();
     for (const tag of req.body.tags) {
-      const newArticleTag = await db
+      await db
         .insert(article_tags)
         .values([{ article_id: newArticle[0].article_id, tag: tag }]);
     }
     res.send(newArticle);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function publishArticle(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const data = await db
+      .update(article)
+      .set({ article_status: "published" })
+      .where(eq(article.article_id, req.params.id));
+    res.send(data);
+  } catch (e) {
+    next(e);
+  }
+}
+export async function updateLikes(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentArticle = await db.query.article.findFirst({
+      where: eq(article.article_id, req.params.id),
+    });
+
+    const data = await db
+      .update(article)
+      .set({ likes: currentArticle.likes + 1 })
+      .where(eq(article.article_id, req.params.id));
+    res.send(data);
   } catch (e) {
     next(e);
   }
@@ -105,7 +145,7 @@ export async function deleteArticle(
   next: NextFunction,
 ) {
   try {
-    const deleteArticleTags = await db
+    await db
       .delete(article_tags)
       .where(eq(article_tags.article_id, req.params.id));
 
