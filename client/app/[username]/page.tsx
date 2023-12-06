@@ -1,31 +1,19 @@
 "use client";
 import { Label } from "@/components/ui/label";
-import User from "@/models/user";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import Image from "next/image";
-import followUser from "../server-actions/follow";
+import { SessionContext } from "@/store/sessionStore";
 
 export default function Profile({ params }: { params: { username: string } }) {
-  const [profile, setProfile] = useState<User | null>(null);
-  useEffect(() => {
-    fetch(`http://localhost:8080/profile/`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        data;
-        setProfile(data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  const ctx = useContext(SessionContext);
+  const profile = ctx?.session!;
 
   return (
     <div className="h-screen w-screen text-content flex flex-col items-center">
       <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
         <Image
           className="rounded-full m-2"
-          src={profile?.user_image ?? "/profile_default.png"}
+          src={"/profile_default.png"}
           alt="profile"
           height={128}
           width={128}
@@ -55,19 +43,3 @@ export default function Profile({ params }: { params: { username: string } }) {
     </div>
   );
 }
-
-//  <div className="flex">
-//    <button
-//      onClick={() => followUser(profile?.user_id)}
-//      className="bg-gcontent2 text-content rounded-lg w-24 h-8 m-2"
-//    >
-//      متابعة
-//    </button>
-//    <button
-//      onClick={() => followUser(profile?.user_id)}
-//      className="bg-gcontent2 text-content rounded-lg w-40 h-8 m-2"
-//    >
-//      ترقية لمراجع محتوى
-//    </button>
-//  </div>
-//</div>
