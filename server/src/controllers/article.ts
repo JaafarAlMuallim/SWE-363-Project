@@ -174,3 +174,51 @@ export async function getArticleByTag(
     next(e);
   }
 }
+
+export async function getDrafted(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const draftedArticles = await db.query.article.findMany({
+      where: eq(article.article_status, "draft"),
+      with: { article_tags: true },
+    });
+    res.send(draftedArticles);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getPublished(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const publishedArticles = await db.query.article.findMany({
+      where: eq(article.article_status, "published"),
+      with: { article_tags: true },
+    });
+    res.send(publishedArticles);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getInReview(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const inReviewArticles = await db.query.article.findMany({
+      where: eq(article.article_status, "in_review"),
+      with: { article_tags: true },
+    });
+    res.send(inReviewArticles);
+  } catch (e) {
+    next(e);
+  }
+}
