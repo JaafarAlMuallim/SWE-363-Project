@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  changeArticleStatus,
   deleteArticle,
   getArticleById,
   getArticleByTag,
@@ -17,6 +18,9 @@ router
   .get(getArticleById)
   .put(isLoggedIn, isArticleAuthor, wrapAsync(updateArticle))
   .delete(isLoggedIn, canDeleteArticle, wrapAsync(deleteArticle));
+
+
+router.route("/:id/changeArticleStatus").post(changeArticleStatus)
 
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
 
