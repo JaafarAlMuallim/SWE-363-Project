@@ -7,6 +7,7 @@ import {
   Newspaper,
   Sun,
   Users,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import React, { useContext, useState } from "react";
@@ -76,6 +77,11 @@ export default function Navbar() {
                 >
                   المقالات
                   <Newspaper className="mx-2" />
+                </Link>
+              </li>
+              <li>
+                <Link href="/reviewArticle">
+                  <Bell />
                 </Link>
               </li>
               <li>
