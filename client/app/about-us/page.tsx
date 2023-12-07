@@ -1,32 +1,31 @@
+"use client";
 import React from "react";
 import Image from "next/image";
+import Lottie from "lottie-react";
+import animationData from "./AboutUsAnimation.json";
 
 import { UserCard } from "../components/UserCard";
 
 const AboutUsPage = () => {
   return (
-      <><section className="bg-crd w-full text-center p-5  relative">
-      <div className="bg-no-repeat bg-center bg-[url(/AboutUsbackgroundIcon.png)] absolute inset-0 opacity-40 " />
-      <div className="flex flex-col items-center gap-4 relative text-content">
-        <div className=" text-4xl">
-          قطاع ريادة الأعمال في تطور 
-          <span className="font-bold"> مبهر</span>
-        </div>
+    <>
+      <section className="bg-crd w-full text-center p-5  relative">
+        <div className="bg-no-repeat bg-center bg-[url(/AboutUsbackgroundIcon.png)] absolute inset-0 opacity-40 " />
+        <div className="flex flex-col items-center gap-4 relative text-content">
+          <div className=" text-4xl">
+            قطاع ريادة الأعمال في تطور
+            <span className="font-bold"> مبهر</span>
+          </div>
+          <Lottie className="w-2/4 h-1/4" animationData={animationData} />
 
-        <Image
-          className="p-4"
-          priority
-          src={"/undraw_growth_curve_re_t5s7 1.svg"}
-          width={500}
-          height={500}
-          alt="Guy showing something" />
-        <div className=" text-2xl mt-3">
-          لذلك قررنا ننشئ  <strong>Pitfall</strong> <br />
-          المنصة الاولى عربيا المختصة في مجال رحلات رياديين الاعمال في الشرق
-          الأوسط بأكمل شفافية
+          <div className=" text-2xl mt-3">
+            لذلك قررنا ننشئ <strong>Pitfall</strong> <br />
+            المنصة الاولى عربيا المختصة في مجال رحلات رياديين الاعمال في الشرق
+            الأوسط بأكمل شفافية
+          </div>
         </div>
-      </div>
-    </section><div className="text-center text-content p-4">
+      </section>
+      <div className="text-center text-content p-4">
         <div className="text-4xl ">فريق العمل</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <UserCard
@@ -58,7 +57,8 @@ const AboutUsPage = () => {
             linkedIn=""
           ></UserCard>
         </div>
-      </div></>
+      </div>
+    </>
   );
 };
 

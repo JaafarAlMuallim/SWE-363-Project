@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import React from "react";
 import { SessionProvider } from "@/store/sessionStore";
 import Provider from "./components/Provider";
+import Footer from "./components/Footer";
 const cairo = Cairo({ subsets: ["arabic"] });
 const local_theme = "dark";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
           <main className=" flex flex-col justify-center items-center">
             {children}
           </main>
+          <Footer />
         </body>
       </Provider>
     </html>
