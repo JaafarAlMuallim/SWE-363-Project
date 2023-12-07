@@ -1,9 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import User from "@/models/user";
+import { SessionContext } from "@/store/sessionStore";
 export default function Profile({ params }: { params: { username: string } }) {
+  const ctx = useContext(SessionContext);
+  const currentUser = ctx?.session;
   const [profile, setProfile] = useState<User | null>(null);
   const [follow, setFollow] = useState<boolean>(false);
   useEffect(() => {
@@ -52,12 +55,27 @@ export default function Profile({ params }: { params: { username: string } }) {
       })
       .catch((err) => {});
   };
+
+  const upgradeToContentReviewer = () => {
+    fetch(`http://localhost:8080/user/changeRole/${profile!.user_id}`, {
+      method: "PATCH",
+      credentials: "include",
+      body: JSON.stringify({ role: "reviewer" }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        data;
+        console.log(data);
+      })
+      .catch((err) => {});
+  };
+
   return (
     <div className="h-screen w-screen text-content flex flex-col items-center">
       <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
         <Image
           className="rounded-full m-2"
-          src={profile?.user_image ?? "/profile_default.png"}
+          src={"/profile_default.png"}
           alt="profile"
           height={128}
           width={128}
@@ -79,7 +97,7 @@ export default function Profile({ params }: { params: { username: string } }) {
             {follow ? "الغاء المتابعة" : "متابعة"}
           </button>
           <button
-            onClick={() => followUser(profile?.user_id!)}
+            onClick={() => upgradeToContentReviewer()}
             className="bg-gcontent2 text-content rounded-lg w-40 h-8 m-2"
           >
             ترقية لمراجع محتوى

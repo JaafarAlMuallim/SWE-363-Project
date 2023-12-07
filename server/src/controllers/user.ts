@@ -190,3 +190,69 @@ export async function bookMarkArticle(
     next(e);
   }
 }
+
+export async function unBookMarkArticle(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = req.session.user;
+    const currentArticle = await db.query.article.findFirst({
+      where: eq(article.article_id, req.params.id),
+    });
+    const removeArticle = await db
+      .delete(user_bookmarks)
+      .where(
+        and(
+          eq(user_bookmarks.user_id, currentUser.user_id),
+          eq(user_bookmarks.article_id, currentArticle.article_id),
+        ),
+      )
+      .returning();
+    res.send(removeArticle);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function bookmarkedArticles(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = req.session.user;
+    const bookmarked = await db.query.user_bookmarks.findMany({
+      where: eq(user_bookmarks.user_id, currentUser.user_id),
+    });
+    res.send(bookmarked);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function changeRole(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const changedUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.params.id),
+    });
+    console.log(req.session.user.user_id);
+    console.log(changedUser.user_id);
+    const changeRole = await db
+      .update(users)
+      .set({
+        role: req.body.role,
+      })
+      .where(eq(users.user_id, changedUser.user_id))
+      .returning();
+    console.log(changeRole);
+    res.send(changeRole);
+  } catch (e) {
+    next(e);
+  }
+}

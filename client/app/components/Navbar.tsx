@@ -14,6 +14,7 @@ import React, { useContext, useState } from "react";
 import { Avatar } from "@material-tailwind/react";
 import { Sriracha } from "next/font/google";
 import { SessionContext } from "@/store/sessionStore";
+import { useEffect } from "react";
 const sriracha = Sriracha({
   subsets: ["latin"],
   weight: "400",
@@ -24,7 +25,17 @@ export default function Navbar() {
   const [local_theme, setTheme] = useState("light");
   const [chk, setChk] = useState(true);
   const ctx = useContext(SessionContext);
-  console.log(ctx!.session);
+  console.log(ctx?.session);
+  useEffect(() => {
+    if (!ctx?.session) {
+      fetch(`http://localhost:8080/session`)
+        .then((res) => res.json())
+        .then((data) => {
+          ctx!.session = data;
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
   const handleThemeChange = () => {
     setTheme((local_theme) => (local_theme === "dark" ? "light" : "dark"));
     document.documentElement.setAttribute("local_theme", local_theme);

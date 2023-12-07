@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function OrgCard(props: { org: Organization }) {
   return (
     <Link href={`/organizations/${props.org.id}`}>
-      <div className="my-5 mx-5 shadow-xl px-10 rounded-lg bg-slate-800 py-10">
+      <div className="my-5 mx-5 shadow-xl px-10 rounded-lg bg-crd2 py-10">
         <Image
           src={props.org.image!}
           alt=""
