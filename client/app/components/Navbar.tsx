@@ -10,37 +10,20 @@ import {
   Bell,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Avatar } from "@material-tailwind/react";
 import { Sriracha } from "next/font/google";
-import { SessionContext } from "@/store/sessionStore";
-import { useEffect } from "react";
 const sriracha = Sriracha({
   subsets: ["latin"],
   weight: "400",
 });
+import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
+  const { data: session } = useSession();
   const [active, setActive] = useState(false);
   const [local_theme, setTheme] = useState("light");
   const [chk, setChk] = useState(true);
-  const ctx = useContext(SessionContext);
-  console.log(ctx?.session);
-  useEffect(() => {
-    if (!ctx?.session) {
-      fetch(`http://localhost:8080/session`)
-        .then((res) => res.json())
-        .then((data) => {
-          ctx!.session = data;
-        })
-        .catch((err) => console.log(err));
-    }
-  }, []);
-  const handleThemeChange = () => {
-    setTheme((local_theme) => (local_theme === "dark" ? "light" : "dark"));
-    document.documentElement.setAttribute("local_theme", local_theme);
-    setChk(!chk);
-  };
   return (
     <>
       <div className="sticky top-0 z-10 bg-secondaryDark py-4 border-b w-full text-content">
@@ -48,18 +31,20 @@ export default function Navbar() {
           {/* Large screens */}
           <nav className="hidden md:flex items-center justify-between">
             <ul className="list-none flex items-center gap-4">
-              {ctx!.session ? (
+              {session && session.user ? (
                 <li>
-                  <Link href={`/${ctx!.session.username}`}>
-                    @{ctx!.session.username}
-                    <Avatar
-                      src={ctx!.session?.user_image}
-                      alt="avatar"
-                      size="md"
-                      className="shadow-lg mr-2"
-                      withBorder={true}
-                      variant="circular"
-                    />
+                  <Link href={`/${session.user.username}`}>
+                    @{session.user.username}
+                    {session?.user.user_image && (
+                      <Avatar
+                        src={session?.user.user_image}
+                        alt="avatar"
+                        size="md"
+                        className="shadow-lg mr-2"
+                        withBorder={true}
+                        variant="circular"
+                      />
+                    )}
                   </Link>
                 </li>
               ) : (
@@ -67,11 +52,15 @@ export default function Navbar() {
                   <Link href={`/auth`}>تسجيل الدخول</Link>
                 </li>
               )}
+              {/*}
               <li>
+                //{" "}
                 <button onClick={handleThemeChange} className="p-2">
-                  {chk == true ? <Sun /> : <Moon />}
+                  // {chk == true ? <Sun /> : <Moon />}
+                  //{" "}
                 </button>
               </li>
+              */}
               <li>
                 <Link
                   className="flex link link-underline link-underline-black p-2"
@@ -111,13 +100,13 @@ export default function Navbar() {
                   عنا <Users className="mx-2" />
                 </Link>
               </li>
-              {ctx!.session && (
+              {session && session.user && (
                 <li>
                   <Link
                     className="flex"
                     onClick={() => {
                       setActive((prevState) => !prevState);
-                      ctx!.logout();
+                      signOut();
                     }}
                     href={`/`}
                   >
@@ -147,15 +136,15 @@ export default function Navbar() {
       >
         <nav className="list-none ml-4 mt-4 flex flex-col justify-end items-end gap-20">
           <ul className="flex flex-col justify-center items-center gap-8 list-none">
-            {ctx!.session ? (
+            {session && session.user ? (
               <li>
                 <Link
                   onClick={() => setActive((prevState) => !prevState)}
                   href={`/profile`}
                 >
-                  @{ctx!.session.username || "X"}
+                  @{session.user.username || "X"}
                   <Avatar
-                    src={ctx!.session.user_image}
+                    src={session.user.user_image}
                     size="md"
                     className="shadow-lg mr-2"
                     withBorder={true}
@@ -212,13 +201,13 @@ export default function Navbar() {
                 عنا <Users className="mx-2" />
               </Link>
             </li>
-            {ctx!.session?.user && (
+            {session?.user && (
               <li>
                 <Link
                   className="flex"
                   onClick={() => {
                     setActive((prevState) => !prevState);
-                    ctx!.logout();
+                    signOut();
                   }}
                   href={`/`}
                 >
@@ -226,11 +215,11 @@ export default function Navbar() {
                 </Link>
               </li>
             )}
-            <li>
+            {/*<li>
               <button onClick={handleThemeChange} className="px-4">
                 {chk == true ? <Sun /> : <Moon />}
               </button>
-            </li>
+            </li>*/}
           </ul>
         </nav>
       </div>

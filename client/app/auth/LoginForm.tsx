@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 import {
   Form,
   FormControl,
@@ -12,11 +13,9 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SessionContext } from "@/store/sessionStore";
 import { useContext } from "react";
 
 export default function LoginForm() {
-  const ctx = useContext(SessionContext);
   const loginSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
     password: z
@@ -38,10 +37,12 @@ export default function LoginForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    ctx!.login({
+    signIn("credentials", {
       email: form.getValues("email"),
       password: form.getValues("password"),
     });
+
+    // Sign User In with NextAuth
   };
   return (
     <Form {...form}>

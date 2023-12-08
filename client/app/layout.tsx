@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Cairo } from "next/font/google";
+import { Cairo } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
 import React from "react";
-import { SessionProvider } from "@/store/sessionStore";
-import Provider from "./components/Provider";
 import Footer from "./components/Footer";
+import { AuthProvider } from "./components/AuthProvider";
+import Navbar from "./components/Navbar";
 const cairo = Cairo({ subsets: ["arabic"] });
 const local_theme = "dark";
 
@@ -25,13 +24,13 @@ export default function RootLayout({
         dir="rtl"
         className={`${cairo.className} bg-gradient-to-br from-primaryDark to-secondaryDark`}
       >
-        <Provider>
+        <AuthProvider>
           <Navbar />
           <main className=" flex flex-col justify-center items-center">
             {children}
           </main>
           <Footer />
-        </Provider>
+        </AuthProvider>
       </body>
     </html>
   );

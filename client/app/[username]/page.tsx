@@ -2,11 +2,11 @@
 import { Label } from "@/components/ui/label";
 import { useContext } from "react";
 import Image from "next/image";
-import { SessionContext } from "@/store/sessionStore";
+import { useSession } from "next-auth/react";
 
 export default function Profile({ params }: { params: { username: string } }) {
-  const ctx = useContext(SessionContext);
-  const profile = ctx?.session!;
+  const { data: profile } = useSession();
+  console.log(profile);
 
   return (
     <div className="h-screen w-screen text-content flex flex-col items-center">
@@ -19,10 +19,10 @@ export default function Profile({ params }: { params: { username: string } }) {
           width={128}
         />
         <Label className="font-bold text-xl m-2" dir="ltr">
-          @{profile?.username}
+          @{profile?.user.username}
         </Label>
-        <Label className="font-bold text-2xl m-2">{profile?.name}</Label>
-        <Label className="text-lg m-2">{profile?.role}</Label>
+        <Label className="font-bold text-2xl m-2">{profile?.user.name}</Label>
+        <Label className="text-lg m-2">{profile?.user.role}</Label>
 
         <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-gcontent2">
           <div className="flex flex-col m-4 justify-center items-center">

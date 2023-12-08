@@ -12,10 +12,8 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SessionContext } from "@/store/sessionStore";
-import { useContext } from "react";
+import { signIn } from "next-auth/react";
 export default function RegisterForm() {
-  const ctx = useContext(SessionContext);
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
     password: z
@@ -44,11 +42,22 @@ export default function RegisterForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    ctx!.signup({
+    fetch("http://localhost:8080/user/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+        name: form.getValues("name"),
+        username: form.getValues("username"),
+      }),
+    });
+    // TODO Sign User in with NextAuth
+    signIn("credentials", {
       email: form.getValues("email"),
       password: form.getValues("password"),
-      name: form.getValues("name"),
-      username: form.getValues("username"),
     });
   };
 

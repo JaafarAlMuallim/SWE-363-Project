@@ -1,12 +1,9 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import User from "@/models/user";
-import { SessionContext } from "@/store/sessionStore";
 export default function Profile({ params }: { params: { username: string } }) {
-  const ctx = useContext(SessionContext);
-  const currentUser = ctx?.session;
   const [profile, setProfile] = useState<User | null>(null);
   const [follow, setFollow] = useState<boolean>(false);
   useEffect(() => {
