@@ -1,9 +1,6 @@
 "use client";
-import { Sriracha } from "next/font/google";
-import Lottie from "lottie-react";
-import animationData from "./meow.json";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Animation from "./components/Animation";
 import {
   Accordion,
   AccordionContent,
@@ -11,10 +8,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/Accordion";
 import Link from "next/link";
-const sriracha = Sriracha({
-  subsets: ["latin"],
-  weight: "400",
-});
 export default function Home() {
   return (
     <>
@@ -23,7 +16,7 @@ export default function Home() {
           <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
         </div>
         <div>
-          <Lottie animationData={animationData} />
+          <Animation />
         </div>
         <div className=" text-white-500 text-3xl mx-5 mt-10">
           مهتمون بجميع المشاريع في قطاع
