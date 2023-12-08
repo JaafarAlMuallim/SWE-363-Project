@@ -21,18 +21,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" local_theme={local_theme}>
-      <Provider>
-        <body
-          dir="rtl"
-          className={`${cairo.className} bg-gradient-to-br from-primaryDark to-secondaryDark`}
-        >
+      <body
+        dir="rtl"
+        className={`${cairo.className} bg-gradient-to-br from-primaryDark to-secondaryDark`}
+      >
+        <Provider>
           <Navbar />
           <main className=" flex flex-col justify-center items-center">
             {children}
           </main>
           <Footer />
-        </body>
-      </Provider>
+        </Provider>
+      </body>
     </html>
   );
 }

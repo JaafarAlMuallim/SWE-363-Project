@@ -50,9 +50,10 @@ app.use("/profile", profileRoute);
 app.get("/", async (req, res) => {});
 app.get("/session", async (req, res) => {
   if (req.session.user) {
-    res.json(req.session.user);
+    console.log(req.session.user);
+    res.send(req.session.user);
   } else {
-    res.json({ message: "no session found" });
+    res.send({ message: "no session found" });
   }
 });
 app.get("*", async (req, res) => {

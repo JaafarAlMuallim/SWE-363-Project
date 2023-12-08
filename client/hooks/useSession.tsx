@@ -11,7 +11,9 @@ const useSession = () => {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const response = await fetch("http://localhost:8080/session");
+        const response = await fetch("http://localhost:8080/session", {
+          credentials: "include",
+        });
         if (response.ok) {
           const data = await response.json();
           if (data.user) setSession(data);
