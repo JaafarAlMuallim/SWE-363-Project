@@ -1,17 +1,9 @@
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
-import session from "express-session";
 import { articleRoute } from "./routes/article";
 import { orgRoute } from "./routes/org";
 import { profileRoute } from "./routes/profile";
 import { userRoute } from "./routes/user";
-import { User } from "./schema";
-
-declare module "express-session" {
-  interface SessionData {
-    user: Omit<User, "password">;
-  }
-}
 
 const app = express();
 const port = 8080;
@@ -37,25 +29,11 @@ const config = {
     expires: new Date(Date.now() + 60 * 60 * 1000 * 24 * 7),
   },
 };
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.locals.session = req.session;
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
-app.use(session(config));
 app.use("/user", userRoute);
 app.use("/article", articleRoute);
 app.use("/org", orgRoute);
 app.use("/profile", profileRoute);
 app.get("/", async (req, res) => {});
-app.get("/session", async (req, res) => {
-  if (req.session.user) {
-    console.log(req.session.user);
-    res.send(req.session.user);
-  } else {
-    res.send({ message: "no session found" });
-  }
-});
 app.get("*", async (req, res) => {
   res.status(404).send("404 Not Found");
 });

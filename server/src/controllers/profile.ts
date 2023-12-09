@@ -9,8 +9,12 @@ export async function getUserProfile(
   next: NextFunction,
 ) {
   try {
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
+
     const user = await db.query.users.findFirst({
-      where: eq(users.user_id, req.session.user.user_id),
+      where: eq(users.user_id, currentUser.user_id),
     });
     const { password, ...userWithoutPassword } = user;
     res.send(userWithoutPassword);

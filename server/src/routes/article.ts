@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addComment,
   changeArticleStatus,
   deleteArticle,
   getArticleById,
@@ -21,10 +22,12 @@ import wrapAsync from "../utils";
 const router = express.Router();
 
 router.route("/").get(getArticles).post(isLoggedIn, wrapAsync(saveArticle));
+router.route("/articleTags").get(wrapAsync(getArticleByTag));
 router.route("/drafted").get(wrapAsync(getDrafted));
 router.route("/published").get(wrapAsync(getPublished));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
 router.route("/like/:id").patch(wrapAsync(updateLikes));
+router.route("/comment/:id").post(isLoggedIn, wrapAsync(addComment));
 router
   .route("/:id")
   .get(getArticleById)
@@ -41,7 +44,5 @@ router
 router
   .route("/:id/changeArticleStatus")
   .patch(isLoggedIn, canReview, wrapAsync(changeArticleStatus));
-
-router.route("/articleTags").get(wrapAsync(getArticleByTag));
 
 export { router as articleRoute };

@@ -30,7 +30,6 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
     };
     const insertedData = await db.insert(users).values([user]).returning();
     const { password, ...rest } = insertedData[0];
-    req.session.user = rest;
     res.send(rest);
   } catch (e) {
     next(e);
@@ -45,7 +44,6 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     console.log(user);
     if (bcrypt.compareSync(req.body.password, user.password)) {
       const { password, ...userWithoutPassword } = user;
-      req.session.user = userWithoutPassword;
       res.send(userWithoutPassword);
     } else {
       res.send({ message: "Incorrect password" });
@@ -81,11 +79,13 @@ export async function followUser(
   next: NextFunction,
 ) {
   try {
-    const currentUser = req.session.user;
     const followedUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.params.id),
     });
 
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
     console.log("currentUser", currentUser);
     console.log("followedUser", followedUser);
 
@@ -110,9 +110,12 @@ export async function unfollowUser(
   next: NextFunction,
 ) {
   try {
-    const currentUser = req.session.user;
     const followedUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.params.id),
+    });
+
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
     });
     const removeFollow = await db
       .delete(user_follow)
@@ -135,7 +138,9 @@ export async function isFollowingUser(
   next: NextFunction,
 ) {
   try {
-    const currentUser = req.session.user;
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
     const followedUser = await db.query.users.findFirst({
       where: eq(users.username, req.params.id),
     });
@@ -173,7 +178,9 @@ export async function bookMarkArticle(
   next: NextFunction,
 ) {
   try {
-    const currentUser = req.session.user;
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
     const currentArticle = await db.query.article.findFirst({
       where: eq(article.article_id, req.params.id),
     });
@@ -197,7 +204,9 @@ export async function unBookMarkArticle(
   next: NextFunction,
 ) {
   try {
-    const currentUser = req.session.user;
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
     const currentArticle = await db.query.article.findFirst({
       where: eq(article.article_id, req.params.id),
     });
@@ -222,7 +231,9 @@ export async function bookmarkedArticles(
   next: NextFunction,
 ) {
   try {
-    const currentUser = req.session.user;
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
     const bookmarked = await db.query.user_bookmarks.findMany({
       where: eq(user_bookmarks.user_id, currentUser.user_id),
     });
@@ -241,8 +252,6 @@ export async function changeRole(
     const changedUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.params.id),
     });
-    console.log(req.session.user.user_id);
-    console.log(changedUser.user_id);
     const changeRole = await db
       .update(users)
       .set({

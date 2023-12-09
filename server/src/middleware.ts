@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from "express";
+import db from "./db";
+import { users } from "./schema";
+import { eq } from "drizzle-orm";
 export async function isLoggedIn(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  if (req.session.user) {
+  console.log(req.headers);
+  if (req.headers.authorization.split(" ")[1]) {
     next();
   } else {
     console.log("You must be logged in");
@@ -13,7 +17,10 @@ export async function isLoggedIn(
 }
 
 export async function isAdmin(req: Request, res: Response, next: NextFunction) {
-  if (req.session.user.role === "admin") {
+  const currentUser = await db.query.users.findFirst({
+    where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+  });
+  if (currentUser.role === "admin") {
     next();
   } else {
     res.status(403).send("You are not authorized");
@@ -25,7 +32,9 @@ export async function isArticleAuthor(
   res: Response,
   next: NextFunction,
 ) {
-  if (req.session.user.user_id === req.body.article.author.user_id) {
+  if (
+    req.headers.authorization.split(" ")[1] === req.body.article.author.user_id
+  ) {
     next();
   } else {
     res.status(403).send("You are not authorized");
@@ -36,7 +45,9 @@ export async function isCommentAuthor(
   res: Response,
   next: NextFunction,
 ) {
-  if (req.session.user.user_id === req.body.comment.author.user_id) {
+  if (
+    req.headers.authorization.split(" ")[1] === req.body.comment.author.user_id
+  ) {
     next();
   } else {
     res.status(403).send("You are not authorized");
@@ -48,10 +59,10 @@ export async function canReview(
   res: Response,
   next: NextFunction,
 ) {
-  if (
-    req.session.user.role === "reviewer" ||
-    req.session.user.role === "admin"
-  ) {
+  const currentUser = await db.query.users.findFirst({
+    where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+  });
+  if (currentUser.role === "reviewer" || currentUser.role === "admin") {
     next();
   } else {
     res.status(403).send("You are not authorized");
@@ -63,10 +74,13 @@ export async function canPublish(
   res: Response,
   next: NextFunction,
 ) {
+  const currentUser = await db.query.users.findFirst({
+    where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+  });
   if (
-    req.session.user.role === "admin" ||
-    req.session.user.role === "reviewer" ||
-    req.session.user.verified
+    currentUser.role === "admin" ||
+    currentUser.role === "reviewer" ||
+    currentUser.verified
   ) {
     next();
   } else {
@@ -79,9 +93,12 @@ export async function canDeleteArticle(
   res: Response,
   next: NextFunction,
 ) {
+  const currentUser = await db.query.users.findFirst({
+    where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+  });
   if (
-    req.session.user.user_id === req.body.article.author.user_id ||
-    req.session.user.role === "admin"
+    currentUser.user_id === req.body.article.author.user_id ||
+    currentUser.role === "admin"
   ) {
     next();
   } else {
@@ -94,9 +111,12 @@ export async function canDeleteComment(
   res: Response,
   next: NextFunction,
 ) {
+  const currentUser = await db.query.users.findFirst({
+    where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+  });
   if (
-    req.session.user.user_id === req.body.comment.author.user_id ||
-    req.session.user.role === "admin"
+    currentUser.user_id === req.body.comment.author.user_id ||
+    currentUser.role === "admin"
   ) {
     next();
   } else {
@@ -109,7 +129,10 @@ export async function canEditOrg(
   res: Response,
   next: NextFunction,
 ) {
-  if (req.session.user.role === "admin") {
+  const currentUser = await db.query.users.findFirst({
+    where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+  });
+  if (currentUser.role === "admin") {
     next();
   } else {
     res.status(403).send("You are not authorized");
