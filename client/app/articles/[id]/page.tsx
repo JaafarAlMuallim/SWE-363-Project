@@ -2,6 +2,7 @@ import Article from "@/models/article";
 import Image from "next/image";
 import CommentInput from "./CommentInput";
 import Link from "next/link";
+import CommentSection from "./CommentSection";
 
 export default async function Article({ params }: { params: { id: string } }) {
   const res = await fetch(`http://localhost:8080/article/${params.id}`, {
@@ -51,21 +52,7 @@ export default async function Article({ params }: { params: { id: string } }) {
           })}
       </section>
       <p>Author Card To be implemented with About us page before</p>
-      <CommentInput handleSubmit={handleComment} />
-      <section className="flex flex-col justify-center gap-2">
-        {article.comment &&
-          article.comment.map((comment, index) => {
-            console.log(comment);
-            return (
-              <div key={index} className="flex flex-col gap-2">
-                <p>{comment.content}</p>
-                <p>{comment.date}</p>
-                <p>{comment.user.username}</p>
-                {<Link href="#">edit</Link>}
-              </div>
-            );
-          })}
-      </section>
+      <CommentSection article={article} />
     </div>
   );
 }

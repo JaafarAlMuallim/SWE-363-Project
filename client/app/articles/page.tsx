@@ -7,7 +7,6 @@ export default async function Articles() {
     next: { revalidate: 120 },
   });
   const articles = (await res.json()) as Article[];
-
   return (
     <>
       <div>

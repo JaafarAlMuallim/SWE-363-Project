@@ -20,7 +20,6 @@ export async function getArticles(
     const articles = await db.query.article.findMany({
       with: { article_tags: true },
     });
-    console.log(articles);
     res.send(articles);
   } catch (e) {
     next(e);
@@ -45,7 +44,6 @@ export async function getArticleById(
       .update(article)
       .set({ views: foundArticle.views + 1 })
       .where(eq(article.article_id, req.params.id));
-    console.log(foundArticle);
     res.send(foundArticle);
   } catch (e) {
     next(e);
@@ -258,6 +256,22 @@ export async function changeArticleStatus(
   }
 }
 
+export async function getComments(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const comments = await db.query.comment.findMany({
+      where: eq(comment.article_id, req.params.id),
+      with: { user: true },
+    });
+    res.send(comments);
+  } catch (e) {
+    next(e);
+  }
+}
+
 export async function addComment(
   req: Request,
   res: Response,
@@ -267,7 +281,6 @@ export async function addComment(
     const currentUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
     });
-    console.log(currentUser);
     const newComment: CommentData = {
       article_id: req.params.id,
       user_id: currentUser.user_id,
@@ -275,6 +288,7 @@ export async function addComment(
       date: new Date().toISOString(),
       comment_likes: 0,
     };
+    console.log(newComment);
 
     const data = await db.insert(comment).values([newComment]).returning();
     res.send(data[0]);

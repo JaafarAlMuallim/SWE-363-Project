@@ -41,7 +41,6 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const user = await db.query.users.findFirst({
       where: eq(users.email, req.body.email),
     });
-    console.log(user);
     if (bcrypt.compareSync(req.body.password, user.password)) {
       const { password, ...userWithoutPassword } = user;
       res.send(userWithoutPassword);
@@ -73,7 +72,7 @@ export async function devUsers(
   }
 }
 
-export async function followUser(
+export async function changeFollowStatus(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -86,47 +85,34 @@ export async function followUser(
     const currentUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
     });
-    console.log("currentUser", currentUser);
-    console.log("followedUser", followedUser);
-
-    const userFollow: UserFollowType = {
-      user_id: currentUser.user_id,
-      follow_user_id: followedUser.user_id,
-    };
-    console.log("userFollow", userFollow);
-    const addFollow = await db
-      .insert(user_follow)
-      .values([userFollow])
-      .returning();
-    console.log(addFollow);
-    res.send(addFollow);
-  } catch (e) {
-    next(e);
-  }
-}
-export async function unfollowUser(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const followedUser = await db.query.users.findFirst({
-      where: eq(users.user_id, req.params.id),
+    const isFollowing = await db.query.user_follow.findFirst({
+      where: and(
+        eq(user_follow.user_id, currentUser.user_id),
+        eq(user_follow.follow_user_id, followedUser.user_id),
+      ),
     });
-
-    const currentUser = await db.query.users.findFirst({
-      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
-    });
-    const removeFollow = await db
-      .delete(user_follow)
-      .where(
-        and(
-          eq(user_follow.user_id, currentUser.user_id),
-          eq(user_follow.follow_user_id, followedUser.user_id),
-        ),
-      )
-      .returning();
-    res.send(removeFollow);
+    if (isFollowing) {
+      const removeFollow = await db
+        .delete(user_follow)
+        .where(
+          and(
+            eq(user_follow.user_id, currentUser.user_id),
+            eq(user_follow.follow_user_id, followedUser.user_id),
+          ),
+        )
+        .returning();
+      res.send(removeFollow);
+    } else {
+      const userFollow: UserFollowType = {
+        user_id: currentUser.user_id,
+        follow_user_id: followedUser.user_id,
+      };
+      const addFollow = await db
+        .insert(user_follow)
+        .values([userFollow])
+        .returning();
+      res.send(addFollow[0]);
+    }
   } catch (e) {
     next(e);
   }
@@ -138,21 +124,16 @@ export async function isFollowingUser(
   next: NextFunction,
 ) {
   try {
-    const currentUser = await db.query.users.findFirst({
-      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
-    });
     const followedUser = await db.query.users.findFirst({
       where: eq(users.username, req.params.id),
     });
-    console.log("currentUser", currentUser);
-    console.log("followedUser", followedUser);
     const isFollowing = await db.query.user_follow.findFirst({
       where: and(
-        eq(user_follow.user_id, currentUser.user_id),
+        eq(user_follow.user_id, req.headers.authorization.split(" ")[1]),
         eq(user_follow.follow_user_id, followedUser.user_id),
       ),
     });
-    res.send(isFollowing);
+    res.send({ isFollowing: isFollowing ? true : false });
   } catch (e) {
     next(e);
   }

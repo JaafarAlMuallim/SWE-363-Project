@@ -6,6 +6,7 @@ import {
   getArticleById,
   getArticleByTag,
   getArticles,
+  getComments,
   getDrafted,
   getPublished,
   saveArticle,
@@ -27,7 +28,10 @@ router.route("/drafted").get(wrapAsync(getDrafted));
 router.route("/published").get(wrapAsync(getPublished));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
 router.route("/like/:id").patch(wrapAsync(updateLikes));
-router.route("/comment/:id").post(isLoggedIn, wrapAsync(addComment));
+router
+  .route("/comment/:id")
+  .get(getComments)
+  .post(isLoggedIn, wrapAsync(addComment));
 router
   .route("/:id")
   .get(getArticleById)

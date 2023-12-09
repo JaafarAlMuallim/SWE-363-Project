@@ -7,7 +7,6 @@ export async function isLoggedIn(
   res: Response,
   next: NextFunction,
 ) {
-  console.log(req.headers);
   if (req.headers.authorization.split(" ")[1]) {
     next();
   } else {
