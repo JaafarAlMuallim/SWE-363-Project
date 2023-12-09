@@ -6,8 +6,6 @@ import { useSession } from "next-auth/react";
 
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: profile } = useSession();
-  console.log(profile);
-
   return (
     <div className="h-screen w-screen text-content flex flex-col items-center">
       <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
