@@ -1,4 +1,5 @@
 import Tag from "./tag";
+import Comment from "./comment";
 
 export default interface Article {
   article_id?: string;
@@ -10,6 +11,7 @@ export default interface Article {
   date?: string;
   article_image?: string;
   article_tags?: Tag[];
+  comment?: Comment[];
   likes?: number;
   views?: number;
   bookmarks?: boolean;

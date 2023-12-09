@@ -38,16 +38,12 @@ export const authConfig = {
   callbacks: {
     jwt({ token, user }: any) {
       if (user) {
-        console.log(user);
-        console.log(token);
         token.user = user;
       }
       return token;
     },
     session({ session, token }: any) {
       if (session.user) {
-        console.log(token);
-        console.log(session);
         session.user = token.user;
       }
       return session;

@@ -1,8 +1,16 @@
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { Article, article, article_tags } from "../schema";
+import {
+  Article,
+  article,
+  article_tags,
+  comment,
+  Comment,
+  users,
+} from "../schema";
 type ArticleData = Omit<Article, "article_id">;
+type CommentData = Omit<Comment, "comment_id">;
 export async function getArticles(
   req: Request,
   res: Response,
@@ -26,7 +34,11 @@ export async function getArticleById(
 ) {
   try {
     const foundArticle = await db.query.article.findFirst({
-      with: { article_tags: true, comment: true },
+      with: {
+        article_tags: true,
+        comment: { with: { user: true } },
+        user: true,
+      },
       where: eq(article.article_id, req.params.id),
     });
     await db
@@ -199,7 +211,10 @@ export async function getPublished(
   try {
     const publishedArticles = await db.query.article.findMany({
       where: eq(article.article_status, "published"),
-      with: { article_tags: true },
+      with: {
+        article_tags: true,
+        comment: true,
+      },
     });
     res.send(publishedArticles);
   } catch (e) {
@@ -238,6 +253,31 @@ export async function changeArticleStatus(
       .returning();
 
     res.send(updatedArticle);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function addComment(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
+    console.log(currentUser);
+    const newComment: CommentData = {
+      article_id: req.params.id,
+      user_id: currentUser.user_id,
+      content: req.body.content,
+      date: new Date().toISOString(),
+      comment_likes: 0,
+    };
+
+    const data = await db.insert(comment).values([newComment]).returning();
+    res.send(data[0]);
   } catch (e) {
     next(e);
   }
