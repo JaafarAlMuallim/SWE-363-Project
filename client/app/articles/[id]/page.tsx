@@ -1,7 +1,5 @@
 import Article from "@/models/article";
 import Image from "next/image";
-import CommentInput from "./CommentInput";
-import Link from "next/link";
 import CommentSection from "./CommentSection";
 
 export default async function Article({ params }: { params: { id: string } }) {
@@ -22,7 +20,7 @@ export default async function Article({ params }: { params: { id: string } }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer}`,
+          authorization: `Bearer ${bearer}`,
         },
         body: JSON.stringify({
           content: content,

@@ -1,6 +1,6 @@
 "use client";
+import { redirect } from "next/navigation";
 import { Label } from "@/components/ui/label";
-import { useContext } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 

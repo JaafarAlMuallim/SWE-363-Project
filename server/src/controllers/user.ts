@@ -240,8 +240,22 @@ export async function changeRole(
       })
       .where(eq(users.user_id, changedUser.user_id))
       .returning();
-    console.log(changeRole);
     res.send(changeRole);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function checkRole(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
+    res.send(currentUser);
   } catch (e) {
     next(e);
   }

@@ -13,8 +13,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import TipTap from "./TipTap";
 import { Button } from "@/components/ui/button";
-import { FormEvent, FormEventHandler } from "react";
+import { FormEvent } from "react";
+import { useSession } from "next-auth/react";
+import { useMutation, useQuery } from "react-query";
 export default function Page() {
+  const { data: session } = useSession();
   const formSchema = z.object({
     title: z
       .string()
@@ -41,23 +44,64 @@ export default function Page() {
       tags: "",
     },
   });
-  const handleSubmit = (e: FormEvent) => {
-    fetch("http://localhost:8080/article/", {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify({
-        title: form.getValues("title"),
-        subtitle: form.getValues("subtitle"),
-        content: form.getValues("content"),
-        tags: form.getValues("tags").split(","),
-      }),
-    });
-  };
+  const { mutate: postArticle } = useMutation({
+    mutationKey: "article",
+    mutationFn: () => {
+      return fetch(`http://localhost:8080/article/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${session?.user?.user_id}`,
+        },
+        body: JSON.stringify({
+          title: form.getValues("title"),
+          subtitle: form.getValues("subtitle"),
+          content: form.getValues("content"),
+          tags: form.getValues("tags").split("،"),
+          article_status: "in_review",
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          return data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  });
+  const { mutate: draftArticle } = useMutation({
+    mutationKey: "article",
+    mutationFn: () => {
+      console.log(form.getValues("tags").split("،"));
+      return fetch(`http://localhost:8080/article/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${session?.user?.user_id}`,
+        },
+        body: JSON.stringify({
+          title: form.getValues("title"),
+          subtitle: form.getValues("subtitle"),
+          content: form.getValues("content"),
+          tags: form.getValues("tags").split("،"),
+          article_status: "draft",
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          return data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  });
 
   return (
     <section className="h-screen my-20">
       <Form {...form}>
-        <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-8">
           <div className="flex flex-col justify-center gap-8 md:flex-row md:gap-20">
             <FormField
               name="title"
@@ -69,7 +113,7 @@ export default function Page() {
                     <Input
                       placeholder="عنوان مقالتك"
                       onChange={field.onChange}
-                      className="bg-inputbg w-64"
+                      className="bg-inputbg w-64 text-white"
                     ></Input>
                   </FormControl>
                   <FormMessage />
@@ -86,7 +130,7 @@ export default function Page() {
                     <Input
                       placeholder="عنوان مقالتك الفرعي"
                       onChange={field.onChange}
-                      className="bg-inputbg w-64"
+                      className="bg-inputbg w-64 text-white"
                     ></Input>
                   </FormControl>
                   <FormMessage />
@@ -117,7 +161,7 @@ export default function Page() {
                   <Input
                     placeholder="كلمات مفتاحية، مثال : تقنية، تطوير، برمجة"
                     onChange={field.onChange}
-                    className="bg-inputbg w-64"
+                    className="bg-inputbg w-64 text-white"
                   ></Input>
                 </FormControl>
                 <FormMessage />
@@ -125,10 +169,24 @@ export default function Page() {
             )}
           />
           <div className="flex gap-8">
-            <Button type="submit" className="bg-green-800" onClick={() => {}}>
+            <Button
+              type="submit"
+              className="bg-green-800"
+              onClick={(evt) => {
+                evt.preventDefault();
+                postArticle();
+              }}
+            >
               إنشاء
             </Button>
-            <Button type="button" className="bg-orange-800" onClick={() => {}}>
+            <Button
+              type="button"
+              className="bg-orange-800"
+              onClick={(evt) => {
+                evt.preventDefault();
+                draftArticle();
+              }}
+            >
               حفظ
             </Button>
           </div>
