@@ -8,6 +8,7 @@ import {
   getArticles,
   getComments,
   getDrafted,
+  getInReview,
   getPublished,
   saveArticle,
   updateArticle,
@@ -26,6 +27,7 @@ router.route("/").get(getArticles).post(isLoggedIn, wrapAsync(saveArticle));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
 router.route("/drafted").get(wrapAsync(getDrafted));
 router.route("/published").get(wrapAsync(getPublished));
+router.route("/inReview").get(isLoggedIn, canReview, wrapAsync(getInReview));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
 router.route("/like/:id").patch(wrapAsync(updateLikes));
 router
@@ -37,13 +39,6 @@ router
   .get(getArticleById)
   .put(isLoggedIn, isArticleAuthor, wrapAsync(updateArticle))
   .delete(isLoggedIn, canDeleteArticle, wrapAsync(deleteArticle));
-
-router
-  .route("/:id/approve")
-  .patch(isLoggedIn, canDeleteArticle, wrapAsync(updateArticle));
-router
-  .route("/:id/reject")
-  .patch(isLoggedIn, canDeleteArticle, wrapAsync(updateArticle));
 
 router
   .route("/:id/changeArticleStatus")

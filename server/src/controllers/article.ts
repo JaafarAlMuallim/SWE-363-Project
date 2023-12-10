@@ -40,10 +40,12 @@ export async function getArticleById(
       },
       where: eq(article.article_id, req.params.id),
     });
-    await db
-      .update(article)
-      .set({ views: foundArticle.views + 1 })
-      .where(eq(article.article_id, req.params.id));
+    if (foundArticle.article_status === "published") {
+      await db
+        .update(article)
+        .set({ views: foundArticle.views + 1 })
+        .where(eq(article.article_id, req.params.id));
+    }
     res.send(foundArticle);
   } catch (e) {
     next(e);
@@ -60,15 +62,16 @@ export async function saveArticle(
       title: req.body.title,
       subtitle: req.body.subtitle,
       content: req.body.content,
-      user_id: req.body.user_id,
-      org_id: req.body.org_id,
+      user_id: req.headers.authorization.split(" ")[1],
+      org_id: "2491ce88-199e-4fbb-be33-9f5f5b2feb13",
       article_image: req.body.article_image,
       views: 0,
       bookmarks: 0,
       likes: 0,
       date: new Date().toISOString(),
-      article_status: "draft",
+      article_status: req.body.article_status || "draft",
     };
+
     const newArticle = await db
       .insert(article)
       .values([articleData])
@@ -288,7 +291,6 @@ export async function addComment(
       date: new Date().toISOString(),
       comment_likes: 0,
     };
-    console.log(newComment);
 
     const data = await db.insert(comment).values([newComment]).returning();
     res.send(data[0]);

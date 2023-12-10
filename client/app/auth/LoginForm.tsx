@@ -39,9 +39,10 @@ export default function LoginForm() {
     signIn("credentials", {
       email: form.getValues("email"),
       password: form.getValues("password"),
+      callbackUrl: "/",
+    }).then((res) => {
+      console.log(res);
     });
-
-    // Sign User In with NextAuth
   };
   return (
     <Form {...form}>

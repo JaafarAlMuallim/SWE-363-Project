@@ -11,6 +11,7 @@ import {
   bookmarkedArticles,
   changeRole,
   changeFollowStatus,
+  checkRole,
 } from "../controllers/user";
 import wrapAsync from "../utils";
 import { isAdmin, isLoggedIn } from "../middleware";
@@ -23,6 +24,7 @@ router.route("/following/:id").get(wrapAsync(isFollowingUser));
 router.route("/bookmark/:id").post(wrapAsync(bookMarkArticle));
 router.route("/unbookmark/:id").post(wrapAsync(unBookMarkArticle));
 router.route("/bookmarked").get(wrapAsync(bookmarkedArticles));
+router.route("checkRole").get(isLoggedIn, wrapAsync(checkRole));
 router
   .route("/changerole/:id")
   .patch(isLoggedIn, isAdmin, wrapAsync(changeRole));

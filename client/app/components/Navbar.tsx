@@ -13,6 +13,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { Avatar } from "@material-tailwind/react";
 import { Sriracha } from "next/font/google";
+import { useRouter } from "next/navigation";
 const sriracha = Sriracha({
   subsets: ["latin"],
   weight: "400",
@@ -24,6 +25,7 @@ export default function Navbar() {
   const [active, setActive] = useState(false);
   const [local_theme, setTheme] = useState("light");
   const [chk, setChk] = useState(true);
+  const router = useRouter();
   return (
     <>
       <div className="sticky top-0 z-10 bg-secondaryDark py-4 border-b w-full text-content">
@@ -79,11 +81,15 @@ export default function Navbar() {
                   <Newspaper className="mx-2" />
                 </Link>
               </li>
-              <li>
-                <Link href="/reviewArticle">
-                  <Bell />
-                </Link>
-              </li>
+              {session &&
+                (session.user.role === "admin" ||
+                  session.user.role === "reviewer") && (
+                  <li>
+                    <Link href="/reviewArticle">
+                      <Bell />
+                    </Link>
+                  </li>
+                )}
               <li>
                 <Link
                   className="flex link link-underline link-underline-black p-2"
@@ -105,8 +111,8 @@ export default function Navbar() {
                   <Link
                     className="flex"
                     onClick={() => {
-                      setActive((prevState) => !prevState);
                       signOut();
+                      router.push("/");
                     }}
                     href={`/`}
                   >
@@ -208,6 +214,7 @@ export default function Navbar() {
                   onClick={() => {
                     setActive((prevState) => !prevState);
                     signOut();
+                    router.push("/");
                   }}
                   href={`/`}
                 >
