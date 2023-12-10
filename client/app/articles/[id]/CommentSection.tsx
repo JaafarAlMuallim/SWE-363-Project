@@ -39,7 +39,7 @@ export default function CommentSection({ article }: { article: Article }) {
   });
   const { mutate: handleComment } = useMutation({
     mutationKey: "comments",
-    mutationFn: () => {
+    mutationFn: (comment: Comment) => {
       return fetch(
         `http://localhost:8080/article/comment/${article.article_id}`,
         {
@@ -49,7 +49,7 @@ export default function CommentSection({ article }: { article: Article }) {
             authorization: `Bearer ${session!.user.user_id}`,
           },
           body: JSON.stringify({
-            content: form.getValues("content"),
+            content: comment.content,
           }),
         },
       );
@@ -119,7 +119,7 @@ export default function CommentSection({ article }: { article: Article }) {
   });
 
   return (
-    <section className="overflow-y-scroll flex flex-col justify-center gap-2">
+    <section className="flex flex-col justify-center gap-2">
       {session?.user && (
         <Form {...form}>
           <form>
@@ -153,6 +153,7 @@ export default function CommentSection({ article }: { article: Article }) {
                   user: session.user,
                   article_id: article.article_id,
                 };
+                form.setValue("content", "");
                 handleComment(newComment);
               }}
             >
@@ -161,24 +162,18 @@ export default function CommentSection({ article }: { article: Article }) {
           </form>
         </Form>
       )}
-      {loadingComments ? (
-        <div className="flex flex-col gap-8">
-          <Skeleton className="bg-gray-400 h-20 w-96" />
-          <Skeleton className="bg-gray-400 h-20 w-96" />
-          <Skeleton className="bg-gray-400 h-20 w-96" />
-        </div>
-      ) : (
-        comments &&
-        comments!.map((comment, index) => {
-          return (
-            <CommentCard
-              key={index}
-              comment={comment}
-              onDelete={handleDelete}
-            />
-          );
-        })
-      )}
+      <div className="overflow-y-scroll h-80">
+        {comments &&
+          comments!.map((comment, index) => {
+            return (
+              <CommentCard
+                key={index}
+                comment={comment}
+                onDelete={handleDelete}
+              />
+            );
+          })}
+      </div>
     </section>
   );
 }
