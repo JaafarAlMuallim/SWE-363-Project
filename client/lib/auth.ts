@@ -1,7 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 export const authConfig = {
   secret: process.env.NEXT_AUTH_SECRET,
-  url: process.env.NEXT_AUTH_URL,
   providers: [
     CredentialsProvider({
       id: "credentials",
@@ -24,6 +23,7 @@ export const authConfig = {
           headers: { "Content-Type": "application/json" },
         });
         const data = await response.json();
+        console.log(data);
         if (data) {
           return data;
         } else {
@@ -47,6 +47,20 @@ export const authConfig = {
         session.user = token.user;
       }
       return session;
+    },
+    authorized({ auth, request: { nextUrl } }: any) {
+      console.log(auth);
+      const isLoggedIn = !!auth?.user;
+      const paths = ["/:path", "/writeArticle", "/reviewArticle"];
+      const isProtected = paths.some((path) =>
+        nextUrl.pathname.startsWith(path),
+      );
+      if (isProtected && !isLoggedIn) {
+        const redirectUrl = new URL("/auth", nextUrl.origin);
+        redirectUrl.searchParams.append("callbackUrl", nextUrl.href);
+        return Response.redirect(redirectUrl);
+      }
+      return true;
     },
   },
 };

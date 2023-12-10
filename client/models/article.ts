@@ -6,7 +6,7 @@ export default interface Article {
   user_id?: string;
   org_id?: string;
   title: string;
-  content: string;
+  content: HTMLParagraphElement;
   subtitle?: string;
   date?: string;
   article_image?: string;

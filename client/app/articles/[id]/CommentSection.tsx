@@ -46,7 +46,7 @@ export default function CommentSection({ article }: { article: Article }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session!.user.user_id}`,
+            authorization: `Bearer ${session!.user.user_id}`,
           },
           body: JSON.stringify({
             content: form.getValues("content"),
