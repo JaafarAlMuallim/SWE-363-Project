@@ -12,7 +12,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import Article from "@/models/article";
 import Comment from "@/models/comment";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,9 +19,11 @@ import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { z } from "zod";
+import { useState } from "react";
 
 export default function CommentSection({ article }: { article: Article }) {
   const { data: session } = useSession();
+  const [showModal, setShowModal] = useState(false);
   const { data: comments, isLoading: loadingComments } = useQuery({
     queryKey: "comments",
     queryFn: () => {
@@ -170,6 +171,9 @@ export default function CommentSection({ article }: { article: Article }) {
                 key={index}
                 comment={comment}
                 onDelete={handleDelete}
+                onEdit={() => {
+                  showModal ? setShowModal(false) : setShowModal(true);
+                }}
               />
             );
           })}

@@ -1,10 +1,10 @@
 "use client";
 import Article from "@/models/article";
 import Image from "next/image";
-import CommentSection from "./CommentSection";
 import DOMPurify from "dompurify";
 import { useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import CommentSection from "./CommentSection";
 
 export default function Article({ params }: { params: { id: string } }) {
   const {

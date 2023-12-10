@@ -44,9 +44,7 @@ export async function isCommentAuthor(
   res: Response,
   next: NextFunction,
 ) {
-  if (
-    req.headers.authorization.split(" ")[1] === req.body.comment.author.user_id
-  ) {
+  if (req.headers.authorization.split(" ")[1] === req.body.user.user_id) {
     next();
   } else {
     res.status(403).send("You are not authorized");

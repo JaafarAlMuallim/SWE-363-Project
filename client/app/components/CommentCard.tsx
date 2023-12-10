@@ -3,14 +3,80 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Comment from "@/models/comment";
 import { GoHeartFill } from "react-icons/go";
+import { useMutation } from "react-query";
+import { queryClient } from "@/app/components/QueryProvider";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import EditCommentModal from "./EditCommentModal";
 
 export default function CommentCard({
   comment,
   onDelete,
+  onEdit,
 }: {
   comment: Comment;
   onDelete(comment: Comment): void;
+  onEdit(): void;
 }) {
+  const { data: session } = useSession();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleEdit = () => {
+    setIsModalOpen(true);
+    console.log("handleEdit", isModalOpen);
+    console.log("modal opened");
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    console.log("handleClose", isModalOpen);
+    console.log("modal closed");
+  };
+
+  const updateCommentMutation = useMutation(
+    (updatedComment: Comment) => {
+      handleModalClose();
+      console.log("updateCommentMutation", updatedComment);
+      return fetch(
+        `http://localhost:8080/comment/${updatedComment.comment_id!}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session!.user.user_id}`,
+          },
+          body: JSON.stringify(updatedComment),
+        },
+      )
+        .then((res) => res.json())
+        .catch((err) => console.log(err));
+    },
+    {
+      onMutate: async (newComment) => {
+        await queryClient.cancelQueries(["comments"]);
+
+        const previousComments = queryClient.getQueryData<Comment[]>([
+          "comments",
+        ]);
+
+        queryClient.setQueryData<Comment[]>(["comments"], (oldComments) =>
+          oldComments!.map((comment) =>
+            comment.comment_id === newComment.comment_id
+              ? { ...comment, ...newComment }
+              : comment,
+          ),
+        );
+
+        return { previousComments };
+      },
+      onError: (err, newComment, context) => {
+        queryClient.setQueryData(["comments"], context!.previousComments);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(["comments"]);
+      },
+    },
+  );
   return (
     <div className="w-80 text-white bg-transparent rounded-lg">
       <div className="flex flex-col rounded-lg">
@@ -31,11 +97,18 @@ export default function CommentCard({
             type="button"
             className="bg-orange-400"
             onClick={(evt) => {
-              evt.preventDefault();
+              handleEdit();
             }}
           >
             تعديل
           </Button>
+          {isModalOpen && (
+            <EditCommentModal
+              comment={comment}
+              onClose={handleModalClose}
+              onSubmit={updateCommentMutation.mutate}
+            />
+          )}
           <Button
             type="button"
             className="bg-red-800"
