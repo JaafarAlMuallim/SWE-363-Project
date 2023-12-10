@@ -30,7 +30,6 @@ export default function RootLayout({
           <main className=" flex flex-col justify-center items-center">
             {children}
           </main>
-          <Footer />
         </body>
       </Provider>
     </html>
