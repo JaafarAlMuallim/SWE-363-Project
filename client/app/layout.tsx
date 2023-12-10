@@ -28,7 +28,9 @@ export default function RootLayout({
         >
           <AuthProvider>
             <Navbar />
-            <main className=" flex flex-col justify-center items-center">
+            <div id="backdrop" />
+            <div id="modal-root" />
+            <main className="flex flex-col justify-center items-center">
               {children}
             </main>
             <Footer />
