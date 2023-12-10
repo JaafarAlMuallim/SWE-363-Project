@@ -6,5 +6,6 @@ export default interface Comment {
   article_id?: string;
   content: string;
   date?: string;
+  comment_likes?: number;
   user: User;
 }

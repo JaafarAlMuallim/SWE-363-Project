@@ -44,9 +44,7 @@ export async function isCommentAuthor(
   res: Response,
   next: NextFunction,
 ) {
-  if (
-    req.headers.authorization.split(" ")[1] === req.body.comment.author.user_id
-  ) {
+  if (req.headers.authorization.split(" ")[1] === req.body.user.user_id) {
     next();
   } else {
     res.status(403).send("You are not authorized");
@@ -113,10 +111,13 @@ export async function canDeleteComment(
   const currentUser = await db.query.users.findFirst({
     where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
   });
+  console.log(currentUser.user_id);
+  console.log(req.body.comment);
   if (
-    currentUser.user_id === req.body.comment.author.user_id ||
+    currentUser.user_id === req.body.comment.user.user_id ||
     currentUser.role === "admin"
   ) {
+    console.log("can delete comment");
     next();
   } else {
     res.status(403).send("You are not authorized");

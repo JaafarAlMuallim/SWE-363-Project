@@ -4,6 +4,7 @@ import { articleRoute } from "./routes/article";
 import { orgRoute } from "./routes/org";
 import { profileRoute } from "./routes/profile";
 import { userRoute } from "./routes/user";
+import { commentRouter } from "./routes/comment";
 
 const app = express();
 const port = 8080;
@@ -32,6 +33,7 @@ const config = {
 app.use("/user", userRoute);
 app.use("/article", articleRoute);
 app.use("/org", orgRoute);
+app.use("/comment", commentRouter);
 app.use("/profile", profileRoute);
 app.get("/", async (req, res) => {});
 app.get("*", async (req, res) => {

@@ -1,29 +1,40 @@
-import { Dialog } from "@headlessui/react";
-import { useRef, ReactNode } from "react";
-export default function Modal({
-  onClose,
-  children,
-}: {
-  onClose: () => void;
-  children: ReactNode;
-}) {
-  let overlayRef = useRef(null);
+"use client";
+import ReactDOM from "react-dom";
+import { ReactNode } from "react";
+import Card from "./Card";
 
+const Backdrop = (props: { onConfirm(): void }) => {
   return (
-    <Dialog
-      static
-      open={true}
-      onClose={onClose}
-      initialFocus={overlayRef}
-      className="fixed inset-0 z-10 flex items-center justify-center"
-    >
-      <Dialog.Overlay
-        ref={overlayRef}
-        className="fixed inset-0 bg-gray-800/60"
-      />
-      <div className="relative flex items-center justify-center w-1/2">
-        {children}
-      </div>
-    </Dialog>
+    <div
+      className={`fixed top-0 left-0 w-screen h-screen z-20 bg-black opacity-75`}
+      onClick={props.onConfirm}
+    ></div>
   );
-}
+};
+const Overlay = (props: { children: ReactNode }) => {
+  return (
+    <Card>
+      <div
+        className={`fixed top-20 left-5 w-96 p-4 bg-white rounded-md shadow-2xl z-30 animate-accordion-up`}
+      >
+        {props.children}
+      </div>
+    </Card>
+  );
+};
+
+const Modal = (props: { onConfirm(): void; children: ReactNode }) => {
+  const modalRoot = document.getElementById("modal-root") as HTMLElement;
+  const backdropRoot = document.getElementById("backdrop") as HTMLElement;
+  return (
+    <>
+      {ReactDOM.createPortal(
+        <Backdrop onConfirm={props.onConfirm} />,
+        modalRoot,
+      )}
+      {ReactDOM.createPortal(<Overlay>{props.children}</Overlay>, backdropRoot)}
+    </>
+  );
+};
+
+export default Modal;

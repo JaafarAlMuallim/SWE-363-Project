@@ -1,5 +1,6 @@
 "use client";
 
+import CommentCard from "@/app/components/CommentCard";
 import { queryClient } from "@/app/components/QueryProvider";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,18 +12,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import Article from "@/models/article";
 import Comment from "@/models/comment";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { z } from "zod";
+import { useState } from "react";
 
 export default function CommentSection({ article }: { article: Article }) {
   const { data: session } = useSession();
+  const [showModal, setShowModal] = useState(false);
   const { data: comments, isLoading: loadingComments } = useQuery({
     queryKey: "comments",
     queryFn: () => {
@@ -39,7 +40,7 @@ export default function CommentSection({ article }: { article: Article }) {
   });
   const { mutate: handleComment } = useMutation({
     mutationKey: "comments",
-    mutationFn: () => {
+    mutationFn: (comment: Comment) => {
       return fetch(
         `http://localhost:8080/article/comment/${article.article_id}`,
         {
@@ -49,7 +50,7 @@ export default function CommentSection({ article }: { article: Article }) {
             authorization: `Bearer ${session!.user.user_id}`,
           },
           body: JSON.stringify({
-            content: form.getValues("content"),
+            content: comment.content,
           }),
         },
       );
@@ -72,7 +73,40 @@ export default function CommentSection({ article }: { article: Article }) {
       return { previousComments };
     },
   });
+  const handleDelete = (comment: Comment) => {
+    deleteComment(comment);
+  };
+  const { mutate: deleteComment } = useMutation({
+    mutationKey: "comments",
+    mutationFn: (comment: Comment) => {
+      console.log(comment);
+      return fetch(`http://localhost:8080/comment/${comment.comment_id!}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${session!.user.user_id}`,
+        },
+        body: JSON.stringify({
+          comment,
+        }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("comments");
+    },
+    onMutate: async (newComment: Comment) => {
+      await queryClient.cancelQueries({ queryKey: ["comments"] });
 
+      const previousComments = queryClient.getQueryData<Comment[]>([
+        "comments",
+      ]);
+      queryClient.setQueryData<Comment[]>(["comments"], (old = []) =>
+        old.filter((comment) => comment.comment_id !== newComment.comment_id),
+      );
+
+      return { previousComments };
+    },
+  });
   const commentSchema = z.object({
     content: z.string().min(1).max(1000),
   });
@@ -120,6 +154,7 @@ export default function CommentSection({ article }: { article: Article }) {
                   user: session.user,
                   article_id: article.article_id,
                 };
+                form.setValue("content", "");
                 handleComment(newComment);
               }}
             >
@@ -128,26 +163,21 @@ export default function CommentSection({ article }: { article: Article }) {
           </form>
         </Form>
       )}
-      {loadingComments ? (
-        <div className="flex flex-col">
-          <Skeleton className="bg-gray-400 h-30 w-30" />
-          <Skeleton className="bg-gray-400 h-30 w-30" />
-          <Skeleton className="bg-gray-400 h-30 w-30" />
-        </div>
-      ) : (
-        comments &&
-        comments!.map((comment, index) => {
-          console.log(comment);
-          return (
-            <div key={index} className="flex flex-col gap-2">
-              <p>{comment.content}</p>
-              <p>{comment.date}</p>
-              <p>{comment.user.username}</p>
-              {<Link href="#">edit</Link>}
-            </div>
-          );
-        })
-      )}
+      <div className="overflow-y-scroll h-80">
+        {comments &&
+          comments!.map((comment, index) => {
+            return (
+              <CommentCard
+                key={index}
+                comment={comment}
+                onDelete={handleDelete}
+                onEdit={() => {
+                  showModal ? setShowModal(false) : setShowModal(true);
+                }}
+              />
+            );
+          })}
+      </div>
     </section>
   );
 }
