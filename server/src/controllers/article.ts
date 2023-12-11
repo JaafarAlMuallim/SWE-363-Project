@@ -215,6 +215,7 @@ export async function getPublished(
       with: {
         article_tags: true,
         comment: true,
+        user: true,
       },
     });
     res.send(publishedArticles);

@@ -5,8 +5,12 @@ import DOMPurify from "dompurify";
 import { useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import CommentSection from "./CommentSection";
+import { useSession } from "next-auth/react";
+import { useMutation } from "react-query";
+import { queryClient } from "../../components/QueryProvider";
 
 export default function Article({ params }: { params: { id: string } }) {
+  const { data: session } = useSession();
   const {
     data: article,
     isLoading,
@@ -16,11 +20,65 @@ export default function Article({ params }: { params: { id: string } }) {
     queryFn: () =>
       fetch(`http://localhost:8080/article/${params.id}`, {
         method: "GET",
-        next: {
-          revalidate: 5,
-        },
       }).then((res) => res.json() as Promise<Article>),
   });
+  const { data: isBookmarked, isLoading: isBookmarkedLoading } = useQuery({
+    enabled: session !== undefined && session?.user !== null,
+    queryKey: "isBookmarked",
+    queryFn: () => {
+      return fetch(`http://localhost:8080/user/isbookmarked/${params.id}`, {
+        method: "GET",
+        headers: {
+          authorization: `Bearer ${session?.user?.user_id}`,
+        },
+        cache: "no-cache",
+      }).then((res) => res.json() as Promise<boolean>);
+    },
+  });
+  const { mutate: bookmark } = useMutation({
+    mutationKey: "isBookmarked",
+    mutationFn: () => {
+      console.log("SAVE");
+      return fetch(`http://localhost:8080/user/bookmark/${params.id}`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${session?.user?.user_id}`,
+        },
+      }).then((res) => res.json() as Promise<boolean>);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("isBookmarked");
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries("isBookmarked");
+      const previousValue = queryClient.getQueryData("isBookmarked");
+      queryClient.setQueryData<boolean>("isBookmarked", (old) => !old);
+      return { previousValue };
+    },
+  });
+  const { mutate: unbookmark } = useMutation({
+    mutationKey: "isBookmarked",
+    mutationFn: () => {
+      return fetch(`http://localhost:8080/user/unbookmark/${params.id}`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${session?.user?.user_id}`,
+        },
+
+        cache: "no-cache",
+      }).then((res) => res.json() as Promise<boolean>);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("isBookmarked");
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries("isBookmarked");
+      const previousValue = queryClient.getQueryData("isBookmarked");
+      queryClient.setQueryData<boolean>("isBookmarked", (old) => !old);
+      return { previousValue };
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
@@ -37,6 +95,7 @@ export default function Article({ params }: { params: { id: string } }) {
     );
   }
 
+  console.log(isBookmarked);
   const { content } = article!;
   const date = article!.date!.toString().substring(0, 10);
   const cleanContent = DOMPurify.sanitize(content, {
@@ -55,14 +114,23 @@ export default function Article({ params }: { params: { id: string } }) {
             return (
               <div
                 key={index}
-                className={`bg-crd2 text-white px-4 py-1 rounded-full inline w-24 text-center`}
+                className={`bg-crd2 text-white px-4 py-1 rounded-full w-32 text-center`}
               >
                 {tag.tag}
               </div>
             );
           })}
       </section>
-      <p>Author Card To be implemented with About us page before</p>
+      {isBookmarkedLoading ? (
+        <Skeleton className="bg-gray-400 h-30 w-30" />
+      ) : (
+        <button
+          className="flex bg-blue-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+          onClick={isBookmarked ? () => unbookmark() : () => bookmark()}
+        >
+          {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
+        </button>
+      )}
       <CommentSection article={article!} />
     </div>
   );
