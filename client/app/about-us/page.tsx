@@ -16,7 +16,10 @@ const AboutUsPage = () => {
             قطاع ريادة الأعمال في تطور
             <span className="font-bold"> مبهر</span>
           </div>
-          <Lottie className="w-2/4 h-1/4" animationData={animationData} />
+          <Lottie
+            className="w-7/8 h-7/8 lg:w-2/6"
+            animationData={animationData}
+          />
 
           <div className=" text-2xl mt-3">
             لذلك قررنا ننشئ <strong>Pitfall</strong> <br />
