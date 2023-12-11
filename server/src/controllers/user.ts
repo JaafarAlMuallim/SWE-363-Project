@@ -212,7 +212,6 @@ export async function bookmarkedArticles(
   next: NextFunction,
 ) {
   try {
-    console.log(req.headers.authorization.split(" ")[1]);
     const bookmarked = await db.query.user_bookmarks.findMany({
       where: eq(
         user_bookmarks.user_id,
@@ -231,17 +230,6 @@ export async function bookmarkedArticles(
           },
         },
       },
-      //      with: {
-      //        user: true,
-      //        article_tags: true,
-      //        comment: {
-      //          with: {
-      //            user: true,
-      //          },
-      //        },
-      //      },
-      //    },
-      //  },
     });
     res.send(bookmarked);
   } catch (e) {

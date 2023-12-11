@@ -128,10 +128,10 @@ export const article = pgTable("article", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   user_id: uuid("user_id")
-    .references(() => users.user_id)
+    .references(() => users.user_id, { onDelete: "cascade" })
     .notNull(),
   org_id: uuid("org_id")
-    .references(() => orgs.org_id)
+    .references(() => orgs.org_id, { onDelete: "cascade" })
     .notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   subtitle: varchar("subtitle", { length: 255 }),
@@ -149,10 +149,10 @@ export const user_bookmarks = pgTable("user_bookmarks", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   user_id: uuid("user_id")
-    .references(() => users.user_id)
+    .references(() => users.user_id, { onDelete: "cascade" })
     .notNull(),
   article_id: uuid("article_id")
-    .references(() => article.article_id)
+    .references(() => article.article_id, { onDelete: "cascade" })
     .notNull(),
 });
 
@@ -161,7 +161,7 @@ export const article_tags = pgTable("article_tags", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   article_id: uuid("article_id")
-    .references(() => article.article_id)
+    .references(() => article.article_id, { onDelete: "cascade" })
     .notNull(),
   tag: text("tag"),
 });
@@ -171,10 +171,10 @@ export const comment = pgTable("comment", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   article_id: uuid("article_id")
-    .references(() => article.article_id)
+    .references(() => article.article_id, { onDelete: "cascade" })
     .notNull(),
   user_id: uuid("user_id")
-    .references(() => users.user_id)
+    .references(() => users.user_id, { onDelete: "cascade" })
     .notNull(),
   content: text("content").notNull(),
   date: date("date").notNull(),

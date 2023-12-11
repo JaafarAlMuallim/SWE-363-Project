@@ -17,7 +17,6 @@ export async function getComment(
         user: true,
       },
     });
-    console.log(foundComment);
     res.send(foundComment);
   } catch (err) {
     next(err);
@@ -53,7 +52,6 @@ export async function deleteComment(
 ) {
   try {
     const { id } = req.params;
-    console.log(id);
     const deletedComment = await db
       .delete(comment)
       .where(eq(comment.comment_id, id))
