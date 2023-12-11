@@ -190,8 +190,17 @@ export async function getOrgArticles(
     const articles = await db.query.article.findMany({
       with: {
         article_tags: true,
+        comment: {
+          with: {
+            user: true,
+          },
+        },
+        user: true,
       },
-      where: eq(orgs.org_id, req.params.id),
+      where: and(
+        eq(orgs.org_id, req.params.id),
+        eq(article.article_status, "published"),
+      ),
     });
     res.send(articles);
   } catch (e) {

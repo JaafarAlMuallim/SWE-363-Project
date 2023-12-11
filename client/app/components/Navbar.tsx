@@ -4,6 +4,7 @@ import {
   Home,
   Menu,
   Moon,
+  Building,
   Newspaper,
   Sun,
   Users,
@@ -86,6 +87,7 @@ export default function Navbar() {
                   session.user.role === "reviewer") && (
                   <li>
                     <Link href="/reviewArticle">
+                      مراجعة المقالات
                       <Bell />
                     </Link>
                   </li>
@@ -93,9 +95,9 @@ export default function Navbar() {
               <li>
                 <Link
                   className="flex link link-underline link-underline-black p-2"
-                  href={`/bookmarks`}
+                  href={`/organizations`}
                 >
-                  الصفحات المرجعية <Bookmark className="mx-2" />
+                  المؤسسات <Building className="mx-2" />
                 </Link>
               </li>
               <li>
@@ -193,9 +195,9 @@ export default function Navbar() {
               <Link
                 className="flex"
                 onClick={() => setActive((prevState) => !prevState)}
-                href={`/bookmarks`}
+                href={`/organizations`}
               >
-                الصفحات المرجعية <Bookmark className="mx-2" />
+                المؤسسات <Building className="mx-2" />
               </Link>
             </li>
             <li>
