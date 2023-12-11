@@ -1,50 +1,229 @@
+"use client";
 import Organization from "@/models/org";
+import Org from "@/models/org";
 import Image from "next/image";
-
-const orgs: Organization[] = [
-  {
-    id: 1,
-    name: "منظمة الصحة العالمية",
-    description:
-      "loreem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis",
-    image: "next.svg",
-    founding_date: "2012-12-12",
-    website: "https://www.who.int/",
-    hq_city: "Geneva, Switzerland",
-  },
-  {
-    id: 2,
-    name: "منظمة الصحة العالمية",
-    description:
-      "loreem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis",
-    image: "next.svg",
-    founding_date: "2012-12-12",
-
-    website: "google.com",
-    hq_city: "Geneva, Switzerland",
-  },
-];
+import { useQuery } from "react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import ArticleCard from "@/app/components/ArticleCard2";
+import Article from "@/models/article";
+import { OrgFounder } from "@/models/org_founders";
 export default function Organization({
   params,
 }: {
   params: { org_id: string };
 }) {
-  // fetch the org with the id of params.article_id
-  let org: Organization;
-  if (params.org_id === "1") {
-    org = orgs[0];
-  } else {
-    org = orgs[1];
+  const { data: org, isLoading: orgLoading } = useQuery({
+    queryKey: "article",
+    queryFn: () =>
+      fetch(`http://localhost:8080/org/${params.org_id}`, {
+        method: "GET",
+      }).then((res) => res.json() as Promise<Org>),
+  });
+  const { data: articles, isLoading: articleLoading } = useQuery({
+    queryKey: "articles",
+    queryFn: () =>
+      fetch(`http://localhost:8080/org/${params.org_id}/articles`, {
+        method: "GET",
+      }).then((res) => res.json() as Promise<Article[]>),
+  });
+  const { data: orgFounders, isLoading: orgFoundersLoading } = useQuery({
+    queryKey: "orgFounders",
+    queryFn: () =>
+      fetch(`http://localhost:8080/org/${params.org_id}/founders`, {
+        method: "GET",
+      }).then((res) => res.json() as Promise<OrgFounder[]>),
+  });
+
+  if (orgLoading) {
+    return (
+      <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
+        <Skeleton className="w-80 h-36" />
+        <Skeleton className="w-64 h-12" />
+        <Skeleton className="w-40 h-4" />
+        <Skeleton className="h-80 w-64" />
+        <div className="flex flex-col my-20">
+          <Skeleton className="bg-gray-400 h-30 w-30" />
+          <Skeleton className="bg-gray-400 h-30 w-30" />
+          <Skeleton className="bg-gray-400 h-30 w-30" />
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
-      <Image src={`../${org.image!}`} alt={"Image"} width={400} height={400} />
-      <h1 className="text-4xl text-center">{org.name}</h1>
-      <p>{org.hq_city}</p>
-      <p>{org.description}</p>
-      <p>{org.founding_date}</p>
-      <p>Author Card To be implemented with About us page before</p>
-    </div>
+    <>
+      <div className="h-screen w-screen text-content hidden md:flex">
+        <div className="w-1/4 m-10 flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
+            {orgLoading ? (
+              <Skeleton className="bg-gray-400 rounded-full m-2" />
+            ) : (
+              <Image
+                className="rounded-lg mx-10"
+                src={"/test.jpg"}
+                alt="profile"
+                height={400}
+                width={400}
+              />
+            )}
+            {orgLoading ? (
+              <div className="flex flex-col">
+                <Skeleton className="font-bold text-2xl m-2 bg-gray-400" />
+                <Skeleton className="font-bold text-3xl m-2 bg-gray-400" />
+                <Skeleton className="text-xl m-2 bg-gray-400" />
+              </div>
+            ) : (
+              <>
+                <Label className="font-bold text-3xl m-2" dir="ltr">
+                  {org?.name}
+                </Label>
+                <Label className="text-xl m-2">{org?.founding_date}</Label>
+                <Label className="text-xl m-2">{`${org?.main_sector
+                  ?.charAt(0)
+                  .toUpperCase()}${org?.main_sector?.substring(1)}`}</Label>
+              </>
+            )}
+            <div className="flex m-4 justify-center items-center">
+              <Label className="m-1 text-gcontent2">عدد المؤسسين</Label>
+              <Label className="font-bold m-1">
+                {org?.org_founders?.length}
+              </Label>
+            </div>
+          </div>
+        </div>
+        <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
+          <div className="w-full h-fit rounded-lg bg-white bg-opacity-5 p-5">
+            {orgLoading ? (
+              <Skeleton className="bg-gray-400 h-64 w-40" />
+            ) : (
+              <div className="flex flex-col whitespace-normal text-right">
+                {org?.description}
+
+                <ul className="flex flex-col justify-start">
+                  المؤسسين:
+                  {orgFoundersLoading ? (
+                    <Skeleton className="bg-gray-400 h-30 w-30" />
+                  ) : (
+                    orgFounders?.map((founder, index) => (
+                      <li key={founder.founder_id} className="block">
+                        {founder.founder}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+          <h1 className="text-2xl">Articles Related to {org?.name}</h1>
+          <div className="container my-12 mx-auto px-4 md:px-12">
+            <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+              {articleLoading ? (
+                <>
+                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                </>
+              ) : (
+                articles!.map((article) => {
+                  return (
+                    <Link
+                      key={article.article_id}
+                      href={`/articles/${article.article_id}`}
+                    >
+                      <ArticleCard article={article} />
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="h-screen w-screen text-content flex flex-col items-center md:hidden">
+        <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
+          {orgLoading ? (
+            <Skeleton className="rounded-full m-2 bg-gray-400" />
+          ) : (
+            <Image
+              className="rounded-lg mb-2"
+              src={"/test.jpg"}
+              alt="profile"
+              height={300}
+              width={400}
+            />
+          )}
+          {orgLoading ? (
+            <div className="flex flex-col gap-2">
+              <Skeleton className="font-bold text-xl m-2 bg-gray-400" />
+              <Skeleton className="font-bold text-2xl m-2 bg-gray-400" />
+              <Skeleton className="text-lg m-2 bg-gray-400" />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Label className="font-bold text-2xl" dir="ltr">
+                {org?.name}
+              </Label>
+              <Label className="text-lg">{org?.founding_date}</Label>
+              <Label className="text-lg">
+                {`${org?.main_sector
+                  ?.charAt(0)
+                  .toUpperCase()}${org?.main_sector?.substring(1)}`}
+              </Label>
+            </div>
+          )}
+          <div className="flex m-4 justify-center items-center">
+            <Label className="m-1 text-gcontent2">المؤسسين</Label>
+            <Label className="font-bold m-1">{org?.org_founders?.length}</Label>
+          </div>
+        </div>
+        {/*overview here*/}
+        <div className="w-80 bg-gradient-to-br from-crd to-crd2 h-fit rounded-lg p-5 whitespace-pre-line">
+          {orgLoading ? (
+            <Skeleton className="bg-gray-400 h-64 w-40" />
+          ) : (
+            <div className="flex flex-col justify-start">
+              {org?.description}
+              <ul className="flex flex-col justify-start">
+                المؤسسين:
+                {orgFoundersLoading ? (
+                  <Skeleton className="bg-gray-400 h-30 w-30" />
+                ) : (
+                  orgFounders?.map((founder, index) => (
+                    <li key={founder.founder_id} className="block">
+                      {founder.founder}
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
+        <h1 className="text-2xl my-4">Articles Related to {org?.name}</h1>
+        <div className="container my-12 mx-auto px-4 md:px-12">
+          <div className="flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+            {articleLoading ? (
+              <>
+                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+              </>
+            ) : (
+              articles!.map((article) => {
+                return (
+                  <Link
+                    key={article.article_id}
+                    href={`/articles/${article.article_id}`}
+                  >
+                    <ArticleCard article={article} />
+                  </Link>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
