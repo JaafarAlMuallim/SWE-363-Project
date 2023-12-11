@@ -107,8 +107,9 @@ export default function Profile({ params }: { params: { username: string } }) {
         </div>
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
           {/*overview here*/}
-          <div className="w-full h-36 rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
+          <div className="w-full h-fit rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
             overview
+            هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى) ويُستخدم في صناعات المطابع ودور النشر. كان لوريم إيبسوم ولايزال المعيار للنص الشكلي منذ القرن الخامس عشر عندما قامت مطبعة مجهولة
           </div>
           {/*articles here*/}
           <h1>articles</h1>
@@ -164,6 +165,10 @@ export default function Profile({ params }: { params: { username: string } }) {
             <Label className="m-1 text-gcontent2">مقال</Label>
           </div>
           {/* <div className="flex flex-col m-4 justify-center items-center"></div> */}
+        </div>
+        {/*overview here*/}
+        <div className="w-80 h-fit m-8 rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
+          overview
         </div>
       </div>
     </div>
