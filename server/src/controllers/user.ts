@@ -212,13 +212,109 @@ export async function bookmarkedArticles(
   next: NextFunction,
 ) {
   try {
+    console.log(req.headers.authorization.split(" ")[1]);
+    const bookmarked = await db.query.user_bookmarks.findMany({
+      where: eq(
+        user_bookmarks.user_id,
+        req.headers.authorization.split(" ")[1],
+      ),
+      with: {
+        article: {
+          with: {
+            user: true,
+            article_tags: true,
+            comment: {
+              with: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+      //      with: {
+      //        user: true,
+      //        article_tags: true,
+      //        comment: {
+      //          with: {
+      //            user: true,
+      //          },
+      //        },
+      //      },
+      //    },
+      //  },
+    });
+    res.send(bookmarked);
+  } catch (e) {
+    next(e);
+  }
+}
+export async function getBookmarkedStatus(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
     const currentUser = await db.query.users.findFirst({
       where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
     });
-    const bookmarked = await db.query.user_bookmarks.findMany({
-      where: eq(user_bookmarks.user_id, currentUser.user_id),
+    const currentArticle = await db.query.article.findFirst({
+      where: eq(article.article_id, req.params.id),
     });
-    res.send(bookmarked);
+    const bookmarked = await db.query.user_bookmarks.findFirst({
+      where: and(
+        eq(user_bookmarks.user_id, currentUser.user_id),
+        eq(user_bookmarks.article_id, currentArticle.article_id),
+      ),
+    });
+    if (bookmarked) {
+      res.send(true);
+    } else {
+      res.send(false);
+    }
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function changeBookmark(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
+    });
+    const currentArticle = await db.query.article.findFirst({
+      where: eq(article.article_id, req.params.id),
+    });
+    const bookmarked = await db.query.user_bookmarks.findFirst({
+      where: and(
+        eq(user_bookmarks.user_id, currentUser.user_id),
+        eq(user_bookmarks.article_id, currentArticle.article_id),
+      ),
+    });
+    if (bookmarked) {
+      const removeArticle = await db
+        .delete(user_bookmarks)
+        .where(
+          and(
+            eq(user_bookmarks.user_id, currentUser.user_id),
+            eq(user_bookmarks.article_id, currentArticle.article_id),
+          ),
+        )
+        .returning();
+      res.send(removeArticle);
+    }
+    const userArticle: UserBookmarkType = {
+      user_id: currentUser.user_id,
+      article_id: currentArticle.article_id,
+    };
+    const addArticle = await db
+      .insert(user_bookmarks)
+      .values([userArticle])
+      .returning();
+    res.send(addArticle);
   } catch (e) {
     next(e);
   }

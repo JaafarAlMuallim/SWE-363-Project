@@ -253,6 +253,16 @@ export const tagsRelations = relations(article_tags, ({ one }) => ({
 export const userArticleRelations = relations(users, ({ many }) => ({
   article: many(article),
 }));
+export const bookmarkRelations = relations(user_bookmarks, ({ one }) => ({
+  user: one(users, {
+    fields: [user_bookmarks.user_id],
+    references: [users.user_id],
+  }),
+  article: one(article, {
+    fields: [user_bookmarks.article_id],
+    references: [article.article_id],
+  }),
+}));
 
 export type ArticleData = InferModel<typeof article>;
 export type CommentData = InferModel<typeof comment>;

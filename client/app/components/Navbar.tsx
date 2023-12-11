@@ -193,7 +193,7 @@ export default function Navbar() {
               <Link
                 className="flex"
                 onClick={() => setActive((prevState) => !prevState)}
-                href={`/about-us`}
+                href={`/bookmarks`}
               >
                 الصفحات المرجعية <Bookmark className="mx-2" />
               </Link>

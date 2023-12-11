@@ -6,6 +6,7 @@ import {
   devUsers,
   isFollowingUser,
   logout,
+  getBookmarkedStatus,
   bookMarkArticle,
   unBookMarkArticle,
   bookmarkedArticles,
@@ -24,6 +25,9 @@ router.route("/following/:id").get(isLoggedIn, wrapAsync(isFollowingUser));
 router.route("/bookmark/:id").post(isLoggedIn, wrapAsync(bookMarkArticle));
 router.route("/unbookmark/:id").post(isLoggedIn, wrapAsync(unBookMarkArticle));
 router.route("/bookmarked").get(isLoggedIn, wrapAsync(bookmarkedArticles));
+router
+  .route("/isbookmarked/:id")
+  .get(isLoggedIn, wrapAsync(getBookmarkedStatus));
 router.route("checkRole").get(isLoggedIn, wrapAsync(checkRole));
 router
   .route("/changerole/:id")

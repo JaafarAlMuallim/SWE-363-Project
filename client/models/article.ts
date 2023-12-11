@@ -1,5 +1,6 @@
 import Tag from "./tag";
 import Comment from "./comment";
+import User from "./user";
 
 export default interface Article {
   article_id?: string;
@@ -16,4 +17,5 @@ export default interface Article {
   views?: number;
   bookmarks?: boolean;
   article_status?: string;
+  user?: User;
 }
