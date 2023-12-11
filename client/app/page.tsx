@@ -27,17 +27,17 @@ export default function Home() {
         <div className=" text-white-500 text-3xl mx-5 mt-10">
           مهتمون بجميع المشاريع في قطاع
           <span className="text-special inline-flex flex-col h-[calc(theme(fontSize.3xl)*theme(lineHeight.tight))] md:h-[calc(theme(fontSize.4xl)*theme(lineHeight.tight))] overflow-hidden">
-            <ul className="mr-3 block animate-text-slide-5 text-right leading-tight [&_li]:block">
-              <li>المالية</li>
-              <li>التقنية</li>
-              <li>اللوجستيات</li>
-              <li>المطاعم</li>
-              <li>الاعلام</li>
-              <li aria-hidden="true">المالية</li>
+            <ul className="block animate-text-slide-5 text-right leading-tight [&_li]:block">
+              <li className="mx-3 mb-1">المالية</li>
+              <li className="mx-3 mb-1">التقنية</li>
+              <li className="mx-3 mb-1">اللوجستيات</li>
+              <li className="mx-3 mb-1">المطاعم</li>
+              <li className="mx-3 mb-1">الاعلام</li>
+              <li className="mx-3 mb-1" aria-hidden="true">المالية</li>
             </ul>
           </span>
         </div>
-        <div className="ml-40 flex  items-end gap-4">
+        <div className="flex items-center justify-between gap-4">
           <Link href="/auth">
             <Button className="bg-cbtn text-content shadow-lg my-10 w-50">
               انضم لنا
