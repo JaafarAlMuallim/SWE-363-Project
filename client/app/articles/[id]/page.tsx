@@ -8,14 +8,12 @@ import CommentSection from "./CommentSection";
 import { useSession } from "next-auth/react";
 import { useMutation } from "react-query";
 import { queryClient } from "../../components/QueryProvider";
+import { useRouter } from "next/navigation";
 
 export default function Article({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
-  const {
-    data: article,
-    isLoading,
-    isError,
-  } = useQuery({
+  const router = useRouter();
+  const { data: article, isLoading } = useQuery({
     queryKey: "article",
     queryFn: () =>
       fetch(`http://localhost:8080/article/${params.id}`, {
@@ -78,6 +76,21 @@ export default function Article({ params }: { params: { id: string } }) {
       return { previousValue };
     },
   });
+  const onDeleteArticle = () => {
+    fetch(`http://localhost:8080/article/${params.id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${session?.user?.user_id}`,
+      },
+      cache: "no-cache",
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.message) {
+          router.push("/articles");
+        }
+      });
+  };
 
   if (isLoading) {
     return (
@@ -129,6 +142,17 @@ export default function Article({ params }: { params: { id: string } }) {
           onClick={isBookmarked ? () => unbookmark() : () => bookmark()}
         >
           {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
+        </button>
+      )}
+      {(session!.user?.user_id === article!.user_id ||
+        session!.user.role === "admin") && (
+        <button
+          className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+          onClick={() => {
+            onDeleteArticle();
+          }}
+        >
+          حذف المقال
         </button>
       )}
       <CommentSection article={article!} />

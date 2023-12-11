@@ -7,6 +7,7 @@ import {
   article_tags,
   comment,
   Comment,
+  user_bookmarks,
   users,
 } from "../schema";
 type ArticleData = Omit<Article, "article_id">;
@@ -161,12 +162,16 @@ export async function deleteArticle(
     await db
       .delete(article_tags)
       .where(eq(article_tags.article_id, req.params.id));
+    await db.delete(comment).where(eq(comment.article_id, req.params.id));
+    await db
+      .delete(user_bookmarks)
+      .where(eq(user_bookmarks.article_id, req.params.id));
 
-    const deletedArticle = await db
+    await db
       .delete(article)
       .where(eq(article.article_id, req.params.id))
       .returning();
-    res.send(deletedArticle);
+    res.send({ message: "Article deleted" });
   } catch (e) {
     next(e);
   }
