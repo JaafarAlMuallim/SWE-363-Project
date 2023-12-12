@@ -3,7 +3,6 @@ import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard";
 import { useSession } from "next-auth/react";
 import { useQuery } from "react-query";
-import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,6 @@ export default function ReviewArticle() {
       return { redirect: "/auth/callbackUrl=/reviewArticle" };
     },
   });
-  const router = useRouter();
   if (
     session != null &&
     session?.user?.role !== "admin" &&

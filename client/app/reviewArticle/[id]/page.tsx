@@ -16,11 +16,7 @@ export default function Article({ params }: { params: { id: string } }) {
     },
   });
   const router = useRouter();
-  const {
-    data: article,
-    isLoading,
-    isSuccess,
-  } = useQuery({
+  const { data: article, isLoading } = useQuery({
     queryKey: "inReview",
     queryFn: () => {
       return fetch(`http://localhost:8080/article/${params.id}`, {
@@ -73,6 +69,7 @@ export default function Article({ params }: { params: { id: string } }) {
               className="bg-crd2 text-white px-4 py-1 rounded-full inline w-24 text-center"
               onClick={() => {
                 handleChange("published");
+                router.push("/articles");
               }}
             >
               قبول
@@ -81,6 +78,7 @@ export default function Article({ params }: { params: { id: string } }) {
               className="bg-crd2 text-white px-4 py-1 rounded-full inline w-24 text-center"
               onClick={() => {
                 handleChange("rejected");
+                router.push("/reviewArticle");
               }}
             >
               رفض

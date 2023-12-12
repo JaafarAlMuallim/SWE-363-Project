@@ -15,8 +15,10 @@ import TipTap from "../components/TipTap";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useMutation } from "react-query";
+import { useRouter } from "next/router";
 export default function Page() {
   const { data: session } = useSession();
+  const router = useRouter();
   const formSchema = z.object({
     title: z
       .string()
@@ -177,6 +179,7 @@ export default function Page() {
               onClick={(evt) => {
                 evt.preventDefault();
                 postArticle();
+                router.push("/articles");
               }}
             >
               إنشاء
@@ -187,6 +190,7 @@ export default function Page() {
               onClick={(evt) => {
                 evt.preventDefault();
                 draftArticle();
+                router.push("/draftedArticles");
               }}
             >
               حفظ

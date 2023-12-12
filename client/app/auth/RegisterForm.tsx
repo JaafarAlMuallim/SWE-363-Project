@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 export default function RegisterForm() {
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
@@ -28,6 +29,7 @@ export default function RegisterForm() {
       .string()
       .min(3, { message: "اسم الحساب يجب ان يكون اكثر من 3 احرف" }),
   });
+  const router = useRouter();
 
   type signUpValues = z.infer<typeof signUpSchema>;
 
@@ -58,6 +60,8 @@ export default function RegisterForm() {
     signIn("credentials", {
       email: form.getValues("email"),
       password: form.getValues("password"),
+    }).then((res) => {
+      router.push("/");
     });
   };
 

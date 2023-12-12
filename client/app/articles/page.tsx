@@ -5,8 +5,11 @@ import Article from "@/models/article";
 import Link from "next/link";
 import { ChangeEvent, useState, useEffect } from "react";
 import { useQuery } from "react-query";
+import { useSession } from "next-auth/react";
 import ArticleCard from "../components/ArticleCard2";
+import { Button } from "@/components/ui/button";
 export default function Articles() {
+  const { data: session } = useSession();
   const { data: articles, isLoading } = useQuery("articles", () => {
     return fetch("http://localhost:8080/article/published", {
       method: "GET",
@@ -48,15 +51,23 @@ export default function Articles() {
         <div className="my-2 text-content text-5xl text-center font-semibold">
           <span>المقالات</span>
         </div>
-        <hr />
-      </div>
-      <div className="my-8 text-2xl font-semibold text-right mx-10 text-content">
-        <Input
-          onChange={(e) => handleSearch(e)}
-          value={search}
-          className="w-96 text-black"
-          placeholder="ابحث عن مقالة معينة أو كلمات مفتاحية أو شركات محددة..."
-        ></Input>
+        <div className="flex justify-center my-8 text-2xl font-semibold text-right text-content mx-4">
+          <div className="flex gap-4">
+            {session && session.user && (
+              <Button type="button" className="bg-green-700 text-l">
+                <Link href={"/writeArticle"} className="">
+                  مقال جديد
+                </Link>
+              </Button>
+            )}
+            <Input
+              onChange={(e) => handleSearch(e)}
+              value={search}
+              className="w-56 text-black md:w-96"
+              placeholder="ابحث عن كلمات مفتاحية"
+            />
+          </div>
+        </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
         <div className="flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">

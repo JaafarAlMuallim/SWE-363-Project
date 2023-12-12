@@ -84,17 +84,19 @@ export async function createOrg(
   next: NextFunction,
 ) {
   try {
+    console.log(req.body);
     const orgData: OrgData = {
       name: req.body.name,
       founding_date: req.body.founding_date,
       main_sector: req.body.main_sector,
       description: req.body.description,
       website: req.body.website,
-      org_image: req.body.org_image,
+      org_image: req.body.org_image || "",
       hq_location: req.body.hq_location,
       org_status: req.body.org_status,
     };
     const newOrg = await db.insert(orgs).values([orgData]).returning();
+    console.log(newOrg);
     for (const founder of req.body.founders) {
       const newFounder = await db
         .insert(org_founders)

@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import { z } from "zod";
 
 export default function LoginForm() {
@@ -22,6 +23,7 @@ export default function LoginForm() {
       .min(8, { message: "كلمة المرور يجب ان تكون اكثر من 8 احرف" })
       .trim(),
   });
+  const router = useRouter();
 
   type loginFormValues = z.infer<typeof loginSchema>;
 
@@ -41,7 +43,7 @@ export default function LoginForm() {
       password: form.getValues("password"),
       callbackUrl: "/",
     }).then((res) => {
-      console.log(res);
+      router.push("/");
     });
   };
   return (
