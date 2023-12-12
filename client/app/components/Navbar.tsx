@@ -86,9 +86,9 @@ export default function Navbar() {
                 (session.user.role === "admin" ||
                   session.user.role === "reviewer") && (
                   <li>
-                    <Link href="/reviewArticle">
+                    <Link className="flex" href="/reviewArticle">
                       مراجعة المقالات
-                      <Bell />
+                      <Bell className="mx-2" />
                     </Link>
                   </li>
                 )}
@@ -200,6 +200,16 @@ export default function Navbar() {
                 المؤسسات <Building className="mx-2" />
               </Link>
             </li>
+            {session &&
+              (session.user.role === "admin" ||
+                session.user.role === "reviewer") && (
+                <li>
+                  <Link className="flex" href="/reviewArticle">
+                    مراجعة المقالات
+                    <Bell className="mx-2" />
+                  </Link>
+                </li>
+              )}
             <li>
               <Link
                 className="flex"

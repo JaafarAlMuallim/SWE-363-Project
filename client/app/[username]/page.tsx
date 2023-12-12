@@ -9,6 +9,7 @@ import { queryClient } from "../components/QueryProvider";
 import {} from "react-query";
 import { useState } from "react";
 import EditProfileModa from "../components/EditProfileModal";
+import Link from "next/link";
 
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: profile } = useSession();
@@ -102,6 +103,18 @@ export default function Profile({ params }: { params: { username: string } }) {
                   >
                     تعديل الملف الشخصي
                   </button>
+                  <Link
+                    className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
+                    href="/bookmarks"
+                  >
+                    المقالات المفضلة
+                  </Link>
+                  <Link
+                    className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
+                    href="/draftedArticles"
+                  >
+                    المقالات مسودة
+                  </Link>
                 </>
               ) : (
                 <></>
@@ -168,6 +181,12 @@ export default function Profile({ params }: { params: { username: string } }) {
                 <button className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2">
                   تعديل الملف الشخصي
                 </button>
+                <Link
+                  className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
+                  href="/bookmarks"
+                >
+                  المقالات المفضلة
+                </Link>
               </>
             )}
           </div>

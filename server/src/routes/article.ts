@@ -1,5 +1,5 @@
 import express from "express";
-import {
+import getDraftedById, {
   addComment,
   changeArticleStatus,
   deleteArticle,
@@ -25,7 +25,8 @@ const router = express.Router();
 
 router.route("/").get(getArticles).post(isLoggedIn, wrapAsync(saveArticle));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
-router.route("/drafted").get(wrapAsync(getDrafted));
+router.route("/drafted").get(isLoggedIn, wrapAsync(getDrafted));
+router.route("/drafted/:id").get(isLoggedIn, wrapAsync(getDraftedById));
 router.route("/published").get(wrapAsync(getPublished));
 router.route("/inReview").get(isLoggedIn, canReview, wrapAsync(getInReview));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));

@@ -33,7 +33,9 @@ export default function Home() {
               <li className="mx-3 mb-1">اللوجستيات</li>
               <li className="mx-3 mb-1">المطاعم</li>
               <li className="mx-3 mb-1">الاعلام</li>
-              <li className="mx-3 mb-1" aria-hidden="true">المالية</li>
+              <li className="mx-3 mb-1" aria-hidden="true">
+                المالية
+              </li>
             </ul>
           </span>
         </div>

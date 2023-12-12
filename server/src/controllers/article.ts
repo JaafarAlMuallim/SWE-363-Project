@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
 import {
@@ -200,10 +200,32 @@ export async function getDrafted(
 ) {
   try {
     const draftedArticles = await db.query.article.findMany({
-      where: eq(article.article_status, "draft"),
-      with: { article_tags: true },
+      where: and(
+        eq(article.article_status, "draft"),
+        eq(article.user_id, req.headers.authorization.split(" ")[1]),
+      ),
+      with: { article_tags: true, user: true },
     });
     res.send(draftedArticles);
+  } catch (e) {
+    next(e);
+  }
+}
+export default async function getDraftedById(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const draftedArticle = await db.query.article.findFirst({
+      with: { article_tags: true },
+      where: and(
+        eq(article.article_status, "draft"),
+        eq(article.article_id, req.params.id),
+        eq(article.user_id, req.headers.authorization.split(" ")[1]),
+      ),
+    });
+    res.send(draftedArticle);
   } catch (e) {
     next(e);
   }
