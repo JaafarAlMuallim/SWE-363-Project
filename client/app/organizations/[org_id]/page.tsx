@@ -2,20 +2,24 @@
 import Organization from "@/models/org";
 import Org from "@/models/org";
 import Image from "next/image";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import ArticleCard from "@/app/components/ArticleCard2";
 import Article from "@/models/article";
 import { OrgFounder } from "@/models/org_founders";
+import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { queryClient } from "../../components/QueryProvider";
 export default function Organization({
   params,
 }: {
   params: { org_id: string };
 }) {
+  const { data: session } = useSession();
   const { data: org, isLoading: orgLoading } = useQuery({
-    queryKey: "article",
+    queryKey: "org",
     queryFn: () =>
       fetch(`http://localhost:8080/org/${params.org_id}`, {
         method: "GET",
@@ -34,6 +38,26 @@ export default function Organization({
       fetch(`http://localhost:8080/org/${params.org_id}/founders`, {
         method: "GET",
       }).then((res) => res.json() as Promise<OrgFounder[]>),
+  });
+  const { mutate: changeOrgStatus } = useMutation({
+    mutationKey: "org",
+    mutationFn: (value: "failure" | "success") =>
+      fetch(`http://localhost:8080/org/${params.org_id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ org_status: value }),
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${session?.user?.user_id}`,
+        },
+      }).then((res) => res.json() as Promise<Org>),
+    onMutate: () => {
+      queryClient.setQueryData("org", (oldData: any) => {
+        return {
+          ...oldData,
+          org_status: org?.org_status === "success" ? "failure" : "success",
+        };
+      });
+    },
   });
 
   if (orgLoading) {
@@ -68,53 +92,72 @@ export default function Organization({
                 width={400}
               />
             )}
-            {orgLoading ? (
-              <div className="flex flex-col">
-                <Skeleton className="font-bold text-2xl m-2 bg-gray-400" />
-                <Skeleton className="font-bold text-3xl m-2 bg-gray-400" />
-                <Skeleton className="text-xl m-2 bg-gray-400" />
-              </div>
-            ) : (
-              <>
-                <Label className="font-bold text-3xl m-2" dir="ltr">
-                  {org?.name}
-                </Label>
-                <Label className="text-xl m-2">{org?.founding_date}</Label>
-                <Label className="text-xl m-2">{`${org?.main_sector
-                  ?.charAt(0)
-                  .toUpperCase()}${org?.main_sector?.substring(1)}`}</Label>
-              </>
-            )}
+            <>
+              <Label className="font-bold text-3xl m-2" dir="ltr">
+                {org?.name}
+              </Label>
+              <Label className="text-xl m-2">{org?.founding_date}</Label>
+              <Label className="text-xl m-2">{`${org?.main_sector
+                ?.charAt(0)
+                .toUpperCase()}${org?.main_sector?.substring(1)}`}</Label>
+            </>
             <div className="flex m-4 justify-center items-center">
               <Label className="m-1 text-gcontent2">عدد المؤسسين</Label>
               <Label className="font-bold m-1">
                 {org?.org_founders?.length}
               </Label>
             </div>
+            {org?.org_status === "success" ? (
+              <Label className="font-bold m-1 text-green-600 text-2xl">
+                ناجحة
+              </Label>
+            ) : (
+              <Label className="font-bold m-1 text-red-600 text-2xl">
+                غير ناجحة
+              </Label>
+            )}
+            <div className="my-4">
+              {(session!.user?.role === "admin" ||
+                session!.user?.role === "reviewer") &&
+                (org?.org_status === "success" ? (
+                  <Button
+                    className="bg-red-700 text-white rounded-lg px-4 py-2"
+                    onClick={() => {
+                      changeOrgStatus("failure");
+                    }}
+                  >
+                    تغيير حالة الشركة
+                  </Button>
+                ) : (
+                  <Button
+                    className="bg-green-700 text-white rounded-lg px-4 py-2"
+                    onClick={() => {
+                      changeOrgStatus("success");
+                    }}
+                  >
+                    تغيير حالة الشركة
+                  </Button>
+                ))}
+            </div>
           </div>
         </div>
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
           <div className="w-full h-fit rounded-lg bg-white bg-opacity-5 p-5">
-            {orgLoading ? (
-              <Skeleton className="bg-gray-400 h-64 w-40" />
-            ) : (
-              <div className="flex flex-col whitespace-normal text-right">
-                {org?.description}
-
-                <ul className="flex flex-col justify-start">
-                  المؤسسين:
-                  {orgFoundersLoading ? (
-                    <Skeleton className="bg-gray-400 h-30 w-30" />
-                  ) : (
-                    orgFounders?.map((founder, index) => (
-                      <li key={founder.founder_id} className="block">
-                        {founder.founder}
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </div>
-            )}
+            <div className="flex flex-col whitespace-normal text-right">
+              {org?.description}
+              <ul className="flex flex-col justify-start">
+                المؤسسين:
+                {orgFoundersLoading ? (
+                  <Skeleton className="bg-gray-400 h-30 w-30" />
+                ) : (
+                  orgFounders?.map((founder, index) => (
+                    <li key={founder.founder_id} className="block">
+                      {founder.founder}
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
           </div>
           <h1 className="text-2xl">Articles Related to {org?.name}</h1>
           <div className="container my-12 mx-auto px-4 md:px-12">

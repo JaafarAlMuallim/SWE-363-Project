@@ -11,6 +11,7 @@ import {
   getOrgs,
   getSuccessfulOrgs,
   updateOrg,
+  updateOrgStatus,
 } from "../controllers/org";
 import { canReview, isAdmin, isLoggedIn } from "../middleware";
 import wrapAsync from "../utils";
@@ -23,7 +24,11 @@ router.route("/successful").get(wrapAsync(getSuccessfulOrgs));
 router.route("/failed").get(wrapAsync(getFailedOrgs));
 router.route("/sectors").get(wrapAsync(getAllSectors));
 router.route("/sector/:sector").get(wrapAsync(getOrgBySector));
-router.route("/:id").get(getOrg).put(isLoggedIn, isAdmin, wrapAsync(updateOrg));
+router
+  .route("/:id")
+  .get(getOrg)
+  .put(isLoggedIn, isAdmin, wrapAsync(updateOrg))
+  .patch(isLoggedIn, canReview, wrapAsync(updateOrgStatus));
 router.route("/:id/founders").get(wrapAsync(getOrgFounders));
 router.route("/:id/interviews").get(wrapAsync(getOrgInterviews));
 router.route("/:id/articles").get(wrapAsync(getOrgArticles));

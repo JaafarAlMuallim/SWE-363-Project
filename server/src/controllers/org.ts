@@ -135,6 +135,24 @@ export async function updateOrg(
   }
 }
 
+export async function updateOrgStatus(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const updatedOrg = await db
+      .update(orgs)
+      .set({ org_status: req.body.org_status })
+      .where(eq(orgs.org_id, req.params.id))
+      .returning();
+    console.log(updatedOrg);
+    res.send(updatedOrg);
+  } catch (e) {
+    next(e);
+  }
+}
+
 export async function getSuccessfulOrgs(
   req: Request,
   res: Response,
