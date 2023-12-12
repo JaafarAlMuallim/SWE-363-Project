@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import { useMutation, useQuery } from "react-query";
 import DOMPurify from "dompurify";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/router";
 
 export default function ArticlePage({
   params,
@@ -25,6 +26,7 @@ export default function ArticlePage({
   params: { article_id: string };
 }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const formSchema = z.object({
     title: z
       .string()
@@ -229,6 +231,7 @@ export default function ArticlePage({
                 onClick={(evt) => {
                   evt.preventDefault();
                   postArticle();
+                  router.push("/articles");
                 }}
               >
                 إنشاء
@@ -239,6 +242,7 @@ export default function ArticlePage({
                 onClick={(evt) => {
                   evt.preventDefault();
                   draftArticle();
+                  router.push("/draftedArticles");
                 }}
               >
                 حفظ
