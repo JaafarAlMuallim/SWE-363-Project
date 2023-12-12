@@ -196,7 +196,7 @@ export default function Page() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="success">شركة ناجحة</SelectItem>
-                        <SelectItem value="failure">شركة خاسرة</SelectItem>
+                        <SelectItem value="failure">شركة غير ناجحة</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

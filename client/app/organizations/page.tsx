@@ -142,7 +142,7 @@ export default function Organizations() {
             <SelectContent>
               <SelectItem value="all">كل الشركات</SelectItem>
               <SelectItem value="success">ناجحة</SelectItem>
-              <SelectItem value="failure">فاشلة</SelectItem>
+              <SelectItem value="failure">غير ناجحة</SelectItem>
             </SelectContent>
           </Select>
         </div>
