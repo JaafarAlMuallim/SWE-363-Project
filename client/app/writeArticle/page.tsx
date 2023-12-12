@@ -11,11 +11,10 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import TipTap from "./TipTap";
+import TipTap from "../components/TipTap";
 import { Button } from "@/components/ui/button";
-import { FormEvent } from "react";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 export default function Page() {
   const { data: session } = useSession();
   const formSchema = z.object({
@@ -58,7 +57,10 @@ export default function Page() {
           subtitle: form.getValues("subtitle"),
           content: form.getValues("content"),
           tags: form.getValues("tags").split("،"),
-          article_status: "in_review",
+          article_status:
+            session!.user.role === "admin" || session!.user.role === "reviewer"
+              ? "published"
+              : "in_review",
         }),
       })
         .then((res) => res.json())
