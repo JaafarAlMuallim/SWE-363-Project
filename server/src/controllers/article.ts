@@ -365,3 +365,25 @@ export async function getArticlesByOtherUser(
     next(e);
   }
 }
+export async function updateUserData(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const userData = {
+      name: req.body.name,
+      username: req.body.username,
+      email: req.body.email,
+      overview: req.body.bio,
+    };
+    const updatedUser = await db
+      .update(users)
+      .set(userData)
+      .where(eq(users.user_id, req.headers.authorization.split(" ")[1]))
+      .returning();
+    res.send(updatedUser);
+  } catch (e) {
+    next(e);
+  }
+}

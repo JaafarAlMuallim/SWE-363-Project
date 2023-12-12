@@ -27,6 +27,7 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
       username: req.body.username,
       role: "user",
       verified: false,
+      overview: "",
     };
     const insertedData = await db.insert(users).values([user]).returning();
     const { password, ...rest } = insertedData[0];

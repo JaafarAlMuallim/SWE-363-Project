@@ -46,7 +46,7 @@ export default function Profile({ params }: { params: { username: string } }) {
     mutationFn: (data: User) => {
       handleCancel();
       return fetch(`http://localhost:8080/profile`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           authorization: `Bearer ${profile?.user.user_id}`,

@@ -29,8 +29,6 @@ export async function updateUserProfile(
   next: NextFunction,
 ) {
   try {
-    console.log(req.body);
-
     if (req.headers.authorization.split(" ")[1] == req.body.user_id) {
       const user = await db
         .update(users)
@@ -38,6 +36,7 @@ export async function updateUserProfile(
           name: req.body.name,
           email: req.body.email,
           username: req.body.username,
+          overview: req.body.overview,
           //x_account: req.body.x_account,
           //linkdin_account: req.body.linkdin_account,
           //website: req.body.website,

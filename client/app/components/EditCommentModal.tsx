@@ -54,7 +54,7 @@ export default function EditCommentModal({
   return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <Form {...form}>
-        <form className="bg-white p-4 rounded-lg shadow-xl">
+        <form className="bg-gradient-to-br from-crd to-crd2 p-4 rounded-lg shadow-xl gap-4 w-96">
           <FormField
             name="content"
             control={form.control}
@@ -78,7 +78,7 @@ export default function EditCommentModal({
           />
           <Button
             type="button"
-            className="w-full bg-cbtn shadow-lg mt-2 text-content"
+            className="w-full bg-gcontent shadow-lg mt-2 text-content"
             onClick={(evt) => {
               evt.preventDefault();
               const newComment: Comment = {
@@ -93,7 +93,7 @@ export default function EditCommentModal({
           </Button>
           <Button
             type="button"
-            className="w-full bg-cbtn shadow-lg mt-2 text-content"
+            className="w-full bg-gcontent shadow-lg mt-2 text-content"
             onClick={onClose}
           >
             إلغاء
