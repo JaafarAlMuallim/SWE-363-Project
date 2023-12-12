@@ -144,6 +144,13 @@ export const article = pgTable("article", {
   likes: bigint("likes", { mode: "number" }).default(0),
 });
 
+export const articleOrgRelations = relations(article, ({ one }) => ({
+  org: one(orgs, {
+    fields: [article.org_id],
+    references: [orgs.org_id],
+  }),
+}));
+
 export const user_bookmarks = pgTable("user_bookmarks", {
   bookmark_id: uuid("bookmark_id")
     .primaryKey()

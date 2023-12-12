@@ -19,7 +19,7 @@ export async function getArticles(
 ) {
   try {
     const articles = await db.query.article.findMany({
-      with: { article_tags: true },
+      with: { article_tags: true, org: true, user: true },
     });
     res.send(articles);
   } catch (e) {
@@ -240,6 +240,7 @@ export async function getPublished(
     const publishedArticles = await db.query.article.findMany({
       where: eq(article.article_status, "published"),
       with: {
+        org: true,
         article_tags: true,
         comment: true,
         user: true,
