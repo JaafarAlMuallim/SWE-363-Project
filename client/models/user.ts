@@ -9,4 +9,5 @@ export default interface User {
   x_account?: string;
   linkdin_account?: string;
   website?: string;
+  overview?: string;
 }

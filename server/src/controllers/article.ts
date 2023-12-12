@@ -334,10 +334,30 @@ export async function getArticlesByUser(
   next: NextFunction,
 ) {
   try {
-    console.log(req.headers.authorization.split(" ")[1]);
-    console.log("HERE");
     const articles = await db.query.article.findMany({
-      where: eq(article.user_id, req.headers.authorization.split(" ")[1]),
+      where: and(
+        eq(article.user_id, req.headers.authorization.split(" ")[1]),
+        eq(article.article_status, "published"),
+      ),
+      with: { article_tags: true, org: true, user: true },
+    });
+    res.send(articles);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getArticlesByOtherUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const articles = await db.query.article.findMany({
+      where: and(
+        eq(article.user_id, req.params.id),
+        eq(article.article_status, "published"),
+      ),
       with: { article_tags: true, org: true, user: true },
     });
     res.send(articles);

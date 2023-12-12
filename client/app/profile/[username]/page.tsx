@@ -5,6 +5,9 @@ import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { queryClient } from "@/app/components/QueryProvider";
+import Article from "@/models/article";
+import Link from "next/link";
+import ArticleCard from "@/app/components/ArticleCard2";
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: session } = useSession();
   const [profile, isFollowing] = useQueries([
@@ -111,6 +114,26 @@ export default function Profile({ params }: { params: { username: string } }) {
     },
   });
 
+  const {
+    data: articles,
+    isLoading: articleLoading,
+    isSuccess: articleSuccess,
+  } = useQuery({
+    queryKey: "articlesByUser",
+    enabled: profile.isSuccess,
+    queryFn: () => {
+      return fetch(
+        `http://localhost:8080/article/user/${profile.data.user_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      ).then((res) => res.json() as Promise<Article[]>);
+    },
+  });
+
   return (
     <>
       <div className="h-screen w-screen text-content hidden md:flex">
@@ -193,11 +216,48 @@ export default function Profile({ params }: { params: { username: string } }) {
         </div>
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
           <div className="w-full h-fit rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
-            overview هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى)
-            ويُستخدم في صناعات المطابع ودور النشر. كان لوريم إيبسوم ولايزال
-            المعيار للنص الشكلي منذ القرن الخامس عشر عندما قامت مطبعة مجهولة
+            {profile?.isLoading ? (
+              <Skeleton className="w-80 h-8" />
+            ) : profile?.isSuccess ? (
+              profile?.data.overview
+            ) : (
+              <>لا توجد معلومات هنا</>
+            )}
           </div>
-          <h1>articles</h1>
+          <h1>
+            Articles By{" "}
+            {profile?.isLoading ? (
+              <Skeleton className="w-36 h-6" />
+            ) : profile?.isSuccess ? (
+              profile?.data.name
+            ) : (
+              <></>
+            )}
+          </h1>
+          <div className="container my-12 mx-auto px-4 md:px-12">
+            <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+              {articleLoading ? (
+                <>
+                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                </>
+              ) : articleSuccess ? (
+                articles!.map((article) => {
+                  return (
+                    <Link
+                      key={article.article_id}
+                      href={`/articles/${article.article_id}`}
+                    >
+                      <ArticleCard article={article} />
+                    </Link>
+                  );
+                })
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -277,9 +337,14 @@ export default function Profile({ params }: { params: { username: string } }) {
             <Label className="m-1 text-gcontent2">مقال</Label>
           </div>
         </div>
-        {/*overview here*/}
         <div className="w-80 h-fit m-8 rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
-          overview
+          {profile?.isLoading ? (
+            <Skeleton className="w-80 h-8" />
+          ) : profile?.isSuccess ? (
+            profile?.data.overview
+          ) : (
+            <>لا توجد معلومات هنا</>
+          )}
         </div>
       </div>
     </>

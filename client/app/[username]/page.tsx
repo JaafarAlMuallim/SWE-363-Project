@@ -160,13 +160,17 @@ export default function Profile({ params }: { params: { username: string } }) {
         </div>
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
           <div className="w-full h-fit rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
-            هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى) ويُستخدم
-            في صناعات المطابع ودور النشر. كان لوريم إيبسوم ولايزال المعيار للنص
-            الشكلي منذ القرن الخامس عشر عندما قامت مطبعة مجهولة
+            {isLoading ? (
+              <Skeleton className="w-80 h-8" />
+            ) : isSuccess ? (
+              userProfile?.overview
+            ) : (
+              <>لا توجد معلومات هنا</>
+            )}
           </div>
           <h1>Articles By {profile?.user.name}</h1>
           <div className="container my-12 mx-auto px-4 md:px-12">
-            <div className="flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+            <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
                 <>
                   <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
@@ -244,11 +248,14 @@ export default function Profile({ params }: { params: { username: string } }) {
             <Label className="m-1 text-gcontent2">مقال</Label>
           </div>
         </div>
-        {/*overview here*/}
         <div className="w-80 h-fit m-8 rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
-          هو ببساطة نص شكلي (بمعنى أن الغاية هي الشكل وليس المحتوى) ويُستخدم في
-          صناعات المطابع ودور النشر. كان لوريم إيبسوم ولايزال المعيار للنص
-          الشكلي منذ القرن الخامس عشر عندما قامت مطبعة مجهولة
+          {isLoading ? (
+            <Skeleton className="w-80 h-8" />
+          ) : isSuccess ? (
+            userProfile?.overview
+          ) : (
+            <>لا توجد معلومات هنا</>
+          )}
         </div>
 
         <h1>Articles By {profile?.user.name}</h1>
