@@ -1,4 +1,12 @@
 "use client";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Organization from "@/models/org";
 import OrganiztionCard from "..//components/OrganizationCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,9 +29,57 @@ export default function Organizations() {
   const [filteredOrgs, setFilteredOrgs] = useState<Org[]>(
     isLoading ? [] : orgs!,
   );
+  const [orgsList, setOrgsList] = useState<"all" | "failure" | "success">(
+    "all",
+  );
+  const handleListChange = (value: string) => {
+    let newListState: "all" | "failure" | "success";
+    if (orgsList === "all") {
+      newListState = "success";
+    } else if (orgsList === "success") {
+      newListState = "failure";
+    } else {
+      newListState = "all";
+    }
+    setOrgsList(newListState);
+    const filtered = isLoading
+      ? []
+      : orgs?.filter((org) => {
+          const nameMatch = org.name.includes(search);
+          const orgFounder = org.org_founders?.some(
+            (founder) => founder.founder?.includes(search),
+          );
+          return nameMatch || orgFounder;
+        });
+
+    setFilteredOrgs((_) => {
+      return newListState === "all"
+        ? filtered!
+        : filtered!.filter((org) => org.org_status === newListState);
+    });
+  };
+  //  const handleListChange = (value: string) => {
+  //    setOrgsList(value as "all" | "failure" | "success");
+  //    const filtered = isLoading
+  //      ? []
+  //      : orgs?.filter((org) => {
+  //          const nameMatch = org.name.includes(search);
+  //          const orgFounder = org.org_founders?.some(
+  //            (founder) => founder.founder?.includes(search),
+  //          );
+  //          return nameMatch || orgFounder;
+  //        });
+  //    setFilteredOrgs((_) => {
+  //      return value === "all"
+  //        ? filtered!
+  //        : filtered!.filter((org) => org.org_status === orgsList);
+  //    });
+  //  };
+
   useEffect(() => {
     setFilteredOrgs(isLoading ? [] : orgs!);
   }, [orgs, isLoading]);
+
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const currentSearchValue = e.target.value;
     setSearch(currentSearchValue);
@@ -39,7 +95,11 @@ export default function Organizations() {
             );
             return nameMatch || orgFounder;
           });
-      setFilteredOrgs(filtered!);
+      setFilteredOrgs((_) => {
+        return orgsList === "all"
+          ? filtered!
+          : filtered!.filter((org) => org.org_status === orgsList);
+      });
     }
   };
 
@@ -51,22 +111,40 @@ export default function Organizations() {
         <div className="my-2 text-content text-5xl text-center font-semibold">
           <span>المؤسسات</span>
         </div>
-        <div className="flex justify-center my-8 text-2xl font-semibold text-right text-content mx-4">
-          <div className="flex gap-4">
-            {session && session.user && (
-              <Button type="button" className="bg-green-700 text-l">
-                <Link href={"/writeOrg"} className="">
-                  مؤسسة جديدة
-                </Link>
-              </Button>
-            )}
-            <Input
-              onChange={(e) => handleSearch(e)}
-              value={search}
-              className="w-56 text-black md:w-96"
-              placeholder="ابحث عن كلمات مفتاحية"
-            />
-          </div>
+        <div className="grid grid-cols-2 gap-4 center my-8 text-2xl font-semibold text-right text-content mx-10">
+          {session && session.user && (
+            <Button type="button" className="bg-green-700 text-l w-36">
+              <Link href={"/writeOrg"}>مؤسسة جديدة</Link>
+            </Button>
+          )}
+          <Input
+            onChange={(e) => handleSearch(e)}
+            value={search}
+            className="w-36 text-black md:w-96"
+            placeholder="كلمات مفتاحية"
+          />
+          <Select
+            onValueChange={(value: "all" | "failure" | "success") =>
+              handleListChange(value)
+            }
+            dir="rtl"
+          >
+            <SelectTrigger
+              className="bg-inputbg w-36 text-white md:w-96"
+              dir="rtl"
+            >
+              <SelectValue
+                placeholder="حالة المؤسسة"
+                dir="rtl"
+                defaultValue={"all"}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الشركات</SelectItem>
+              <SelectItem value="success">ناجحة</SelectItem>
+              <SelectItem value="failure">فاشلة</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
