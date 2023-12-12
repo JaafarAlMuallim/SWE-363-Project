@@ -327,3 +327,21 @@ export async function addComment(
     next(e);
   }
 }
+
+export async function getArticlesByUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    console.log(req.headers.authorization.split(" ")[1]);
+    console.log("HERE");
+    const articles = await db.query.article.findMany({
+      where: eq(article.user_id, req.headers.authorization.split(" ")[1]),
+      with: { article_tags: true, org: true, user: true },
+    });
+    res.send(articles);
+  } catch (e) {
+    next(e);
+  }
+}
