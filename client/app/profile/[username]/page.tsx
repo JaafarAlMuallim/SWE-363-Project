@@ -48,11 +48,7 @@ export default function Profile({ params }: { params: { username: string } }) {
     },
   ]);
   // useMutation
-  const {
-    mutate: changeFollowStatus,
-    isLoading: followingLoading,
-    isSuccess: followingSuccess,
-  } = useMutation({
+  const { mutate: changeFollowStatus } = useMutation({
     mutationKey: "following",
     mutationFn: () => {
       return fetch(
@@ -89,7 +85,9 @@ export default function Profile({ params }: { params: { username: string } }) {
         {
           method: "PATCH",
           credentials: "include",
-          body: JSON.stringify({ role: "reviewer" }),
+          body: JSON.stringify({
+            role: profile?.data?.role === "reviewer" ? "user" : "reviewer",
+          }),
           headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${session!.user.user_id}`,
@@ -104,6 +102,12 @@ export default function Profile({ params }: { params: { username: string } }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries("profile");
+    },
+    onMutate: () => {
+      queryClient.setQueryData("profile", {
+        ...profile.data,
+        role: profile.data.role === "reviewer" ? "user" : "reviewer",
+      });
     },
   });
 
@@ -145,7 +149,7 @@ export default function Profile({ params }: { params: { username: string } }) {
                 <Skeleton className="bg-cbtn text-content text-lg rounded-lg p-2" />
               ) : (
                 <button
-                  className="bg-cbtn text-content text-lg rounded-lg p-2"
+                  className="bg-cbtn text-content rounded-lg p-2 m-2"
                   onClick={() => changeFollowStatus()}
                 >
                   {isFollowing.isSuccess && isFollowing.data.isFollowing
@@ -153,12 +157,23 @@ export default function Profile({ params }: { params: { username: string } }) {
                     : "متابعة"}
                 </button>
               )}
-              <button
-                onClick={() => changeRoleStatus()}
-                className="bg-cbtn text-content text-lg rounded-lg p-2"
-              >
-                ترقية لمراجع محتوى
-              </button>
+              {profile.isLoading ? (
+                <Skeleton className="bg-cbtn text-content text-lg rounded-lg p-2" />
+              ) : profile.data.role === "reviewer" ? (
+                <button
+                  onClick={() => changeRoleStatus()}
+                  className="bg-red-700 text-content rounded-lg p-2 m-2"
+                >
+                  مستخدم عادي
+                </button>
+              ) : (
+                <button
+                  onClick={() => changeRoleStatus()}
+                  className="bg-green-700 text-content rounded-lg p-2 m-2"
+                >
+                  ترقية لمراجع محتوى
+                </button>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-gcontent2">
@@ -193,7 +208,7 @@ export default function Profile({ params }: { params: { username: string } }) {
           ) : (
             <Image
               className="rounded-full m-2"
-              src={profile?.data.user_image ?? "/profile_default.png"}
+              src={"/profile_default.png"}
               alt="profile"
               height={128}
               width={128}
@@ -229,12 +244,23 @@ export default function Profile({ params }: { params: { username: string } }) {
                   : "متابعة"}
               </button>
             )}
-            <button
-              onClick={() => changeRoleStatus()}
-              className="bg-cbtn text-content rounded-lg p-2 m-2"
-            >
-              ترقية لمراجع محتوى
-            </button>
+            {profile.isLoading ? (
+              <Skeleton className="bg-cbtn text-content text-lg rounded-lg p-2" />
+            ) : profile.data.role === "reviewer" ? (
+              <button
+                onClick={() => changeRoleStatus()}
+                className="bg-red-700 text-content rounded-lg p-2 m-2"
+              >
+                مستخدم عادي
+              </button>
+            ) : (
+              <button
+                onClick={() => changeRoleStatus()}
+                className="bg-green-700 text-content rounded-lg p-2 m-2"
+              >
+                ترقية لمراجع محتوى
+              </button>
+            )}
           </div>
         </div>
         <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-gcontent2">
