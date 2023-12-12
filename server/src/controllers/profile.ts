@@ -29,22 +29,25 @@ export async function updateUserProfile(
   next: NextFunction,
 ) {
   try {
-    const user = await db
-      .update(users)
-      .set({
-        name: req.body.name,
-        email: req.body.email,
-        username: req.body.username,
-        role: req.body.role,
-        verified: req.body.verified,
-        x_account: req.body.x_account,
-        linkdin_account: req.body.linkdin_account,
-        website: req.body.website,
-        user_image: req.body.user_image,
-      })
-      .where(eq(users.user_id, req.params.id))
-      .returning();
-    res.send(user);
+    console.log(req.body);
+
+    if (req.headers.authorization.split(" ")[1] == req.body.user_id) {
+      const user = await db
+        .update(users)
+        .set({
+          name: req.body.name,
+          email: req.body.email,
+          username: req.body.username,
+          //x_account: req.body.x_account,
+          //linkdin_account: req.body.linkdin_account,
+          //website: req.body.website,
+          //user_image: req.body.user_image,
+        })
+        .where(eq(users.user_id, req.headers.authorization.split(" ")[1]))
+        .returning();
+      res.send(user);
+    }
+    return;
   } catch (e) {
     next(e);
   }
