@@ -85,8 +85,8 @@ export default function Profile({ params }: { params: { username: string } }) {
   });
 
   return (
-    <>
-      <div className="h-screen w-screen text-content hidden md:flex">
+    <div className="min-h-screen w-screen flex flex-col justify-center items-center w-full">
+      <div className=" text-content hidden md:flex">
         <div className="w-1/4 m-10 flex flex-col items-center gap-8">
           <div className="flex flex-col items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
             <Image
@@ -196,7 +196,7 @@ export default function Profile({ params }: { params: { username: string } }) {
         </div>
       </div>
 
-      <div className="h-screen w-screen text-content flex flex-col items-center md:hidden">
+      <div className=" text-content flex flex-col items-center md:hidden">
         <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
           <Image
             className="rounded-full my-2"
@@ -284,6 +284,6 @@ export default function Profile({ params }: { params: { username: string } }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
