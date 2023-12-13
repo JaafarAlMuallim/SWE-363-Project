@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import EditCommentModal from "./EditCommentModal";
 import { toast, useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
+import { Avatar } from "@material-tailwind/react";
 
 export default function CommentCard({
   comment,
@@ -80,18 +82,44 @@ export default function CommentCard({
     },
   );
   return (
-    <div className="w-80 text-white bg-transparent rounded-lg">
+    <div className="w-full text-content bg-transparent rounded-lg">
       <div className="flex flex-col rounded-lg">
         <div className="w-full flex items-center justify-between p-4">
-          <Label className="mb-1 text-base font-bold leading-tight text-white shadow-xl">
-            {comment.user.username}
-          </Label>
-          <div className="flex flex-col justify-center items-center">
-            <GoHeartFill />
-            {comment.comment_likes}
-          </div>
+          <div className="flex items-center">
+            <object>
+                <Link href={`/profile/${comment.user.username}`}>
+                  <Avatar
+                    src="/profile_default.png"
+                    alt="avatar"
+                    size="md"
+                    className="shadow-lg"
+                    withBorder={true}
+                    variant="circular"
+                  />
+                </Link>
+              </object>
+              <div className="mr-2">
+                <span>
+                  <object>
+                    <Link
+                      href={`/profile/${comment.user.username}`}
+                      className="hover:underline"
+                    >
+                      {comment.user.username}
+                    </Link>
+                  </object>
+                </span>
+                <span className="block text-gcontent2 text-sm">
+                  {comment.date}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center">
+              <GoHeartFill />
+              {comment.comment_likes}
+            </div>
         </div>
-        <div className="flex flex-col mb-8">
+        <div className="flex flex-col mb-8 mx-6">
           <Label className="text-right">{comment.content}</Label>
         </div>
         <div className="flex my-2 gap-6 mx-4">
