@@ -49,7 +49,7 @@ export default function Bookmarks() {
         <p>المقالات المحفوظة</p>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

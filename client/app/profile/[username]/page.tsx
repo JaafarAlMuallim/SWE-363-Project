@@ -259,7 +259,7 @@ export default function Profile({ params }: { params: { username: string } }) {
             )}
           </h1>
           <div className="container my-12 mx-auto px-4 md:px-12">
-            <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+            <div className="h-auto flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
                 <>
                   <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
