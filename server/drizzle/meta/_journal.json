@@ -43,6 +43,13 @@
       "when": 1702325257675,
       "tag": "0005_common_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1702419869112,
+      "tag": "0006_silly_bulldozer",
+      "breakpoints": true
     }
   ]
 }

@@ -33,6 +33,7 @@ export const users = pgTable("users", {
   linkdin_account: varchar("linkding_account", { length: 255 }),
   website: varchar("website", { length: 255 }),
   user_image: varchar("user_image", { length: 255 }),
+  overview: text("overview"),
 });
 
 export const user_follow = pgTable("user_follow", {

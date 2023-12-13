@@ -327,3 +327,63 @@ export async function addComment(
     next(e);
   }
 }
+
+export async function getArticlesByUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const articles = await db.query.article.findMany({
+      where: and(
+        eq(article.user_id, req.headers.authorization.split(" ")[1]),
+        eq(article.article_status, "published"),
+      ),
+      with: { article_tags: true, org: true, user: true },
+    });
+    res.send(articles);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getArticlesByOtherUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const articles = await db.query.article.findMany({
+      where: and(
+        eq(article.user_id, req.params.id),
+        eq(article.article_status, "published"),
+      ),
+      with: { article_tags: true, org: true, user: true },
+    });
+    res.send(articles);
+  } catch (e) {
+    next(e);
+  }
+}
+export async function updateUserData(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const userData = {
+      name: req.body.name,
+      username: req.body.username,
+      email: req.body.email,
+      overview: req.body.bio,
+    };
+    const updatedUser = await db
+      .update(users)
+      .set(userData)
+      .where(eq(users.user_id, req.headers.authorization.split(" ")[1]))
+      .returning();
+    res.send(updatedUser);
+  } catch (e) {
+    next(e);
+  }
+}

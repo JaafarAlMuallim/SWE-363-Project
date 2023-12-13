@@ -1,6 +1,7 @@
 import express from "express";
 import getDraftedById, {
   addComment,
+  getArticlesByUser,
   changeArticleStatus,
   deleteArticle,
   getArticleById,
@@ -13,6 +14,7 @@ import getDraftedById, {
   saveArticle,
   updateArticle,
   updateLikes,
+  getArticlesByOtherUser,
 } from "../controllers/article";
 import {
   canDeleteArticle,
@@ -30,6 +32,8 @@ router.route("/drafted/:id").get(isLoggedIn, wrapAsync(getDraftedById));
 router.route("/published").get(wrapAsync(getPublished));
 router.route("/inReview").get(isLoggedIn, canReview, wrapAsync(getInReview));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
+router.route("/user").get(isLoggedIn, wrapAsync(getArticlesByUser));
+router.route("/user/:id").get(wrapAsync(getArticlesByOtherUser));
 router.route("/like/:id").patch(wrapAsync(updateLikes));
 router
   .route("/comment/:id")

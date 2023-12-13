@@ -14,7 +14,7 @@ const router = express.Router();
 router
   .route("/")
   .get(isLoggedIn, wrapAsync(getUserProfile))
-  .put(isLoggedIn, wrapAsync(updateUserProfile));
+  .patch(isLoggedIn, wrapAsync(updateUserProfile));
 router.get("/:username", wrapAsync(getOtherUserProfile));
 router.patch("/image/:id", isLoggedIn, wrapAsync(updateUserProfileImage));
 router.patch("/password/:id", isLoggedIn, wrapAsync(updateUserProfilePassword));
