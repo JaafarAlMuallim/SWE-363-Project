@@ -111,26 +111,20 @@ export default function Organizations() {
         <div className="my-2 text-content text-5xl text-center font-semibold">
           <span>المؤسسات</span>
         </div>
-        <div className="grid grid-cols-2 gap-4 center my-8 text-2xl font-semibold text-right text-content mx-10">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-4 lg:-mx-4 center my-8 text-2xl font-semibold text-right text-content mx-10">
           {session && session.user && (
             <Button type="button" className="bg-green-700 text-l w-36">
               <Link href={"/writeOrg"}>مؤسسة جديدة</Link>
             </Button>
           )}
-          <Input
-            onChange={(e) => handleSearch(e)}
-            value={search}
-            className="w-36 text-black md:w-96"
-            placeholder="كلمات مفتاحية"
-          />
           <Select
             onValueChange={(value: "all" | "failure" | "success") =>
-              handleListChange(value)
-            }
+            handleListChange(value)
+          }
             dir="rtl"
           >
             <SelectTrigger
-              className="bg-inputbg w-36 text-white md:w-96"
+              className="bg-inputbg w-36 md:w-40"
               dir="rtl"
             >
               <SelectValue
@@ -139,12 +133,18 @@ export default function Organizations() {
                 defaultValue={"all"}
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-inputbg text-content">
               <SelectItem value="all">كل الشركات</SelectItem>
               <SelectItem value="success">ناجحة</SelectItem>
               <SelectItem value="failure">غير ناجحة</SelectItem>
             </SelectContent>
           </Select>
+          <Input
+            onChange={(e) => handleSearch(e)}
+            value={search}
+            className="w-52 text-gcontent2 md:w-96"
+            placeholder="كلمات مفتاحية"
+          />
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
