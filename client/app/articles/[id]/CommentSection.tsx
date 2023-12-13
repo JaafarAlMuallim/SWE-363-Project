@@ -20,9 +20,11 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { z } from "zod";
 import { useState } from "react";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 export default function CommentSection({ article }: { article: Article }) {
   const { data: session } = useSession();
+  const { toast } = useToast();
   const [showModal, setShowModal] = useState(false);
   const { data: comments, isLoading: loadingComments } = useQuery({
     queryKey: "comments",
@@ -56,6 +58,11 @@ export default function CommentSection({ article }: { article: Article }) {
       );
     },
     onSuccess: () => {
+      toast({
+        title: "تم إضافة التعليق بنجاح",
+        className: "bg-green-700 text-white",
+        duration: 3000,
+      });
       queryClient.invalidateQueries("comments");
     },
 
@@ -79,7 +86,6 @@ export default function CommentSection({ article }: { article: Article }) {
   const { mutate: deleteComment } = useMutation({
     mutationKey: "comments",
     mutationFn: (comment: Comment) => {
-      console.log(comment);
       return fetch(`http://localhost:8080/comment/${comment.comment_id!}`, {
         method: "DELETE",
         headers: {
@@ -92,6 +98,11 @@ export default function CommentSection({ article }: { article: Article }) {
       });
     },
     onSuccess: () => {
+      toast({
+        title: "تم حذف التعليق بنجاح",
+        className: "bg-green-700 text-white",
+        duration: 3000,
+      });
       queryClient.invalidateQueries("comments");
     },
     onMutate: async (newComment: Comment) => {

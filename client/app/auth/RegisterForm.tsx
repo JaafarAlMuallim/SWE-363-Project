@@ -32,7 +32,6 @@ export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const url = searchParams.get("callbackUrl");
-  console.log(url);
 
   type signUpValues = z.infer<typeof signUpSchema>;
 

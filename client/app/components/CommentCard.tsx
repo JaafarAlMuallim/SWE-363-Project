@@ -8,6 +8,7 @@ import { queryClient } from "@/app/components/QueryProvider";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import EditCommentModal from "./EditCommentModal";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 export default function CommentCard({
   comment,
@@ -20,23 +21,19 @@ export default function CommentCard({
 }) {
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleEdit = () => {
     setIsModalOpen(true);
-    console.log("handleEdit", isModalOpen);
-    console.log("modal opened");
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    console.log("handleClose", isModalOpen);
-    console.log("modal closed");
   };
 
   const updateCommentMutation = useMutation(
     (updatedComment: Comment) => {
       handleModalClose();
-      console.log("updateCommentMutation", updatedComment);
       return fetch(
         `http://localhost:8080/comment/${updatedComment.comment_id!}`,
         {
@@ -66,13 +63,18 @@ export default function CommentCard({
               : comment,
           ),
         );
-
         return { previousComments };
       },
       onError: (err, newComment, context) => {
         queryClient.setQueryData(["comments"], context!.previousComments);
       },
-      onSettled: () => {
+      onSuccess: () => {
+        toast({
+          title: "تم تعديل التعليق بنجاح",
+          className: "bg-green-700 text-white",
+          duration: 3000,
+        });
+
         queryClient.invalidateQueries(["comments"]);
       },
     },
