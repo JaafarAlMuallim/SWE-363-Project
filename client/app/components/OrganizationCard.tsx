@@ -22,7 +22,7 @@ export default function OrganizationCard(props: { org: Org }) {
           </div>
         </div>
       </header>
-      <div className="text-white px-2">
+      <div className="text-content px-2">
         <h1 className="text-xl">{props.org.name}</h1>
         <h2 className="text-l text-gcontent2 text-ellipsis">
           {`${props.org.description.slice(0, 100)}...`}
