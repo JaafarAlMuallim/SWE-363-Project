@@ -403,7 +403,6 @@ export async function getArticlesLikedByUser(
         },
       },
     });
-    console.log(articles);
     res.send(articles);
   } catch (e) {
     next(e);

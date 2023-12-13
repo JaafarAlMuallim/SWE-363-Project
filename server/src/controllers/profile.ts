@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { users } from "../schema";
+import { article, user_follow, users } from "../schema";
 
 export async function getUserProfile(
   req: Request,
@@ -137,6 +137,65 @@ export async function getOtherUserProfile(
       where: eq(users.username, req.params.username),
     });
     res.send(user);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getStatsInProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const followers = await db.query.user_follow.findMany({
+      where: eq(
+        user_follow.followed_id,
+        req.headers.authorization.split(" ")[1],
+      ),
+    });
+    const following = await db.query.user_follow.findMany({
+      where: eq(user_follow.user_id, req.headers.authorization.split(" ")[1]),
+    });
+    const articles = await db.query.article.findMany({
+      where: and(
+        eq(users.user_id, req.headers.authorization.split(" ")[1]),
+        eq(article.article_status, "published"),
+      ),
+    });
+
+    res.send({
+      followers: followers.length,
+      following: following.length,
+      articles: articles.length,
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+export async function getOthersStatsInProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const followers = await db.query.user_follow.findMany({
+      where: eq(user_follow.followed_id, req.params.id),
+    });
+    const following = await db.query.user_follow.findMany({
+      where: eq(user_follow.user_id, req.params.id),
+    });
+    const articles = await db.query.article.findMany({
+      where: and(
+        eq(users.user_id, req.params.id),
+        eq(article.article_status, "published"),
+      ),
+    });
+    res.send({
+      followers: followers.length,
+      following: following.length,
+      articles: articles.length,
+    });
   } catch (e) {
     next(e);
   }

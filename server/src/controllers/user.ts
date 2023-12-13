@@ -355,7 +355,7 @@ export async function getUserFollowing(
     const following = await db.query.user_follow.findMany({
       where: eq(user_follow.user_id, req.headers.authorization.split(" ")[1]),
       with: {
-        user: true,
+        followed: true,
       },
     });
     res.send(following);
@@ -371,7 +371,7 @@ export async function getUserFollowers(
   try {
     const followers = await db.query.user_follow.findMany({
       where: eq(
-        user_follow.follow_user_id,
+        user_follow.followed_id,
         req.headers.authorization.split(" ")[1],
       ),
       with: {

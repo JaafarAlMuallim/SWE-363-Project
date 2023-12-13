@@ -2,7 +2,7 @@
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueries } from "react-query";
 import User from "@/models/user";
 import { Skeleton } from "@/components/ui/skeleton";
 import { queryClient } from "../components/QueryProvider";
@@ -12,6 +12,7 @@ import EditProfileModa from "../components/EditProfileModal";
 import Link from "next/link";
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard2";
+import ProfileStats from "@/models/profile_stats";
 
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: profile } = useSession();
@@ -23,23 +24,37 @@ export default function Profile({ params }: { params: { username: string } }) {
     setIsModalOpen(false);
   };
 
-  const {
-    data: userProfile,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    enabled: profile !== undefined && profile?.user !== null,
-    queryKey: "userProfile",
-    queryFn: () => {
-      return fetch(`http://localhost:8080/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${profile?.user.user_id}`,
-        },
-      }).then((res) => res.json() as Promise<User>);
+  const [
+    { data: userProfile, isLoading, isSuccess },
+    { data: stats, isLoading: statsLoading, isSuccess: statsSuccess },
+  ] = useQueries([
+    {
+      enabled: profile !== undefined && profile?.user !== null,
+      queryKey: "userProfile",
+      queryFn: () => {
+        return fetch(`http://localhost:8080/profile`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${profile?.user.user_id}`,
+          },
+        }).then((res) => res.json() as Promise<User>);
+      },
     },
-  });
+    {
+      enabled: profile !== undefined && profile?.user !== null,
+      queryKey: "profileStats",
+      queryFn: () => {
+        return fetch(`http://localhost:8080/profile/stats`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${profile?.user.user_id}`,
+          },
+        }).then((res) => res.json() as Promise<ProfileStats>);
+      },
+    },
+  ]);
 
   const { mutate: handleEditProfileMutation } = useMutation({
     mutationKey: "userProfile",
@@ -145,15 +160,25 @@ export default function Profile({ params }: { params: { username: string } }) {
           </div>
           <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-gcontent2">
             <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">3</Label>
-              <Label className="m-1 text-gcontent2">متابَعون</Label>
+              <Label className="font-bold m-1">
+                {statsSuccess ? stats!.followers : 0}
+              </Label>
+              <Link href={"/following"}>
+                <Label className="m-1 text-gcontent2">المُتابَعون</Label>
+              </Link>
             </div>
             <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">3220</Label>
-              <Label className="m-1 text-gcontent2">متابعا</Label>
+              <Label className="font-bold m-1">
+                {statsSuccess ? stats!.following : 0}
+              </Label>
+              <Link href={"/followers"}>
+                <Label className="m-1 text-gcontent2">المُتابعين</Label>
+              </Link>
             </div>
             <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">70</Label>
+              <Label className="font-bold m-1">
+                {statsSuccess ? stats!.articles : 0}
+              </Label>
               <Label className="m-1 text-gcontent2">مقال</Label>
             </div>
           </div>

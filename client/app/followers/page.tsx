@@ -5,66 +5,62 @@ import Link from "next/link";
 import { ChangeEvent, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useSession } from "next-auth/react";
-import ArticleCard from "../components/ArticleCard2";
 import { useRouter } from "next/navigation";
-import LikedArticle from "@/models/liked_article";
+import UserCard from "../components/UserCard2";
+import UserFollow from "@/models/userFollow";
 
-export default function LikedArticles() {
+export default function FollowingPage() {
   const { data: session } = useSession();
   const router = useRouter();
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (!session) router.push(`/auth?callbackUrl=/liked/`);
+      if (!session) router.push(`/auth?callbackUrl=/following/`);
     }, 1250);
     return () => {
       clearTimeout(timeout);
     };
   }, [session]);
   const {
-    data: articles,
+    data: users,
     isLoading,
     isSuccess,
   } = useQuery({
     enabled: session !== undefined && session?.user !== null,
-    queryKey: "articles",
+    queryKey: "follower",
     queryFn: () => {
-      return fetch("http://localhost:8080/article/liked", {
+      return fetch("http://localhost:8080/user/follower", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           authorization: `Bearer ${session?.user.user_id}`,
         },
         cache: "no-cache",
-      }).then((res) => res.json() as Promise<LikedArticle[]>);
+      }).then((res) => res.json() as Promise<UserFollow[]>);
     },
   });
   const [search, setSearch] = useState("");
-  const [filteredArticles, setFilteredArticles] = useState<LikedArticle[]>(
-    isLoading ? [] : articles!,
+  const [filteredUsers, setFilteredUsers] = useState<UserFollow[]>(
+    isLoading ? [] : users!,
   );
   useEffect(() => {
-    setFilteredArticles(isLoading ? [] : articles!);
-  }, [articles, isLoading]);
+    setFilteredUsers(isLoading ? [] : users!);
+  }, [users, isLoading]);
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const currentSearchValue = e.target.value;
     setSearch(currentSearchValue);
     if (currentSearchValue.length === 0) {
-      setFilteredArticles(articles!);
+      setFilteredUsers(users!);
     } else {
       const filtered = isLoading
         ? []
-        : articles?.filter((liked) => {
-            const titleMatch = liked.article.title.includes(currentSearchValue);
-            const subtitleMatch =
-              liked.article.subtitle?.includes(currentSearchValue);
-            const tagMatch = liked.article.article_tags?.some(
-              (tag) => tag.tag?.includes(currentSearchValue),
-            );
-            const orgMatch =
-              liked.article.org?.name.includes(currentSearchValue);
-            return titleMatch || subtitleMatch || tagMatch || orgMatch;
+        : users?.filter((following) => {
+            const usernameMatch =
+              following.user!.username.includes(currentSearchValue);
+            const nameMatch = following.user!.name.includes(currentSearchValue);
+            const roleMatch = following.user!.role.includes(currentSearchValue);
+            return usernameMatch || nameMatch || roleMatch;
           });
-      setFilteredArticles(filtered!);
+      setFilteredUsers(filtered!);
     }
   };
   return (
@@ -72,7 +68,7 @@ export default function LikedArticles() {
       <div>
         <hr className="w-screen" />
         <div className="my-4 text-content text-5xl text-center font-semibold">
-          <span>مقالات أعجبتني</span>
+          <span>المُتابَعون</span>
         </div>
         <div className="flex justify-center my-8 text-2xl font-semibold text-right text-content mx-4">
           <div className="flex gap-4">
@@ -95,13 +91,13 @@ export default function LikedArticles() {
             </>
           ) : (
             isSuccess &&
-            filteredArticles!.map((liked) => {
+            filteredUsers!.map((following) => {
               return (
                 <Link
-                  key={liked.article_id}
-                  href={`/articles/${liked.article_id}`}
+                  key={following.user_id}
+                  href={`/profile/${following.user!.username}`}
                 >
-                  <ArticleCard article={liked.article} />
+                  <UserCard user={following.user!} />
                 </Link>
               );
             })

@@ -12,7 +12,7 @@ export default function Articles() {
   const router = useRouter();
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (!profile) router.push(`/auth?callbackUrl=/draftedArticles/`);
+      if (!profile) router.push(`/auth?callbackUrl=/follower/`);
     }, 1250);
     return () => {
       clearTimeout(timeout);
@@ -26,7 +26,7 @@ export default function Articles() {
     enabled: profile !== undefined && profile?.user !== null,
     queryKey: "articles",
     queryFn: () => {
-      return fetch("http://localhost:8080/article/drafted", {
+      return fetch("http://localhost:8080/follower", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

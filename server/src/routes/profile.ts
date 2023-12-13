@@ -7,6 +7,8 @@ import {
   updateVerifiedStatus,
   updateRole,
   getOtherUserProfile,
+  getStatsInProfile,
+  getOthersStatsInProfile,
 } from "../controllers/profile";
 import { isLoggedIn } from "../middleware";
 import wrapAsync from "../utils";
@@ -15,6 +17,8 @@ router
   .route("/")
   .get(isLoggedIn, wrapAsync(getUserProfile))
   .patch(isLoggedIn, wrapAsync(updateUserProfile));
+router.route("/stats").get(isLoggedIn, wrapAsync(getStatsInProfile));
+router.route("/stats:id").get(isLoggedIn, wrapAsync(getOthersStatsInProfile));
 router.get("/:username", wrapAsync(getOtherUserProfile));
 router.patch("/image/:id", isLoggedIn, wrapAsync(updateUserProfileImage));
 router.patch("/password/:id", isLoggedIn, wrapAsync(updateUserProfilePassword));

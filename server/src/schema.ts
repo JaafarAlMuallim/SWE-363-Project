@@ -43,13 +43,23 @@ export const user_follow = pgTable("user_follow", {
   user_id: uuid("user_id")
     .references(() => users.user_id)
     .notNull(),
-  follow_user_id: uuid("follow_user_id")
+  followed_id: uuid("followed_id")
     .references(() => users.user_id)
     .notNull(),
 });
 
 export const user_followRelations = relations(users, ({ many }) => ({
   user_follow: many(user_follow),
+}));
+export const userFollowRelations = relations(user_follow, ({ one }) => ({
+  followed: one(users, {
+    fields: [user_follow.followed_id],
+    references: [users.user_id],
+  }),
+  user: one(users, {
+    fields: [user_follow.user_id],
+    references: [users.user_id],
+  }),
 }));
 
 export const prefs = pgTable("prefs", {
