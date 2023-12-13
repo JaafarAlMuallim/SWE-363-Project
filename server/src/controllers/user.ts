@@ -345,3 +345,41 @@ export async function checkRole(
     next(e);
   }
 }
+
+export async function getUserFollowing(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const following = await db.query.user_follow.findMany({
+      where: eq(user_follow.user_id, req.headers.authorization.split(" ")[1]),
+      with: {
+        followed: true,
+      },
+    });
+    res.send(following);
+  } catch (e) {
+    next(e);
+  }
+}
+export async function getUserFollowers(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const followers = await db.query.user_follow.findMany({
+      where: eq(
+        user_follow.followed_id,
+        req.headers.authorization.split(" ")[1],
+      ),
+      with: {
+        user: true,
+      },
+    });
+    res.send(followers);
+  } catch (e) {
+    next(e);
+  }
+}

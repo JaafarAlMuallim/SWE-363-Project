@@ -43,13 +43,23 @@ export const user_follow = pgTable("user_follow", {
   user_id: uuid("user_id")
     .references(() => users.user_id)
     .notNull(),
-  follow_user_id: uuid("follow_user_id")
+  followed_id: uuid("followed_id")
     .references(() => users.user_id)
     .notNull(),
 });
 
 export const user_followRelations = relations(users, ({ many }) => ({
   user_follow: many(user_follow),
+}));
+export const userFollowRelations = relations(user_follow, ({ one }) => ({
+  followed: one(users, {
+    fields: [user_follow.followed_id],
+    references: [users.user_id],
+  }),
+  user: one(users, {
+    fields: [user_follow.user_id],
+    references: [users.user_id],
+  }),
 }));
 
 export const prefs = pgTable("prefs", {
@@ -210,19 +220,25 @@ export const comment_like = pgTable("comment_like", {
     .references(() => comment.comment_id)
     .notNull(),
 });
-export const articleLikeRelations = relations(article, ({ one }) => ({
-  article_like: one(article_like, {
-    fields: [article.article_id],
-    references: [article_like.article_id],
+
+export const articleLikeRelations = relations(article, ({ many }) => ({
+  article_like: many(article_like),
+}));
+export const articleUserLikesRelation = relations(article_like, ({ one }) => ({
+  article: one(article, {
+    fields: [article_like.article_id],
+    references: [article.article_id],
+  }),
+  user: one(users, {
+    fields: [article_like.user_id],
+    references: [users.user_id],
   }),
 }));
 
-export const commentLikeRelations = relations(comment, ({ one }) => ({
-  comment_like: one(comment_like, {
-    fields: [comment.comment_id],
-    references: [comment_like.comment_id],
-  }),
+export const commentLikeRelations = relations(comment, ({ many }) => ({
+  comment_like: many(comment_like),
 }));
+
 export const userLikeRelations = relations(users, ({ many }) => ({
   article_like: many(article_like),
   comment_like: many(comment_like),

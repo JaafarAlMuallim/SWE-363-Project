@@ -4,6 +4,7 @@ import db from "../db";
 import {
   Article,
   article,
+  article_like,
   article_tags,
   comment,
   Comment,
@@ -383,6 +384,26 @@ export async function updateUserData(
       .where(eq(users.user_id, req.headers.authorization.split(" ")[1]))
       .returning();
     res.send(updatedUser);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getArticlesLikedByUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const articles = await db.query.article_like.findMany({
+      where: eq(article_like.user_id, req.headers.authorization.split(" ")[1]),
+      with: {
+        article: {
+          with: { article_tags: true, org: true, user: true },
+        },
+      },
+    });
+    res.send(articles);
   } catch (e) {
     next(e);
   }
