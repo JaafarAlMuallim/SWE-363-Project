@@ -106,7 +106,6 @@ export default function ReviewArticle() {
         ) : (
           <p>لا يوجد مقالات</p>
         )}
-        )
       </div>
     </>
   );

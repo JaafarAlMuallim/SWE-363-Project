@@ -117,27 +117,29 @@ export default function Organization({
               </Label>
             )}
             <div className="my-4">
-              {(session!.user?.role === "admin" ||
+              {session &&
+              session.user &&
+              (session!.user?.role === "admin" ||
                 session!.user?.role === "reviewer") &&
-                (org?.org_status === "success" ? (
-                  <Button
-                    className="bg-red-700 text-white rounded-lg px-4 py-2"
-                    onClick={() => {
-                      changeOrgStatus("failure");
-                    }}
-                  >
-                    تغيير حالة الشركة
-                  </Button>
-                ) : (
-                  <Button
-                    className="bg-green-700 text-white rounded-lg px-4 py-2"
-                    onClick={() => {
-                      changeOrgStatus("success");
-                    }}
-                  >
-                    تغيير حالة الشركة
-                  </Button>
-                ))}
+              org?.org_status === "success" ? (
+                <Button
+                  className="bg-red-700 text-white rounded-lg px-4 py-2"
+                  onClick={() => {
+                    changeOrgStatus("failure");
+                  }}
+                >
+                  تغيير حالة الشركة
+                </Button>
+              ) : (
+                <Button
+                  className="bg-green-700 text-white rounded-lg px-4 py-2"
+                  onClick={() => {
+                    changeOrgStatus("success");
+                  }}
+                >
+                  تغيير حالة الشركة
+                </Button>
+              )}
             </div>
           </div>
         </div>

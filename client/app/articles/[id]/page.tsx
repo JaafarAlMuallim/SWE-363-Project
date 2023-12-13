@@ -144,17 +144,19 @@ export default function Article({ params }: { params: { id: string } }) {
           {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
         </button>
       )}
-      {(session!.user?.user_id === article!.user_id ||
-        session!.user.role === "admin") && (
-        <button
-          className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
-          onClick={() => {
-            onDeleteArticle();
-          }}
-        >
-          حذف المقال
-        </button>
-      )}
+      {session &&
+        session.user &&
+        (session!.user?.user_id === article!.user_id ||
+          session!.user.role === "admin") && (
+          <button
+            className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+            onClick={() => {
+              onDeleteArticle();
+            }}
+          >
+            حذف المقال
+          </button>
+        )}
       <CommentSection article={article!} />
     </div>
   );
