@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
+import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
 
 export default function LoginForm() {
@@ -24,6 +24,9 @@ export default function LoginForm() {
       .trim(),
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const url = searchParams.get("callbackUrl");
+  console.log(url);
 
   type loginFormValues = z.infer<typeof loginSchema>;
 
@@ -36,15 +39,21 @@ export default function LoginForm() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signIn("credentials", {
-      email: form.getValues("email"),
-      password: form.getValues("password"),
-      callbackUrl: "/",
-    }).then((res) => {
-      router.push("/");
-    });
+    try {
+      const response = await signIn("credentials", {
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+        callbackUrl: url || "/",
+        redirect: true,
+      });
+      if (response!.ok) {
+        console.log(response!.url);
+      }
+    } catch {
+      console.log("error");
+    }
   };
   return (
     <Form {...form}>
@@ -92,7 +101,10 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
-        <Button className="w-full bg-cbtn shadow-lg mt-2 text-content">
+        <Button
+          className="w-full bg-cbtn shadow-lg mt-2 text-content"
+          type="submit"
+        >
           دخول
         </Button>
       </form>

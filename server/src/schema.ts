@@ -188,6 +188,45 @@ export const comment = pgTable("comment", {
   date: date("date").notNull(),
   comment_likes: bigint("comment_likes", { mode: "number" }).default(0),
 });
+export const article_like = pgTable("article_like", {
+  like_id: uuid("like_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  article_id: uuid("article_id")
+    .references(() => article.article_id)
+    .notNull(),
+});
+export const comment_like = pgTable("comment_like", {
+  like_id: uuid("like_id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  user_id: uuid("user_id")
+    .references(() => users.user_id)
+    .notNull(),
+  comment_id: uuid("comment_id")
+    .references(() => comment.comment_id)
+    .notNull(),
+});
+export const articleLikeRelations = relations(article, ({ one }) => ({
+  article_like: one(article_like, {
+    fields: [article.article_id],
+    references: [article_like.article_id],
+  }),
+}));
+
+export const commentLikeRelations = relations(comment, ({ one }) => ({
+  comment_like: one(comment_like, {
+    fields: [comment.comment_id],
+    references: [comment_like.comment_id],
+  }),
+}));
+export const userLikeRelations = relations(users, ({ many }) => ({
+  article_like: many(article_like),
+  comment_like: many(comment_like),
+}));
 
 export const articleRelations = relations(article, ({ one, many }) => ({
   article_tags: many(article_tags),

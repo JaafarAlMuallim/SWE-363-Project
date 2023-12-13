@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import DOMPurify from "dompurify";
+import { useEffect } from "react";
 
 export default function Article({ params }: { params: { id: string } }) {
   const { data: session } = useSession({
@@ -16,6 +17,15 @@ export default function Article({ params }: { params: { id: string } }) {
     },
   });
   const router = useRouter();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!session)
+        router.push(`/auth?callbackUrl=/reviewArticle/${params.id}`);
+    }, 1250);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [session]);
   const { data: article, isLoading } = useQuery({
     queryKey: "inReview",
     queryFn: () => {

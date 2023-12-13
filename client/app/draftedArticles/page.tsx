@@ -5,8 +5,19 @@ import Link from "next/link";
 import { useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 export default function Articles() {
   const { data: profile } = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!profile) router.push(`/auth?callbackUrl=/draftedArticles/`);
+    }, 1250);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [profile]);
   const {
     data: articles,
     isLoading,

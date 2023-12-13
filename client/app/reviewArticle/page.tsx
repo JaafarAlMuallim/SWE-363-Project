@@ -6,14 +6,22 @@ import { useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ReviewArticle() {
   const { data: session } = useSession({
     required: true,
-    onUnauthenticated() {
-      return { redirect: "/auth/callbackUrl=/reviewArticle" };
-    },
   });
+  const router = useRouter();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!session) router.push("/auth?callbackUrl=/reviewArticle");
+    }, 1250);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [session]);
   if (
     session != null &&
     session?.user?.role !== "admin" &&

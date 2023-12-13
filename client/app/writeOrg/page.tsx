@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useMutation } from "react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -23,9 +23,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect } from "react";
 export default function Page() {
   const { data: session } = useSession();
   const router = useRouter();
+  useEffect(() => {
+    if (session && session!.user.role === "user") {
+      router.push("/");
+    }
+    const timeout = setTimeout(() => {
+      if (!session) router.push(`/auth?callbackUrl=/writeOrg/`);
+    }, 1250);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [session]);
   const formSchema = z.object({
     name: z
       .string()

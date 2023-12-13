@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 export default function RegisterForm() {
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
@@ -30,6 +30,9 @@ export default function RegisterForm() {
       .min(3, { message: "اسم الحساب يجب ان يكون اكثر من 3 احرف" }),
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const url = searchParams.get("callbackUrl");
+  console.log(url);
 
   type signUpValues = z.infer<typeof signUpSchema>;
 
@@ -60,8 +63,9 @@ export default function RegisterForm() {
     signIn("credentials", {
       email: form.getValues("email"),
       password: form.getValues("password"),
+      callbackUrl: url!,
     }).then((res) => {
-      router.push("/");
+      if (res!.status === 200) router.back();
     });
   };
 
@@ -84,6 +88,7 @@ export default function RegisterForm() {
                 <Input
                   className="bg-inputbg placeholder:text-gcontent"
                   type="text"
+                  name="name"
                   onChange={field.onChange}
                   placeholder="الاسم"
                 />
@@ -104,6 +109,7 @@ export default function RegisterForm() {
                 <Input
                   className="bg-inputbg placeholder:text-gcontent"
                   type="text"
+                  name="username"
                   onChange={field.onChange}
                   placeholder="mohammedAli123"
                 />
@@ -124,6 +130,7 @@ export default function RegisterForm() {
                 <Input
                   className="bg-inputbg placeholder:text-gcontent"
                   onChange={field.onChange}
+                  name="email"
                   placeholder="example@gmail.com"
                 />
               </FormControl>
