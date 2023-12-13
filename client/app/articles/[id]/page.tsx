@@ -108,7 +108,7 @@ export default function Article({ params }: { params: { id: string } }) {
 
   if (isLoading) {
     return (
-      <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
+      <div className="h-screen my-20 text-content flex flex-col justify-start items-center gap-5">
         <Skeleton className="w-80 h-36" />
         <Skeleton className="w-64 h-12" />
         <Skeleton className="w-40 h-4" />
@@ -128,7 +128,7 @@ export default function Article({ params }: { params: { id: string } }) {
     USE_PROFILES: { html: true },
   });
   return (
-    <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
+    <div className="my-20 px-6 w-full text-content flex flex-col justify-start items-center gap-5">
       <Image src={`../next.svg`} alt={"Image"} width={400} height={400} />
       <h1 className="text-4xl text-center">{article!.title}</h1>
       <p>{article!.subtitle}</p>
@@ -140,7 +140,7 @@ export default function Article({ params }: { params: { id: string } }) {
             return (
               <div
                 key={index}
-                className={`bg-crd2 text-white px-4 py-1 rounded-full w-32 text-center`}
+                className={`bg-crd2 text-content px-4 py-1 rounded-full w-32 text-center`}
               >
                 {tag.tag}
               </div>
