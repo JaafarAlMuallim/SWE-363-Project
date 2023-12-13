@@ -120,7 +120,7 @@ export default function CommentSection({ article }: { article: Article }) {
   });
 
   return (
-    <section className="flex flex-col justify-center gap-2">
+    <section className="h-screen flex flex-col justify-center gap-2">
       {session?.user && (
         <Form {...form}>
           <form>

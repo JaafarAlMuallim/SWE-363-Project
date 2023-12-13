@@ -134,29 +134,31 @@ export default function Article({ params }: { params: { id: string } }) {
             );
           })}
       </section>
-      {isBookmarkedLoading ? (
-        <Skeleton className="bg-gray-400 h-30 w-30" />
-      ) : (
-        <button
-          className="flex bg-blue-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
-          onClick={isBookmarked ? () => unbookmark() : () => bookmark()}
-        >
-          {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
-        </button>
-      )}
-      {session &&
-        session.user &&
-        (session!.user?.user_id === article!.user_id ||
-          session!.user.role === "admin") && (
+      <div className="flex gap-4">
+        {isBookmarkedLoading ? (
+          <Skeleton className="bg-gray-400 h-30 w-30" />
+        ) : (
           <button
-            className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
-            onClick={() => {
-              onDeleteArticle();
-            }}
+            className="flex bg-blue-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+            onClick={isBookmarked ? () => unbookmark() : () => bookmark()}
           >
-            حذف المقال
+            {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
           </button>
         )}
+        {session &&
+          session.user &&
+          (session!.user?.user_id === article!.user_id ||
+            session!.user.role === "admin") && (
+            <button
+              className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+              onClick={() => {
+                onDeleteArticle();
+              }}
+            >
+              حذف المقال
+            </button>
+          )}
+      </div>
       <CommentSection article={article!} />
     </div>
   );
