@@ -258,7 +258,7 @@ export default function Profile({ params }: { params: { username: string } }) {
               <></>
             )}
           </h1>
-          <div className="container mx-auto px-4 md:px-12">
+          <div className="container my-12 mx-auto px-4 md:px-12">
             <div className="h-auto flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
                 <>
