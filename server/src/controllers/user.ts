@@ -89,7 +89,7 @@ export async function changeFollowStatus(
     const isFollowing = await db.query.user_follow.findFirst({
       where: and(
         eq(user_follow.user_id, currentUser.user_id),
-        eq(user_follow.follow_user_id, followedUser.user_id),
+        eq(user_follow.followed_id, followedUser.user_id),
       ),
     });
     if (isFollowing) {
@@ -98,7 +98,7 @@ export async function changeFollowStatus(
         .where(
           and(
             eq(user_follow.user_id, currentUser.user_id),
-            eq(user_follow.follow_user_id, followedUser.user_id),
+            eq(user_follow.followed_id, followedUser.user_id),
           ),
         )
         .returning();
@@ -106,7 +106,7 @@ export async function changeFollowStatus(
     } else {
       const userFollow: UserFollowType = {
         user_id: currentUser.user_id,
-        follow_user_id: followedUser.user_id,
+        followed_id: followedUser.user_id,
       };
       const addFollow = await db
         .insert(user_follow)
@@ -131,7 +131,7 @@ export async function isFollowingUser(
     const isFollowing = await db.query.user_follow.findFirst({
       where: and(
         eq(user_follow.user_id, req.headers.authorization.split(" ")[1]),
-        eq(user_follow.follow_user_id, followedUser.user_id),
+        eq(user_follow.followed_id, followedUser.user_id),
       ),
     });
     res.send({ isFollowing: isFollowing ? true : false });

@@ -26,7 +26,6 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const url = searchParams.get("callbackUrl");
-  console.log(url);
 
   type loginFormValues = z.infer<typeof loginSchema>;
 
@@ -46,10 +45,10 @@ export default function LoginForm() {
         email: form.getValues("email"),
         password: form.getValues("password"),
         callbackUrl: url || "/",
-        redirect: true,
+        redirect: false,
       });
       if (response!.ok) {
-        console.log(response!.url);
+        router.push(url || "/");
       }
     } catch {
       console.log("error");

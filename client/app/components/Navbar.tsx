@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Avatar } from "@material-tailwind/react";
+import Image from "next/image";
 import { Sriracha } from "next/font/google";
 import { useRouter } from "next/navigation";
 const sriracha = Sriracha({
@@ -36,16 +36,18 @@ export default function Navbar() {
             <ul className="list-none flex items-center gap-4">
               {session && session.user ? (
                 <li>
-                  <Link href={`/${session.user.username}`}>
+                  <Link
+                    href={`/${session.user.username}`}
+                    className="flex flex-row justify-center items-center"
+                  >
                     @{session.user.username}
                     {session?.user.user_image && (
-                      <Avatar
-                        src={session?.user.user_image}
+                      <Image
+                        src={"/profile_default.png"}
                         alt="avatar"
-                        size="md"
                         className="shadow-lg mr-2"
-                        withBorder={true}
-                        variant="circular"
+                        height={40}
+                        width={40}
                       />
                     )}
                   </Link>
@@ -148,14 +150,15 @@ export default function Navbar() {
                 <Link
                   onClick={() => setActive((prevState) => !prevState)}
                   href={`/profile`}
+                  className="flex flex-row justify-center items-center"
                 >
                   @{session.user.username || "X"}
-                  <Avatar
-                    src={session.user.user_image}
-                    size="md"
+                  <Image
+                    src={"/profile_default.png"}
+                    alt="avatar"
                     className="shadow-lg mr-2"
-                    withBorder={true}
-                    variant="circular"
+                    height={40}
+                    width={40}
                   />
                 </Link>
               </li>

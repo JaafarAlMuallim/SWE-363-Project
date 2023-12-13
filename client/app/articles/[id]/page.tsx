@@ -9,9 +9,11 @@ import { useSession } from "next-auth/react";
 import { useMutation } from "react-query";
 import { queryClient } from "../../components/QueryProvider";
 import { useRouter } from "next/navigation";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 export default function Article({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
+  const { toast } = useToast();
   const router = useRouter();
   const { data: article, isLoading } = useQuery({
     queryKey: "article",
@@ -36,7 +38,6 @@ export default function Article({ params }: { params: { id: string } }) {
   const { mutate: bookmark } = useMutation({
     mutationKey: "isBookmarked",
     mutationFn: () => {
-      console.log("SAVE");
       return fetch(`http://localhost:8080/user/bookmark/${params.id}`, {
         method: "POST",
         headers: {
@@ -45,6 +46,13 @@ export default function Article({ params }: { params: { id: string } }) {
       }).then((res) => res.json() as Promise<boolean>);
     },
     onSuccess: () => {
+      toast({
+        title: "تم الحفظ",
+        description: "تم حفظ المقال بنجاح",
+        duration: 3000,
+        className: "bg-green-700 text-white",
+      });
+
       queryClient.invalidateQueries("isBookmarked");
     },
     onMutate: async () => {
@@ -67,6 +75,12 @@ export default function Article({ params }: { params: { id: string } }) {
       }).then((res) => res.json() as Promise<boolean>);
     },
     onSuccess: () => {
+      toast({
+        title: "تم الحذف",
+        description: "تم حذف المقال من المقالات المحفوظة بنجاح",
+        duration: 3000,
+        className: "bg-green-700 text-white",
+      });
       queryClient.invalidateQueries("isBookmarked");
     },
     onMutate: async () => {
@@ -108,7 +122,6 @@ export default function Article({ params }: { params: { id: string } }) {
     );
   }
 
-  console.log(isBookmarked);
   const { content } = article!;
   const date = article!.date!.toString().substring(0, 10);
   const cleanContent = DOMPurify.sanitize(content, {

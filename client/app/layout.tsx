@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import { AuthProvider } from "./components/AuthProvider";
 import Navbar from "./components/Navbar";
 import QueryProvider from "./components/QueryProvider";
+import { Toaster } from "@/components/ui/toaster";
 const cairo = Cairo({ subsets: ["arabic"] });
 const local_theme = "dark";
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             <main className="flex flex-col justify-center items-center w-full">
               {children}
             </main>
+            <Toaster />
             <Footer />
           </AuthProvider>
         </body>

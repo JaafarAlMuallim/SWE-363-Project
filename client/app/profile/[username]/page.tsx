@@ -8,8 +8,10 @@ import { queryClient } from "@/app/components/QueryProvider";
 import Article from "@/models/article";
 import Link from "next/link";
 import ArticleCard from "@/app/components/ArticleCard2";
+import { toast, useToast } from "@/components/ui/use-toast";
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: session } = useSession();
+  const { toast } = useToast();
   const [profile, isFollowing] = useQueries([
     {
       queryKey: "profile",
@@ -71,6 +73,12 @@ export default function Profile({ params }: { params: { username: string } }) {
         .catch((err) => console.log(err));
     },
     onSuccess: () => {
+      toast({
+        title: "تمت المتابعة بنجاح",
+        description: `تمت متابعة ${profile.data.name}`,
+        className: "bg-green-700 text-white",
+        duration: 3000,
+      });
       queryClient.invalidateQueries("following");
     },
     onMutate: () => {
@@ -104,6 +112,22 @@ export default function Profile({ params }: { params: { username: string } }) {
         .catch((err) => {});
     },
     onSuccess: () => {
+      toast({
+        title:
+          profile?.data.role === "reviewer"
+            ? "تمت الترقية بنجاح"
+            : "تمت التخفيض بنجاح",
+        description:
+          profile?.data.role === "reviewer"
+            ? `تمت ترقية ${profile.data.name}`
+            : `تمت تخفيض ${profile.data.name}`,
+
+        className:
+          profile.data.role === "reviewer"
+            ? "bg-green-700 text-white"
+            : "bg-red-700 text-white",
+        duration: 3000,
+      });
       queryClient.invalidateQueries("profile");
     },
     onMutate: () => {

@@ -86,7 +86,6 @@ export default function Page() {
   const { mutate: draftArticle } = useMutation({
     mutationKey: "article",
     mutationFn: () => {
-      console.log(form.getValues("tags").split("،"));
       return fetch(`http://localhost:8080/article/`, {
         method: "POST",
         headers: {

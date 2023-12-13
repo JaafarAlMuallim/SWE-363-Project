@@ -13,10 +13,12 @@ import Link from "next/link";
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard2";
 import ProfileStats from "@/models/profile_stats";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: profile } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
   const handleEditProfile = () => {
     setIsModalOpen(true);
   };
@@ -70,6 +72,12 @@ export default function Profile({ params }: { params: { username: string } }) {
       }).then((res) => res.json() as Promise<User>);
     },
     onSuccess: () => {
+      toast({
+        title: "تم تعديل الملف الشخصي بنجاح",
+        description: "تم حفظ الملف الشخصي الجديد بنجاح",
+        className: "bg-green-700 text-white",
+        duration: 3000,
+      });
       queryClient.invalidateQueries("userProfile");
     },
     onMutate: (data) => {

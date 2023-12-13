@@ -103,7 +103,6 @@ export default function Organizations() {
     }
   };
 
-  console.log(orgs);
   return (
     <>
       <div>
