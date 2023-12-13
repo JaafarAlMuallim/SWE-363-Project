@@ -58,24 +58,6 @@ export default function Organizations() {
         : filtered!.filter((org) => org.org_status === newListState);
     });
   };
-  //  const handleListChange = (value: string) => {
-  //    setOrgsList(value as "all" | "failure" | "success");
-  //    const filtered = isLoading
-  //      ? []
-  //      : orgs?.filter((org) => {
-  //          const nameMatch = org.name.includes(search);
-  //          const orgFounder = org.org_founders?.some(
-  //            (founder) => founder.founder?.includes(search),
-  //          );
-  //          return nameMatch || orgFounder;
-  //        });
-  //    setFilteredOrgs((_) => {
-  //      return value === "all"
-  //        ? filtered!
-  //        : filtered!.filter((org) => org.org_status === orgsList);
-  //    });
-  //  };
-
   useEffect(() => {
     setFilteredOrgs(isLoading ? [] : orgs!);
   }, [orgs, isLoading]);
@@ -118,14 +100,11 @@ export default function Organizations() {
           )}
           <Select
             onValueChange={(value: "all" | "failure" | "success") =>
-            handleListChange(value)
-          }
+              handleListChange(value)
+            }
             dir="rtl"
           >
-            <SelectTrigger
-              className="bg-inputbg w-36 md:w-40"
-              dir="rtl"
-            >
+            <SelectTrigger className="bg-inputbg w-36 md:w-40" dir="rtl">
               <SelectValue
                 placeholder="حالة المؤسسة"
                 dir="rtl"
@@ -147,7 +126,7 @@ export default function Organizations() {
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

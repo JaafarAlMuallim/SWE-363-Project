@@ -108,7 +108,7 @@ export default function Profile({ params }: { params: { username: string } }) {
   });
 
   return (
-    <div className="min-h-screen w-screen flex flex-col justify-center items-center w-full">
+    <div className="min-h-screen flex flex-col justify-center items-center w-full">
       <div className=" text-content hidden md:flex">
         <div className="w-1/4 m-10 flex flex-col items-center gap-8">
           <div className="flex flex-col items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
@@ -201,9 +201,9 @@ export default function Profile({ params }: { params: { username: string } }) {
               <>لا توجد معلومات هنا</>
             )}
           </div>
-          <h1>Articles By {profile?.user.name}</h1>
-          <div className="container my-12 mx-auto px-4 md:px-12">
-            <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+          <h1 className="text-2xl">Articles By {profile?.user.name}</h1>
+          <div className="container mx-auto px-4 md:px-12">
+            <div className="h-auto flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
                 <>
                   <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
@@ -293,7 +293,7 @@ export default function Profile({ params }: { params: { username: string } }) {
 
         <h1>Articles By {profile?.user.name}</h1>
         <div className="container my-12 mx-auto px-4 md:px-12">
-          <div className="flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+          <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
             {articleLoading ? (
               <>
                 <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

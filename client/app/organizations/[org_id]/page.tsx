@@ -162,7 +162,7 @@ export default function Organization({
             </div>
           </div>
           <h1 className="text-2xl">Articles Related to {org?.name}</h1>
-          <div className="container my-12 mx-auto px-4 md:px-12">
+          <div className="container mx-auto px-4 md:px-12">
             <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
                 <>
