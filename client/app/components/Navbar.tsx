@@ -110,16 +110,15 @@ export default function Navbar() {
               </li>
               {session && session.user && (
                 <li>
-                  <Link
+                  <button
                     className="flex"
                     onClick={() => {
+                      router.replace("/");
                       signOut();
-                      router.push("/");
                     }}
-                    href={`/`}
                   >
                     تسجيل الخروج
-                  </Link>
+                  </button>
                 </li>
               )}
             </ul>
@@ -221,17 +220,16 @@ export default function Navbar() {
             </li>
             {session?.user && (
               <li>
-                <Link
+                <button
                   className="flex"
                   onClick={() => {
                     setActive((prevState) => !prevState);
-                    signOut();
                     router.push("/");
+                    signOut();
                   }}
-                  href={`/`}
                 >
                   تسجيل الخروج
-                </Link>
+                </button>
               </li>
             )}
             {/*<li>

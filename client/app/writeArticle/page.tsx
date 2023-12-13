@@ -15,10 +15,19 @@ import TipTap from "../components/TipTap";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useMutation } from "react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 export default function Page() {
   const { data: session } = useSession();
   const router = useRouter();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!session) router.push("/auth?callbackUrl=/writeArticle");
+    }, 1250);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [session]);
   const formSchema = z.object({
     title: z
       .string()

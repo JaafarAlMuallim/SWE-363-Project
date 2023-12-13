@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "react-query";
 import ArticleCard from "../components/ArticleCard2";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 type BookmarksProps = {
   user_id: string;
   article_id: string;
@@ -13,11 +15,16 @@ type BookmarksProps = {
 };
 export default function Bookmarks() {
   const { data: session } = useSession();
-  const {
-    data: bookmarks,
-    isLoading,
-    isError,
-  } = useQuery({
+  const router = useRouter();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!session) router.push("/auth?callbackUrl=/bookmarks");
+    }, 1250);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [session]);
+  const { data: bookmarks, isLoading } = useQuery({
     enabled: session !== undefined && session?.user !== null,
     queryKey: "bookmarks",
     queryFn: () => {
