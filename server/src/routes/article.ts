@@ -15,6 +15,7 @@ import getDraftedById, {
   updateArticle,
   updateLikes,
   getArticlesByOtherUser,
+  getArticlesLikedByUser,
 } from "../controllers/article";
 import {
   canDeleteArticle,
@@ -32,6 +33,7 @@ router.route("/drafted/:id").get(isLoggedIn, wrapAsync(getDraftedById));
 router.route("/published").get(wrapAsync(getPublished));
 router.route("/inReview").get(isLoggedIn, canReview, wrapAsync(getInReview));
 router.route("/articleTags").get(wrapAsync(getArticleByTag));
+router.route("/liked").get(isLoggedIn, wrapAsync(getArticlesLikedByUser));
 router.route("/user").get(isLoggedIn, wrapAsync(getArticlesByUser));
 router.route("/user/:id").get(wrapAsync(getArticlesByOtherUser));
 router.route("/like/:id").patch(wrapAsync(updateLikes));
