@@ -120,7 +120,7 @@ export default function CommentSection({ article }: { article: Article }) {
   });
 
   return (
-    <section className="h-screen flex flex-col justify-center gap-2">
+    <section className="w-11/12 bg-white bg-opacity-5 rounded-lg p-4 border border-content flex flex-col justify-center gap-2">
       {session?.user && (
         <Form {...form}>
           <form>
@@ -134,7 +134,7 @@ export default function CommentSection({ article }: { article: Article }) {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-inputbg placeholder:text-gcontent w-full"
+                      className="placeholder:text-gcontent w-full text-black"
                       type="content"
                       onChange={field.onChange}
                       placeholder="ادخل تعليقك هنا"
@@ -164,6 +164,7 @@ export default function CommentSection({ article }: { article: Article }) {
         </Form>
       )}
       <div className="overflow-y-scroll h-80">
+        <h1 className="border-b text-xl my-4">التعليقات</h1>
         {comments &&
           comments!.map((comment, index) => {
             return (
