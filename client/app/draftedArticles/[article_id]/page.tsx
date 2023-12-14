@@ -37,6 +37,9 @@ export default function ArticlePage({
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const formSchema = z.object({
     title: z
       .string()
@@ -69,75 +72,80 @@ export default function ArticlePage({
     isSuccess,
   } = useQuery({
     enabled:
-      session !== undefined && session?.user !== null && session !== null,
+      session !== undefined &&
+      session?.user !== null &&
+      session?.user.user_id !== undefined,
     queryKey: "article",
-    queryFn: () => {
-      return fetch(
-        `http://localhost:8080/article/drafted/${params.article_id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${session?.user.user_id}`,
+    queryFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/article/drafted/${params.article_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session?.user.user_id}`,
+            },
           },
-        },
-      ).then((res) => res.json() as Promise<Article>);
+        );
+        return res.json() as Promise<Article>;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
   const { mutate: postArticle } = useMutation({
     mutationKey: "article",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/article/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        body: JSON.stringify({
-          title: form.getValues("title"),
-          subtitle: form.getValues("subtitle"),
-          content: form.getValues("content"),
-          tags: form.getValues("tags").split("،"),
-          article_status:
-            session!.user.role === "admin" || session!.user.role === "reviewer"
-              ? "published"
-              : "in_review",
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/article/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+          body: JSON.stringify({
+            title: form.getValues("title"),
+            subtitle: form.getValues("subtitle"),
+            content: form.getValues("content"),
+            tags: form.getValues("tags").split("،"),
+            article_status:
+              session!.user.role === "admin" ||
+              session!.user.role === "reviewer"
+                ? "published"
+                : "in_review",
+          }),
         });
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
   const { mutate: draftArticle } = useMutation({
     mutationKey: "article",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/article/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        body: JSON.stringify({
-          title: form.getValues("title"),
-          subtitle: form.getValues("subtitle"),
-          content: form.getValues("content"),
-          tags: form.getValues("tags").split("،"),
-          article_status: "draft",
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/article/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+          body: JSON.stringify({
+            title: form.getValues("title"),
+            subtitle: form.getValues("subtitle"),
+            content: form.getValues("content"),
+            tags: form.getValues("tags").split("،"),
+            article_status: "draft",
+          }),
         });
+        return res.json();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 

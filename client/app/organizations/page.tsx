@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Organization from "@/models/org";
 import OrganiztionCard from "..//components/OrganizationCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "react-query";
@@ -20,10 +19,13 @@ import { Button } from "@/components/ui/button";
 
 export default function Organizations() {
   const { data: session } = useSession();
-  const { data: orgs, isLoading } = useQuery("organizations", () => {
-    return fetch("http://localhost:8080/org").then(
-      (res) => res.json() as Promise<Organization[]>,
-    );
+  const { data: orgs, isLoading } = useQuery("organizations", async () => {
+    try {
+      const res = await fetch("http://localhost:8080/org");
+      return res.json() as Promise<Org[]>;
+    } catch (err) {
+      console.log(err);
+    }
   });
   const [search, setSearch] = useState("");
   const [filteredOrgs, setFilteredOrgs] = useState<Org[]>(
@@ -45,9 +47,12 @@ export default function Organizations() {
     const filtered = isLoading
       ? []
       : orgs?.filter((org) => {
-          const nameMatch = org.name.includes(search);
+          const nameMatch = org.name
+            .toLowerCase()
+            .includes(search.toLowerCase());
           const orgFounder = org.org_founders?.some(
-            (founder) => founder.founder?.includes(search),
+            (founder) =>
+              founder.founder?.toLowerCase().includes(search.toLowerCase()),
           );
           return nameMatch || orgFounder;
         });
@@ -126,7 +131,7 @@ export default function Organizations() {
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

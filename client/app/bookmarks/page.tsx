@@ -24,16 +24,27 @@ export default function Bookmarks() {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const { data: bookmarks, isLoading } = useQuery({
-    enabled: session !== undefined && session?.user !== null,
+    enabled:
+      session !== undefined &&
+      session?.user !== null &&
+      session?.user.user_id !== undefined,
     queryKey: "bookmarks",
-    queryFn: () => {
-      return fetch("http://localhost:8080/user/bookmarked", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${session?.user?.user_id}`,
-        },
-      }).then((res) => res.json() as Promise<BookmarksProps[]>);
+    queryFn: async () => {
+      try {
+        const res = await fetch("http://localhost:8080/user/bookmarked", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session?.user?.user_id}`,
+          },
+        });
+        return res.json() as Promise<BookmarksProps[]>;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
   return (
@@ -49,7 +60,7 @@ export default function Bookmarks() {
         <p>المقالات المحفوظة</p>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

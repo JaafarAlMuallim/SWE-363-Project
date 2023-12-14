@@ -10,11 +10,16 @@ import ArticleCard from "../components/ArticleCard2";
 import { Button } from "@/components/ui/button";
 export default function Articles() {
   const { data: session } = useSession();
-  const { data: articles, isLoading } = useQuery("articles", () => {
-    return fetch("http://localhost:8080/article/published", {
-      method: "GET",
-      cache: "no-cache",
-    }).then((res) => res.json() as Promise<Article[]>);
+  const { data: articles, isLoading } = useQuery("articles", async () => {
+    try {
+      const res = await fetch("http://localhost:8080/article/published", {
+        method: "GET",
+        cache: "no-cache",
+      });
+      return res.json() as Promise<Article[]>;
+    } catch (err) {
+      console.log(err);
+    }
   });
   const [search, setSearch] = useState("");
   const [filteredArticles, setFilteredArticles] = useState<Article[]>(
@@ -70,7 +75,7 @@ export default function Articles() {
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

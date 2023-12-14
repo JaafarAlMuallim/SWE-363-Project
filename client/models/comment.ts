@@ -7,5 +7,5 @@ export default interface Comment {
   content: string;
   date?: string;
   comment_likes?: number;
-  user: User;
+  user?: User;
 }

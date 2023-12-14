@@ -15,8 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation } from "react-query";
-import { queryClient } from "@/app/components/QueryProvider";
 type Props = {
   comment: Comment;
   onClose: () => void;

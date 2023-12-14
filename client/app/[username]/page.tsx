@@ -1,216 +1,284 @@
 "use client";
-import { Label } from "@/components/ui/label";
 import Image from "next/image";
+import { useMutation, useQueries, useQuery } from "react-query";
+import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
-import { useQuery, useMutation, useQueries } from "react-query";
-import User from "@/models/user";
 import { Skeleton } from "@/components/ui/skeleton";
-import { queryClient } from "../components/QueryProvider";
-import {} from "react-query";
-import { useState } from "react";
-import EditProfileModa from "../components/EditProfileModal";
-import Link from "next/link";
+import { queryClient } from "@/app/components/QueryProvider";
 import Article from "@/models/article";
-import ArticleCard from "../components/ArticleCard2";
-import ProfileStats from "@/models/profile_stats";
+import Link from "next/link";
+import ArticleCard from "@/app/components/ArticleCard2";
 import { toast, useToast } from "@/components/ui/use-toast";
-
+import User from "@/models/user";
 export default function Profile({ params }: { params: { username: string } }) {
-  const { data: profile } = useSession();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: session } = useSession();
   const { toast } = useToast();
-  const handleEditProfile = () => {
-    setIsModalOpen(true);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const [
-    { data: userProfile, isLoading, isSuccess },
-    { data: stats, isLoading: statsLoading, isSuccess: statsSuccess },
-  ] = useQueries([
+  const [profile, isFollowing] = useQueries([
     {
-      enabled: profile !== undefined && profile?.user !== null,
-      queryKey: "userProfile",
-      queryFn: () => {
-        return fetch(`http://localhost:8080/profile`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${profile?.user.user_id}`,
-          },
-        }).then((res) => res.json() as Promise<User>);
+      queryKey: "profile",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/profile/${params.username}`,
+            {
+              method: "GET",
+              credentials: "include",
+            },
+          );
+          return res.json() as Promise<User>;
+        } catch (error) {
+          console.log(error);
+        }
       },
+      cacheTime: 8,
     },
     {
-      enabled: profile !== undefined && profile?.user !== null,
-      queryKey: "profileStats",
-      queryFn: () => {
-        return fetch(`http://localhost:8080/profile/stats`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${profile?.user.user_id}`,
-          },
-        }).then((res) => res.json() as Promise<ProfileStats>);
+      enabled: session !== undefined && session?.user !== null,
+      queryKey: "following",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/user/following/${params.username}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${session!.user.user_id}`,
+              },
+            },
+          );
+          const data! = await res.json();
+          return data!;
+        } catch (err) {
+          console.log(err);
+        }
       },
+      cacheTime: 8,
     },
   ]);
-
-  const { mutate: handleEditProfileMutation } = useMutation({
-    mutationKey: "userProfile",
-    mutationFn: (data: User) => {
-      handleCancel();
-      return fetch(`http://localhost:8080/profile`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${profile?.user.user_id}`,
-        },
-        body: JSON.stringify(data),
-      }).then((res) => res.json() as Promise<User>);
+  // useMutation
+  const { mutate: changeFollowStatus } = useMutation({
+    mutationKey: "following",
+    mutationFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/user/follow/${profile.data!.user_id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session!.user.user_id}`,
+            },
+          },
+        );
+      } catch (err) {
+        console.log(err);
+      }
     },
     onSuccess: () => {
       toast({
-        title: "تم تعديل الملف الشخصي بنجاح",
-        description: "تم حفظ الملف الشخصي الجديد بنجاح",
+        title: "تمت المتابعة بنجاح",
+        description: `تمت متابعة ${profile!.data!!.name}`,
         className: "bg-green-700 text-white",
         duration: 3000,
       });
-      queryClient.invalidateQueries("userProfile");
+      queryClient.invalidateQueries("following");
     },
-    onMutate: (data) => {
-      queryClient.setQueryData("userProfile", (oldData: any) => {
-        return {
-          ...oldData,
-          ...data,
-        };
+    onMutate: () => {
+      queryClient.setQueryData("following", {
+        ...isFollowing.data!,
+        isFollowing: !isFollowing.data!.isFollowing,
       });
     },
+  });
+  const { mutate: changeRoleStatus } = useMutation({
+    mutationKey: "profile",
+    mutationFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/user/changeRole/${profile.data!!.user_id}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            body: JSON.stringify({
+              role: profile?.data!?.role === "reviewer" ? "user" : "reviewer",
+            }),
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session!.user.user_id}`,
+            },
+          },
+        );
+        return res.json() as Promise<User>;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    onSuccess: () => {
+      toast({
+        title:
+          profile?.data!!.role === "reviewer"
+            ? "تمت الترقية بنجاح"
+            : "تمت التخفيض بنجاح",
+        description:
+          profile?.data!!.role === "reviewer"
+            ? `تمت ترقية ${profile.data!!.name}`
+            : `تمت تخفيض ${profile.data!!.name}`,
 
-    onError: (error) => {
-      console.log(error);
+        className:
+          profile.data!!.role === "reviewer"
+            ? "bg-green-700 text-white"
+            : "bg-red-700 text-white",
+        duration: 3000,
+      });
+      queryClient.invalidateQueries("profile");
+    },
+    onMutate: () => {
+      queryClient.setQueryData("profile", {
+        ...profile.data!,
+        role: profile.data!!.role === "reviewer" ? "user" : "reviewer",
+      });
     },
   });
-  const { data: articles, isLoading: articleLoading } = useQuery({
-    enabled: profile !== undefined && profile?.user !== null,
+
+  const {
+    data: articles,
+    isLoading: articleLoading,
+    isSuccess: articleSuccess,
+  } = useQuery({
     queryKey: "articlesByUser",
-    queryFn: () => {
-      return fetch(`http://localhost:8080/article/user/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${profile?.user.user_id}`,
-        },
-      }).then((res) => res.json() as Promise<Article[]>);
+    enabled: profile.isSuccess,
+    queryFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/article/user/${profile.data!!.user_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        return res.json() as Promise<Article[]>;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center w-full">
-      <div className=" text-content hidden md:flex">
+    <>
+      <div className="h-screen w-screen text-content hidden md:flex">
         <div className="w-1/4 m-10 flex flex-col items-center gap-8">
           <div className="flex flex-col items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-            <Image
-              className="rounded-full my-2"
-              src={"/profile_default.png"}
-              alt="profile"
-              height={228}
-              width={228}
-            />
-            <div className="flex flex-col items-center justify-center gap-4">
-              {isLoading ? (
-                <>
-                  <Skeleton className="w-40 h-6" />
-                  <Skeleton className="w-40 h-6" />
-                  <Skeleton className="w-40 h-6" />
-                </>
-              ) : isSuccess ? (
-                <>
-                  <Label className="font-bold text-2xl" dir="ltr">
-                    @{userProfile!.username}
-                  </Label>
-                  <Label className="text-xl">{userProfile!.name}</Label>
-                  <Label className="text-xl m-2">{userProfile!.role}</Label>
-                  <button
-                    className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
-                    onClick={() => {
-                      handleEditProfile();
-                    }}
-                  >
-                    تعديل الملف الشخصي
-                  </button>
-                  <Link
-                    className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
-                    href="/bookmarks"
-                  >
-                    المقالات المفضلة
-                  </Link>
-                  <Link
-                    className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
-                    href="/draftedArticles"
-                  >
-                    المقالات مسودة
-                  </Link>
-                </>
+            {profile.isLoading ? (
+              <Skeleton className="bg-gray-400 rounded-full m-2" />
+            ) : (
+              <Image
+                className="rounded-full m-2"
+                src={"/../profile_default.png"}
+                alt="profile"
+                height={228}
+                width={228}
+              />
+            )}
+            {profile.isLoading ? (
+              <div className="flex flex-col">
+                <Skeleton className="font-bold text-2xl m-2 bg-gray-400" />
+                <Skeleton className="font-bold text-3xl m-2 bg-gray-400" />
+                <Skeleton className="text-xl m-2 bg-gray-400" />
+              </div>
+            ) : (
+              <>
+                <Label className="font-bold text-2xl m-2" dir="ltr">
+                  @{profile?.data!.username}
+                </Label>
+                <Label className="font-bold text-3xl m-2">
+                  {profile.data!.name}
+                </Label>
+                <Label className="text-xl m-2">{profile.data!.role}</Label>
+              </>
+            )}
+            <div className="flex gap-4 m-4">
+              {isFollowing.isLoading ? (
+                <Skeleton className="bg-cbtn text-content text-lg rounded-lg p-2" />
               ) : (
-                <></>
+                <button
+                  className="bg-cbtn text-content rounded-lg p-2 m-2"
+                  onClick={() => changeFollowStatus()}
+                >
+                  {isFollowing.isSuccess && isFollowing.data!.isFollowing
+                    ? "الغاء متابعة"
+                    : "متابعة"}
+                </button>
               )}
-              {isModalOpen && (
-                <EditProfileModa
-                  onClose={handleCancel}
-                  onSubmit={handleEditProfileMutation}
-                  user={userProfile!}
-                />
+              {profile.isLoading ? (
+                <Skeleton className="bg-cbtn text-content text-lg rounded-lg p-2" />
+              ) : profile.data!.role === "reviewer" ? (
+                <button
+                  onClick={() => changeRoleStatus()}
+                  className="bg-red-700 text-content rounded-lg p-2 m-2"
+                >
+                  مستخدم عادي
+                </button>
+              ) : (
+                session &&
+                session?.user &&
+                session?.user.role === "admin" && (
+                  <button
+                    onClick={() => changeRoleStatus()}
+                    className="bg-green-700 text-content rounded-lg p-2 m-2"
+                  >
+                    ترقية لمراجع محتوى
+                  </button>
+                )
               )}
             </div>
           </div>
           <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-gcontent2">
             <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">
-                {statsSuccess ? stats!.followers : 0}
-              </Label>
-              <Link href={"/following"}>
-                <Label className="m-1 text-gcontent2">المُتابَعون</Label>
-              </Link>
+              <Label className="font-bold m-1">3</Label>
+              <Label className="m-1 text-gcontent2">متابَعون</Label>
             </div>
             <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">
-                {statsSuccess ? stats!.following : 0}
-              </Label>
-              <Link href={"/followers"}>
-                <Label className="m-1 text-gcontent2">المُتابعين</Label>
-              </Link>
+              <Label className="font-bold m-1">3220</Label>
+              <Label className="m-1 text-gcontent2">متابعا</Label>
             </div>
             <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">
-                {statsSuccess ? stats!.articles : 0}
-              </Label>
+              <Label className="font-bold m-1">70</Label>
               <Label className="m-1 text-gcontent2">مقال</Label>
             </div>
           </div>
         </div>
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
           <div className="w-full h-fit rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
-            {isLoading ? (
+            {profile?.isLoading ? (
               <Skeleton className="w-80 h-8" />
-            ) : isSuccess ? (
-              userProfile?.overview
+            ) : profile?.isSuccess ? (
+              profile?.data!.overview
             ) : (
               <>لا توجد معلومات هنا</>
             )}
           </div>
-          <h1>Articles By {profile?.user.name}</h1>
+          <h1 className="text-2xl">
+            Articles By{" "}
+            {profile?.isLoading ? (
+              <Skeleton className="w-36 h-6" />
+            ) : profile?.isSuccess ? (
+              profile?.data!.name
+            ) : (
+              <></>
+            )}
+          </h1>
           <div className="container my-12 mx-auto px-4 md:px-12">
-            <div className="h-auto flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+            <div className="h-screen flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
                 <>
                   <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
                   <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
                   <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
                 </>
-              ) : isSuccess ? (
+              ) : articleSuccess ? (
                 articles!.map((article) => {
                   return (
                     <Link
@@ -229,41 +297,65 @@ export default function Profile({ params }: { params: { username: string } }) {
         </div>
       </div>
 
-      <div className=" text-content flex flex-col items-center md:hidden">
+      <div className="h-screen w-screen text-content flex flex-col items-center md:hidden">
         <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-          <Image
-            className="rounded-full my-2"
-            src={"/profile_default.png"}
-            alt="profile"
-            height={128}
-            width={128}
-          />
-          <div className="flex flex-col items-center justify-center gap-2">
-            {isLoading ? (
-              <>
-                <Skeleton className="w-40 h-8" />
-                <Skeleton className="w-40 h-8" />
-                <Skeleton className="w-40 h-8" />
-              </>
+          {profile.isLoading ? (
+            <Skeleton className="rounded-full m-2 bg-gray-400" />
+          ) : (
+            <Image
+              className="rounded-full m-2"
+              src={"/profile_default.png"}
+              alt="profile"
+              height={128}
+              width={128}
+            />
+          )}
+          {profile.isLoading ? (
+            <div className="flex flex-col">
+              <Skeleton className="font-bold text-xl m-2 bg-gray-400" />
+              <Skeleton className="font-bold text-2xl m-2 bg-gray-400" />
+              <Skeleton className="text-lg m-2 bg-gray-400" />
+            </div>
+          ) : (
+            <>
+              <Label className="font-bold text-xl m-2" dir="ltr">
+                @{profile?.data!.username}
+              </Label>
+              <Label className="font-bold text-2xl m-2">
+                {profile?.data!.name}
+              </Label>
+              <Label className="text-lg m-2">{profile?.data!.role}</Label>
+            </>
+          )}
+          <div className="flex gap-4">
+            {isFollowing.isLoading ? (
+              <Skeleton className="bg-cbtn text-content rounded-lg p-2 m-2" />
             ) : (
-              <>
-                <Label className="font-bold text-xl" dir="ltr">
-                  @{userProfile?.username}
-                </Label>
-                <Label className="font-bold text-2xl">
-                  {userProfile?.name}
-                </Label>
-                <Label className="text-lg">{userProfile?.role}</Label>
-                <button className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2">
-                  تعديل الملف الشخصي
-                </button>
-                <Link
-                  className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
-                  href="/bookmarks"
-                >
-                  المقالات المفضلة
-                </Link>
-              </>
+              <button
+                onClick={() => changeFollowStatus()}
+                className="bg-cbtn text-content rounded-lg p-2 m-2"
+              >
+                {isFollowing.isSuccess && isFollowing.data!.isFollowing
+                  ? "الغاء المتابعة"
+                  : "متابعة"}
+              </button>
+            )}
+            {profile.isLoading ? (
+              <Skeleton className="bg-cbtn text-content text-lg rounded-lg p-2" />
+            ) : profile.data!.role === "reviewer" ? (
+              <button
+                onClick={() => changeRoleStatus()}
+                className="bg-red-700 text-content rounded-lg p-2 m-2"
+              >
+                مستخدم عادي
+              </button>
+            ) : (
+              <button
+                onClick={() => changeRoleStatus()}
+                className="bg-green-700 text-content rounded-lg p-2 m-2"
+              >
+                ترقية لمراجع محتوى
+              </button>
             )}
           </div>
         </div>
@@ -282,41 +374,15 @@ export default function Profile({ params }: { params: { username: string } }) {
           </div>
         </div>
         <div className="w-80 h-fit m-8 rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
-          {isLoading ? (
+          {profile?.isLoading ? (
             <Skeleton className="w-80 h-8" />
-          ) : isSuccess ? (
-            userProfile?.overview
+          ) : profile?.isSuccess ? (
+            profile?.data!.overview
           ) : (
             <>لا توجد معلومات هنا</>
           )}
         </div>
-
-        <h1>Articles By {profile?.user.name}</h1>
-        <div className="container my-12 mx-auto px-4 md:px-12">
-          <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
-            {articleLoading ? (
-              <>
-                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-              </>
-            ) : isSuccess ? (
-              articles!.map((article) => {
-                return (
-                  <Link
-                    key={article.article_id}
-                    href={`/articles/${article.article_id}`}
-                  >
-                    <ArticleCard article={article} />
-                  </Link>
-                );
-              })
-            ) : (
-              <></>
-            )}
-          </div>
-        </div>
       </div>
-    </div>
+    </>
   );
 }

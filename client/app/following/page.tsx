@@ -21,22 +21,33 @@ export default function FollowingPage() {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const {
     data: users,
     isLoading,
     isSuccess,
   } = useQuery({
-    enabled: session !== undefined && session?.user !== null,
+    enabled:
+      session !== undefined &&
+      session?.user !== null &&
+      session?.user.user_id !== undefined,
     queryKey: "following",
-    queryFn: () => {
-      return fetch("http://localhost:8080/user/following", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user.user_id}`,
-        },
-        cache: "no-cache",
-      }).then((res) => res.json() as Promise<UserFollow[]>);
+    queryFn: async () => {
+      try {
+        const res = await fetch("http://localhost:8080/user/following", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user.user_id}`,
+          },
+          cache: "no-cache",
+        });
+        return res.json() as Promise<UserFollow[]>;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
   const [search, setSearch] = useState("");
@@ -85,7 +96,7 @@ export default function FollowingPage() {
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

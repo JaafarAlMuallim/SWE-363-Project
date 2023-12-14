@@ -2,7 +2,7 @@
 import Organization from "@/models/org";
 import Org from "@/models/org";
 import Image from "next/image";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQueries, useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -18,38 +18,78 @@ export default function Organization({
   params: { org_id: string };
 }) {
   const { data: session } = useSession();
-  const { data: org, isLoading: orgLoading } = useQuery({
-    queryKey: "org",
-    queryFn: () =>
-      fetch(`http://localhost:8080/org/${params.org_id}`, {
-        method: "GET",
-      }).then((res) => res.json() as Promise<Org>),
-  });
-  const { data: articles, isLoading: articleLoading } = useQuery({
-    queryKey: "articles",
-    queryFn: () =>
-      fetch(`http://localhost:8080/org/${params.org_id}/articles`, {
-        method: "GET",
-      }).then((res) => res.json() as Promise<Article[]>),
-  });
-  const { data: orgFounders, isLoading: orgFoundersLoading } = useQuery({
-    queryKey: "orgFounders",
-    queryFn: () =>
-      fetch(`http://localhost:8080/org/${params.org_id}/founders`, {
-        method: "GET",
-      }).then((res) => res.json() as Promise<OrgFounder[]>),
-  });
+  const [
+    { data: org, isLoading: orgLoading },
+    { data: articles, isLoading: articleLoading },
+    { data: orgFounders, isLoading: orgFoundersLoading },
+  ] = useQueries([
+    {
+      queryKey: "org",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/org/${params.org_id}`,
+            {
+              method: "GET",
+            },
+          );
+          return res.json() as Promise<Org>;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
+    {
+      queryKey: "articles",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/org/${params.org_id}/articles`,
+            {
+              method: "GET",
+            },
+          );
+          return res.json() as Promise<Article[]>;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
+    {
+      queryKey: "orgFounders",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/org/${params.org_id}/founders`,
+            {
+              method: "GET",
+            },
+          );
+          return res.json() as Promise<OrgFounder[]>;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
+  ]);
+
   const { mutate: changeOrgStatus } = useMutation({
     mutationKey: "org",
-    mutationFn: (value: "failure" | "success") =>
-      fetch(`http://localhost:8080/org/${params.org_id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ org_status: value }),
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-      }).then((res) => res.json() as Promise<Org>),
+    mutationFn: async (value: "failure" | "success") => {
+      try {
+        const res = await fetch(`http://localhost:8080/org/${params.org_id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ org_status: value }),
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+        });
+        return res.json() as Promise<Org>;
+      } catch (error) {
+        console.log(error);
+      }
+    },
     onMutate: () => {
       queryClient.setQueryData("org", (oldData: any) => {
         return {
@@ -85,7 +125,7 @@ export default function Organization({
               <Skeleton className="bg-gray-400 rounded-full m-2" />
             ) : (
               <Image
-                className="rounded-lg mx-10"
+                className="rounded-lg"
                 src={"/test.jpg"}
                 alt="profile"
                 height={400}
