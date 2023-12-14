@@ -27,6 +27,7 @@ export default function Bookmarks() {
   if (!session) {
     return <div className="h-screen"></div>;
   }
+  // Fetch the user's bookmarks
   const { data: bookmarks, isLoading } = useQuery({
     enabled:
       session !== undefined &&
@@ -61,6 +62,7 @@ export default function Bookmarks() {
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
         <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+          {/* if the data is loading, show the skeleton */}
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
@@ -78,9 +80,10 @@ export default function Bookmarks() {
                 </Link>
               );
             })
-          ) : (
+            ) : (
+            // if the user has no bookmarks, show a message
             <div className="h-screen text-center text-2xl text-content">
-              لا يوجد مقالات محفوظة
+              <p>لا يوجد مقالات محفوظة</p>
             </div>
           )}
         </div>

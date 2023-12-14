@@ -23,6 +23,7 @@ export default function LikedArticles() {
   if (!session) {
     return <div className="h-screen"></div>;
   }
+  // Fetch the liked articles
   const {
     data: articles,
     isLoading,

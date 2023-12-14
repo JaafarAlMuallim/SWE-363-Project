@@ -16,6 +16,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import User from "@/models/user";
 export default function RegisterForm() {
+  // Form validation schema
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
     password: z
@@ -45,6 +46,7 @@ export default function RegisterForm() {
     },
   });
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const res = await fetch("http://localhost:8080/user/signup", {

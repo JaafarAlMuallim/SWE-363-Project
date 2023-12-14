@@ -30,6 +30,7 @@ export default function ReviewArticle() {
     session?.user?.role !== "admin" &&
     session?.user?.role !== "reviewer"
   ) {
+    // Redirect the user to the home page if he is not an admin
     return (
       <div className="h-screen flex flex-col justify-center items-center text-center text-2xl font-semibold text-red-500">
         لا يمكنك الوصول لهذه الصفحة، هذه الصفحة مخصصة للمراجعين والمسؤولين فقط
@@ -49,6 +50,7 @@ export default function ReviewArticle() {
       session?.user.user_id !== undefined,
     queryFn: async () => {
       try {
+        // Fetch the articles that are in review
         const res = await fetch("http://localhost:8080/article/inReview", {
           method: "GET",
           headers: {
@@ -99,6 +101,7 @@ export default function ReviewArticle() {
       </div>
       <div className="h-screen flex flex-col gap-10">
         {isSuccess && data?.length > 0 ? (
+          // Display the articles that are in review
           data!.map((article: Article) => {
             return (
               <ArticleCard

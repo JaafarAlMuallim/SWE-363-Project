@@ -26,6 +26,7 @@ export default function CommentSection({ article }: { article: Article }) {
   const { data: session } = useSession();
   const { toast } = useToast();
   const [showModal, setShowModal] = useState(false);
+  // Fetch comments
   const { data: comments, isLoading: loadingComments } = useQuery({
     queryKey: "comments",
     queryFn: async () => {
@@ -91,6 +92,7 @@ export default function CommentSection({ article }: { article: Article }) {
       return { previousComments };
     },
   });
+  // handle comment deletion
   const handleDelete = (comment: Comment) => {
     deleteComment(comment);
   };
