@@ -37,10 +37,6 @@ export async function updateUserProfile(
           email: req.body.email,
           username: req.body.username,
           overview: req.body.overview,
-          //x_account: req.body.x_account,
-          //linkdin_account: req.body.linkdin_account,
-          //website: req.body.website,
-          //user_image: req.body.user_image,
         })
         .where(eq(users.user_id, req.headers.authorization.split(" ")[1]))
         .returning();
@@ -63,7 +59,7 @@ export async function updateUserProfileImage(
       .set({
         user_image: req.body.user_image,
       })
-      .where(eq(users.user_id, req.params.id))
+      .where(eq(users.user_id, req.headers.authorization.split(" ")[1]))
       .returning();
     res.send(user);
   } catch (e) {
@@ -77,7 +73,7 @@ export async function updateUserProfilePassword(
   next: NextFunction,
 ) {
   try {
-    const user = await db
+    await db
       .update(users)
       .set({
         password: req.body.password,
