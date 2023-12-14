@@ -29,7 +29,7 @@ export default function Article({ params }: { params: { id: string } }) {
             `http://localhost:8080/article/${params.id}`,
             {
               method: "GET",
-              cache: "force-cache",
+              cache: "no-cache",
             },
           );
           return res.json() as Promise<Article>;

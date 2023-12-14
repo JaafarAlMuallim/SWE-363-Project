@@ -25,7 +25,9 @@ export default function Home() {
         <div className=" text-3xl mx-5 mt-10">
           <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
         </div>
-        <div></div>
+        <div>
+          <Animation />
+        </div>
         <div className=" text-white-500 text-3xl mx-5 mt-10">
           مهتمون بجميع المشاريع في قطاع
           {/* Animated text */}

@@ -60,12 +60,13 @@ export async function saveArticle(
   next: NextFunction,
 ) {
   try {
+    console.log(req.body);
     const articleData: ArticleData = {
       title: req.body.title,
       subtitle: req.body.subtitle,
       content: req.body.content,
       user_id: req.headers.authorization.split(" ")[1],
-      org_id: "2491ce88-199e-4fbb-be33-9f5f5b2feb13",
+      org_id: req.body.org_id,
       article_image: req.body.article_image,
       views: 0,
       bookmarks: 0,

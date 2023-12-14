@@ -40,7 +40,7 @@ export default function Article({ params }: { params: { id: string } }) {
           headers: {
             "Content-Type": "application/json",
           },
-          cache: "force-cache",
+          cache: "no-cache",
         });
         const data = await res.json();
         return data;
@@ -82,7 +82,6 @@ export default function Article({ params }: { params: { id: string } }) {
           height={400}
         />
         <>
-          
           <Skeleton className="w-96 h-6" />
           <Skeleton className="w-1/2 h-4" />
           <Skeleton className="w-1/2 h-4" />

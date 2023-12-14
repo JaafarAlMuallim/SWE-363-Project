@@ -14,7 +14,7 @@ export default function Articles() {
     try {
       const res = await fetch("http://localhost:8080/article/published", {
         method: "GET",
-        cache: "force-cache",
+        cache: "no-cache",
       });
       return res.json() as Promise<Article[]>;
     } catch (err) {
