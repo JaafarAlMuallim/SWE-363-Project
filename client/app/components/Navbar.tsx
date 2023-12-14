@@ -27,6 +27,17 @@ export default function Navbar() {
   const [local_theme, setTheme] = useState("light");
   const [chk, setChk] = useState(true);
   const router = useRouter();
+  function handleThemeChange() {
+    if (local_theme === "light") {
+      setTheme("dark");
+      setChk(false);
+    } else {
+      setTheme("light");
+      setChk(true);
+    }
+    document.documentElement.setAttribute("local_theme", local_theme);
+  }
+
   return (
     <>
       <div className="sticky top-0 z-10 bg-secondaryDark py-4 border-b w-full text-content">
@@ -54,37 +65,30 @@ export default function Navbar() {
                   </Link>
                 </li>
               ) : (
-                <li>
-                  <Link href={`/auth`}>تسجيل الدخول</Link>
-                </li>
-              )}
-              {/*}
-              <li>
-                //{" "}
-                <button onClick={handleThemeChange} className="p-2">
-                  // {chk == true ? <Sun /> : <Moon />}
-                  //{" "}
-                </button>
-              </li>
-              */}
-              <li>
-                <Link
-                  className="flex link link-underline link-underline-black p-2"
-                  href={"/"}
-                >
-                  الرئيسية
-                  <Home className="mx-2" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex link link-underline link-underline-black p-2"
-                  href={`/articles`}
-                >
-                  المقالات
-                  <Newspaper className="mx-2" />
-                </Link>
-              </li>
+                <><li>
+                    <Link href={`/auth`}>تسجيل الدخول</Link>
+                  </li><li>
+                      <button onClick={handleThemeChange} className="p-2">
+                        {chk == true ? <Sun /> : <Moon />}
+                      </button>
+                    </li><li>
+                      <Link
+                        className="flex link link-underline link-underline-black p-2"
+                        href={"/"}
+                      >
+                        الرئيسية
+                        <Home className="mx-2" />
+                      </Link>
+                    </li><li>
+                      <Link
+                        className="flex link link-underline link-underline-black p-2"
+                        href={`/articles`}
+                      >
+                        المقالات
+                        <Newspaper className="mx-2" />
+                      </Link>
+                    </li></>
+                  )}
               {session &&
                 (session.user.role === "admin" ||
                   session.user.role === "reviewer") && (
