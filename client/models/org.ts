@@ -1,7 +1,7 @@
 import { OrgFounder } from "./org_founders";
 
 export default interface Organization {
-  org_id?: number;
+  org_id?: string;
   name: string;
   description: string;
   hq_location?: string;

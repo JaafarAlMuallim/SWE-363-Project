@@ -11,12 +11,21 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import Org from "@/models/org";
 import TipTap from "../components/TipTap";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 export default function Page() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -47,6 +56,7 @@ export default function Page() {
       .min(100, { message: "المحتوى يجب أن يكون ١٠٠ حرف أو أكثر" })
       .trim(),
     tags: z.string().min(1, { message: "الوسم يجب أن يكون ٣ أحرف أو أكثر" }),
+    org: z.string().min(1, { message: "المنظمة يجب أن يكون ٣ أحرف أو أكثر" }),
   });
   type FormValues = z.infer<typeof formSchema>;
   const form = useForm<FormValues>({
@@ -59,6 +69,28 @@ export default function Page() {
       tags: "",
     },
   });
+  const {
+    data: orgs,
+    isLoading: orgsLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: "orgs",
+    queryFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/org/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+        });
+        return res.json() as Promise<Org[]>;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  });
+
   const { mutate: postArticle } = useMutation({
     mutationKey: "article",
     mutationFn: async () => {
@@ -74,6 +106,7 @@ export default function Page() {
             subtitle: form.getValues("subtitle"),
             content: form.getValues("content"),
             tags: form.getValues("tags").split("،"),
+            org_id: form.getValues("org"),
             article_status:
               session!.user.role === "admin" ||
               session!.user.role === "reviewer"
@@ -111,6 +144,7 @@ export default function Page() {
       }
     },
   });
+  console.log(form.getValues("org"));
 
   return (
     <section className="h-screen my-20">
@@ -151,6 +185,34 @@ export default function Page() {
                 </FormItem>
               )}
             />
+            <FormField
+              name="org"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue
+                        placeholder="الشركات"
+                        onChange={() => field.onChange()}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {orgsLoading ? (
+                        <Skeleton />
+                      ) : (
+                        isSuccess &&
+                        orgs!.map((org) => (
+                          <SelectItem key={org.org_id} value={org.org_id!}>
+                            {org.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
           </div>
           <FormField
             name="content"
@@ -182,6 +244,7 @@ export default function Page() {
               </FormItem>
             )}
           />
+
           <div className="flex gap-8">
             <Button
               type="submit"
