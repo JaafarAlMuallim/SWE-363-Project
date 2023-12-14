@@ -25,6 +25,8 @@ export default function ArticleCard(props: { article: Article }) {
                 src="/profile_default.png"
                 alt="avatar"
                 className="shadow-lg rounded-full"
+                height={40}
+                width={40}
               />
             </Link>
           </object>

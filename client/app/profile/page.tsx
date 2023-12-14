@@ -183,7 +183,7 @@ export default function Profile({ params }: { params: { username: string } }) {
                   <Label className="text-xl">{userProfile!.name}</Label>
                   <Label className="text-xl m-2">{userProfile!.role}</Label>
                   <button
-                    className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
+                    className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
                     onClick={() => {
                       handleEditProfile();
                     }}
@@ -192,13 +192,13 @@ export default function Profile({ params }: { params: { username: string } }) {
                   </button>
                   <div className="flex flex-row">
                     <Link
-                      className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
+                      className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
                       href="/bookmarks"
                     >
                       المقالات المرجعية
                     </Link>
                     <Link
-                      className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2"
+                      className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
                       href="/draftedArticles"
                     >
                       المقالات المسودة
@@ -217,13 +217,13 @@ export default function Profile({ params }: { params: { username: string } }) {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-gcontent2">
+          <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-cbtn">
             <div className="flex flex-col m-4 justify-center items-center">
               <Label className="font-bold m-1">
                 {statsSuccess ? stats!.followers : 0}
               </Label>
               <Link href={"/following"}>
-                <Label className="m-1 text-gcontent2">المُتابَعون</Label>
+                <Label className="m-1 text-cbtn">المُتابَعون</Label>
               </Link>
             </div>
             <div className="flex flex-col m-4 justify-center items-center">
@@ -231,19 +231,19 @@ export default function Profile({ params }: { params: { username: string } }) {
                 {statsSuccess ? stats!.following : 0}
               </Label>
               <Link href={"/followers"}>
-                <Label className="m-1 text-gcontent2">المُتابعين</Label>
+                <Label className="m-1 text-cbtn">المُتابعين</Label>
               </Link>
             </div>
             <div className="flex flex-col m-4 justify-center items-center">
               <Label className="font-bold m-1">
                 {statsSuccess ? stats!.articles : 0}
               </Label>
-              <Label className="m-1 text-gcontent2">مقال</Label>
+              <Label className="m-1 text-cbtn">مقال</Label>
             </div>
           </div>
         </div>
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
-          <div className="w-full h-fit rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
+          <div className="w-full h-fit rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
             {isLoading ? (
               <Skeleton className="w-80 h-8" />
             ) : isSuccess ? (
@@ -306,18 +306,18 @@ export default function Profile({ params }: { params: { username: string } }) {
                   {userProfile?.name}
                 </Label>
                 <Label className="text-lg">{userProfile?.role}</Label>
-                <button className="bg-gcontent2 text-white rounded-lg px-4 py-2 m-2">
+                <button className="bg-cbtn text-content rounded-lg px-4 py-2 m-2">
                   تعديل الملف الشخصي
                 </button>
                 <div className="flex flex-row gap-2 my-4">
                   <Link
-                    className="bg-gcontent2 text-white rounded-lg px-4 py-2"
+                    className="bg-cbtn text-content rounded-lg px-4 py-2"
                     href="/bookmarks"
                   >
                     المقالات المرجعية
                   </Link>
                   <Link
-                    className="bg-gcontent2 text-white rounded-lg px-4 py-2"
+                    className="bg-cbtn text-content rounded-lg px-4 py-2"
                     href="/draftedArticles"
                   >
                     المقالات المسودة
@@ -327,27 +327,27 @@ export default function Profile({ params }: { params: { username: string } }) {
             )}
           </div>
         </div>
-        <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-gcontent2">
+        <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-cbtn">
           <div className="flex flex-col m-4 justify-center items-center">
             <Label className="font-bold m-1">
               {statsSuccess ? stats!.articles : 0}
             </Label>
-            <Label className="m-1 text-gcontent2">متابَعون</Label>
+            <Label className="m-1 text-cbtn">متابَعون</Label>
           </div>
           <div className="flex flex-col m-4 justify-center items-center">
             <Label className="font-bold m-1">
               {statsSuccess ? stats!.following : 0}
             </Label>
-            <Label className="m-1 text-gcontent2">متابعا</Label>
+            <Label className="m-1 text-cbtn">متابعا</Label>
           </div>
           <div className="flex flex-col m-4 justify-center items-center">
             <Label className="font-bold m-1">
               {statsSuccess ? stats!.articles : 0}
             </Label>
-            <Label className="m-1 text-gcontent2">مقال</Label>
+            <Label className="m-1 text-cbtn">مقال</Label>
           </div>
         </div>
-        <div className="w-80 h-fit m-8 rounded-lg border border-gcontent2 bg-white bg-opacity-5 p-5">
+        <div className="w-80 h-fit m-8 rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
           {isLoading ? (
             <Skeleton className="w-80 h-8" />
           ) : isSuccess ? (
