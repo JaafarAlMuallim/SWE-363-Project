@@ -61,7 +61,7 @@ export default function Home() {
               الأحلام الريادية. إليك لماذا يجب عليك اختيارنا للحصول على رؤى
               فريدة، وتوجيه شامل، ودعم لا مثيل له
             </p>
-            <Accordion className="  mb-10 ml-2 mr-1" type="single" collapsible>
+            <Accordion className="mb-10 ml-2 mr-1" type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger>
                   تركيز خاص على الشركات الناشئة
