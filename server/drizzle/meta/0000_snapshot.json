@@ -1,5 +1,5 @@
 {
-  "id": "4db63e54-25f9-4f46-befa-af1535df7991",
+  "id": "dc9479be-57de-4d45-b44c-918a5d6d3d32",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -109,6 +109,62 @@
           ],
           "columnsTo": [
             "org_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "article_like": {
+      "name": "article_like",
+      "schema": "",
+      "columns": {
+        "like_id": {
+          "name": "like_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "article_id": {
+          "name": "article_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "article_like_user_id_users_user_id_fk": {
+          "name": "article_like_user_id_users_user_id_fk",
+          "tableFrom": "article_like",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "article_like_article_id_article_article_id_fk": {
+          "name": "article_like_article_id_article_article_id_fk",
+          "tableFrom": "article_like",
+          "tableTo": "article",
+          "columnsFrom": [
+            "article_id"
+          ],
+          "columnsTo": [
+            "article_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -227,6 +283,62 @@
           ],
           "columnsTo": [
             "user_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "comment_like": {
+      "name": "comment_like",
+      "schema": "",
+      "columns": {
+        "like_id": {
+          "name": "like_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment_id": {
+          "name": "comment_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "comment_like_user_id_users_user_id_fk": {
+          "name": "comment_like_user_id_users_user_id_fk",
+          "tableFrom": "comment_like",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "comment_like_comment_id_comment_comment_id_fk": {
+          "name": "comment_like_comment_id_comment_comment_id_fk",
+          "tableFrom": "comment_like",
+          "tableTo": "comment",
+          "columnsFrom": [
+            "comment_id"
+          ],
+          "columnsTo": [
+            "comment_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -454,47 +566,25 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "prefs": {
-      "name": "prefs",
+    "user_bookmarks": {
+      "name": "user_bookmarks",
       "schema": "",
       "columns": {
-        "pref_id": {
-          "name": "pref_id",
+        "bookmark_id": {
+          "name": "bookmark_id",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "pref": {
-          "name": "pref",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "user_prefs": {
-      "name": "user_prefs",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "pref_id": {
-          "name": "pref_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
         "user_id": {
           "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "article_id": {
+          "name": "article_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -502,25 +592,81 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "user_prefs_pref_id_prefs_pref_id_fk": {
-          "name": "user_prefs_pref_id_prefs_pref_id_fk",
-          "tableFrom": "user_prefs",
-          "tableTo": "prefs",
+        "user_bookmarks_user_id_users_user_id_fk": {
+          "name": "user_bookmarks_user_id_users_user_id_fk",
+          "tableFrom": "user_bookmarks",
+          "tableTo": "users",
           "columnsFrom": [
-            "pref_id"
+            "user_id"
           ],
           "columnsTo": [
-            "pref_id"
+            "user_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "user_prefs_user_id_users_user_id_fk": {
-          "name": "user_prefs_user_id_users_user_id_fk",
-          "tableFrom": "user_prefs",
+        "user_bookmarks_article_id_article_article_id_fk": {
+          "name": "user_bookmarks_article_id_article_article_id_fk",
+          "tableFrom": "user_bookmarks",
+          "tableTo": "article",
+          "columnsFrom": [
+            "article_id"
+          ],
+          "columnsTo": [
+            "article_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "user_follow": {
+      "name": "user_follow",
+      "schema": "",
+      "columns": {
+        "follow_id": {
+          "name": "follow_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "followed_id": {
+          "name": "followed_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_follow_user_id_users_user_id_fk": {
+          "name": "user_follow_user_id_users_user_id_fk",
+          "tableFrom": "user_follow",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_follow_followed_id_users_user_id_fk": {
+          "name": "user_follow_followed_id_users_user_id_fk",
+          "tableFrom": "user_follow",
+          "tableTo": "users",
+          "columnsFrom": [
+            "followed_id"
           ],
           "columnsTo": [
             "user_id"
@@ -573,34 +719,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "verified": {
-          "name": "verified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "x_account": {
-          "name": "x_account",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "linkding_account": {
-          "name": "linkding_account",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "website": {
-          "name": "website",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "user_image": {
           "name": "user_image",
           "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "overview": {
+          "name": "overview",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -632,7 +759,9 @@
       "values": {
         "published": "published",
         "draft": "draft",
-        "deleted": "deleted"
+        "deleted": "deleted",
+        "rejected": "rejected",
+        "in_review": "in_review"
       }
     },
     "role": {

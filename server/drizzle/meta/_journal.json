@@ -5,64 +5,15 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1700390253354,
-      "tag": "0000_unusual_captain_cross",
+      "when": 1702578591353,
+      "tag": "0000_rare_selene",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "5",
-      "when": 1701291544600,
-      "tag": "0001_next_pride",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1701782345275,
-      "tag": "0002_faithful_ender_wiggin",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1701786130973,
-      "tag": "0003_broken_starjammers",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1702323875707,
-      "tag": "0004_flippant_whiplash",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1702325257675,
-      "tag": "0005_common_doctor_faustus",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1702419869112,
-      "tag": "0006_silly_bulldozer",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1702459750882,
-      "tag": "0007_tearful_madame_hydra",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1702475413637,
-      "tag": "0008_typical_starjammers",
+      "when": 1702578643952,
+      "tag": "0001_luxuriant_enchantress",
       "breakpoints": true
     }
   ]

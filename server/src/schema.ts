@@ -28,10 +28,6 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   password: varchar("password", { length: 250 }).notNull(),
   role: roleEnum("role").notNull(),
-  verified: boolean("verified").default(false),
-  x_account: varchar("x_account", { length: 255 }),
-  linkdin_account: varchar("linkding_account", { length: 255 }),
-  website: varchar("website", { length: 255 }),
   user_image: varchar("user_image", { length: 255 }),
   overview: text("overview"),
 });
@@ -62,27 +58,6 @@ export const userFollowRelations = relations(user_follow, ({ one }) => ({
   }),
 }));
 
-export const prefs = pgTable("prefs", {
-  pref_id: uuid("pref_id")
-    .primaryKey()
-    .default(sql`gen_random_uuid()`),
-  pref: text("pref").notNull(),
-});
-
-export const user_prefs = pgTable("user_prefs", {
-  id: uuid("id").primaryKey(),
-  pref_id: uuid("pref_id")
-    .references(() => prefs.pref_id)
-    .notNull(),
-  user_id: uuid("user_id")
-    .references(() => users.user_id)
-    .notNull(),
-});
-
-export const userPrefsRelations = relations(users, ({ many }) => ({
-  user_prefs: many(user_prefs),
-}));
-
 export const orgs = pgTable("orgs", {
   org_id: uuid("org_id")
     .primaryKey()
@@ -105,33 +80,8 @@ export const org_founders = pgTable("org_founders", {
   founder: varchar("founder", { length: 255 }),
 });
 
-export const interviews = pgTable("interviews", {
-  interview_id: uuid("interview_id")
-    .primaryKey()
-    .default(sql`gen_random_uuid()`),
-  user_id: uuid("user_id")
-    .references(() => users.user_id)
-    .notNull(),
-  org_id: uuid("org_id")
-    .references(() => orgs.org_id)
-    .notNull(),
-  interview_date: varchar("interview_date", { length: 50 }),
-});
-
-export const interview_questions = pgTable("interview_questions", {
-  question_id: uuid("question_id")
-    .primaryKey()
-    .default(sql`gen_random_uuid()`),
-  interview_id: uuid("interview_id")
-    .references(() => interviews.interview_id)
-    .notNull(),
-  question: text("question"),
-  answer: text("answer"),
-});
-
 export const orgsRelations = relations(orgs, ({ many }) => ({
   org_founders: many(org_founders),
-  interviews: many(interviews),
 }));
 
 export const article = pgTable("article", {
@@ -266,19 +216,6 @@ export const commentRelations = relations(comment, ({ one }) => ({
 export const userRelations = relations(users, ({ one, many }) => ({
   article: many(article),
   comment: many(comment),
-  user_prefs: many(user_prefs),
-  interview: many(interviews),
-}));
-export const interviewRelations = relations(interviews, ({ one, many }) => ({
-  user: one(users, {
-    fields: [interviews.user_id],
-    references: [users.user_id],
-  }),
-  org: one(orgs, {
-    fields: [interviews.org_id],
-    references: [orgs.org_id],
-  }),
-  interview_questions: many(interview_questions),
 }));
 
 export const orgRelations = relations(orgs, ({ many }) => ({
@@ -291,21 +228,6 @@ export const orgFounderRelations = relations(org_founders, ({ one }) => ({
   }),
 }));
 
-export const interviewQuestionsRelations = relations(
-  interview_questions,
-  ({ one }) => ({
-    interview: one(interviews, {
-      fields: [interview_questions.interview_id],
-      references: [interviews.interview_id],
-    }),
-  }),
-);
-export const userPrefRelations = relations(users, ({ many }) => ({
-  user_prefs: many(user_prefs),
-}));
-export const prefRelations = relations(prefs, ({ many }) => ({
-  user_prefs: many(user_prefs),
-}));
 export const tagsRelations = relations(article_tags, ({ one }) => ({
   article: one(article, {
     fields: [article_tags.article_id],
@@ -330,26 +252,18 @@ export const bookmarkRelations = relations(user_bookmarks, ({ one }) => ({
 export type ArticleData = InferModel<typeof article>;
 export type CommentData = InferModel<typeof comment>;
 export type UserData = InferModel<typeof users>;
-export type PrefData = InferModel<typeof prefs>;
-export type UserPrefData = InferModel<typeof user_prefs>;
 export type OrgData = InferModel<typeof orgs>;
 export type OrgFounderData = InferModel<typeof org_founders>;
-export type InterviewData = InferModel<typeof interviews>;
-export type InterviewQuestionData = InferModel<typeof interview_questions>;
 export type ArticleTagData = InferModel<typeof article_tags>;
 export type Role = "admin" | "user" | "reviewer";
 export type Status = "success" | "failure";
 export type ArticleStatus = "published" | "draft" | "deleted";
-export type UserPrefs = InferModel<typeof user_prefs>;
 export type Org = InferModel<typeof orgs>;
 export type OrgFounders = InferModel<typeof org_founders>;
-export type Interview = InferModel<typeof interviews>;
-export type InterviewQuestions = InferModel<typeof interview_questions>;
 export type Article = InferModel<typeof article>;
 export type ArticleTags = InferModel<typeof article_tags>;
 export type Comment = InferModel<typeof comment>;
 export type User = InferModel<typeof users>;
-export type Pref = InferModel<typeof prefs>;
 export type UserFollow = InferModel<typeof user_follow>;
 export type UserBookmark = InferModel<typeof user_bookmarks>;
 export type UserFollowData = InferModel<typeof user_follow>;

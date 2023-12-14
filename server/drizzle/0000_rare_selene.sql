@@ -1,5 +1,5 @@
 DO $$ BEGIN
- CREATE TYPE "article_status" AS ENUM('published', 'draft', 'deleted');
+ CREATE TYPE "article_status" AS ENUM('published', 'draft', 'deleted', 'rejected', 'in_review');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -31,6 +31,12 @@ CREATE TABLE IF NOT EXISTS "article" (
 	"likes" bigint DEFAULT 0
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "article_like" (
+	"like_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"article_id" uuid NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "article_tags" (
 	"tag_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"article_id" uuid NOT NULL,
@@ -44,6 +50,12 @@ CREATE TABLE IF NOT EXISTS "comment" (
 	"content" text NOT NULL,
 	"date" date NOT NULL,
 	"comment_likes" bigint DEFAULT 0
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "comment_like" (
+	"like_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"comment_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "interview_questions" (
@@ -78,15 +90,16 @@ CREATE TABLE IF NOT EXISTS "orgs" (
 	"org_status" "status" NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "prefs" (
-	"pref_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"pref" text NOT NULL
+CREATE TABLE IF NOT EXISTS "user_bookmarks" (
+	"bookmark_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"article_id" uuid NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "user_prefs" (
-	"id" uuid PRIMARY KEY NOT NULL,
-	"pref_id" uuid NOT NULL,
-	"user_id" uuid NOT NULL
+CREATE TABLE IF NOT EXISTS "user_follow" (
+	"follow_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"followed_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
@@ -96,11 +109,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"email" varchar(255) NOT NULL,
 	"password" varchar(250) NOT NULL,
 	"role" "role" NOT NULL,
-	"verified" boolean DEFAULT false,
-	"x_account" varchar(255),
-	"linkding_account" varchar(255),
-	"website" varchar(255),
 	"user_image" varchar(255),
+	"overview" text,
 	CONSTRAINT "users_username_unique" UNIQUE("username"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
@@ -113,6 +123,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "article" ADD CONSTRAINT "article_org_id_orgs_org_id_fk" FOREIGN KEY ("org_id") REFERENCES "orgs"("org_id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "article_like" ADD CONSTRAINT "article_like_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "article_like" ADD CONSTRAINT "article_like_article_id_article_article_id_fk" FOREIGN KEY ("article_id") REFERENCES "article"("article_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -131,6 +153,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "comment" ADD CONSTRAINT "comment_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "comment_like" ADD CONSTRAINT "comment_like_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "comment_like" ADD CONSTRAINT "comment_like_comment_id_comment_comment_id_fk" FOREIGN KEY ("comment_id") REFERENCES "comment"("comment_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -160,13 +194,25 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "user_prefs" ADD CONSTRAINT "user_prefs_pref_id_prefs_pref_id_fk" FOREIGN KEY ("pref_id") REFERENCES "prefs"("pref_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "user_bookmarks" ADD CONSTRAINT "user_bookmarks_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "user_prefs" ADD CONSTRAINT "user_prefs_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "user_bookmarks" ADD CONSTRAINT "user_bookmarks_article_id_article_article_id_fk" FOREIGN KEY ("article_id") REFERENCES "article"("article_id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_follow" ADD CONSTRAINT "user_follow_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_follow" ADD CONSTRAINT "user_follow_followed_id_users_user_id_fk" FOREIGN KEY ("followed_id") REFERENCES "users"("user_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
