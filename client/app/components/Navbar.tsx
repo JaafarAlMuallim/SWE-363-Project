@@ -37,7 +37,7 @@ export default function Navbar() {
               {session && session.user ? (
                 <li>
                   <Link
-                    href={`/${session.user.username}`}
+                    href={`/profile`}
                     className="flex flex-row justify-center items-center"
                   >
                     @{session.user.username}
