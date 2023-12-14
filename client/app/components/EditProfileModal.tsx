@@ -46,8 +46,6 @@ export default function EditProfileModa({ user, onClose, onSubmit }: Props) {
       .string()
       .min(1, { message: "يجب أن تكون النظرة العامة اكثر من حرف" })
       .max(200),
-    //image: z.string().url(),
-    image: z.instanceof(File),
   });
   type profileValues = z.infer<typeof profileSchema>;
   const form = useForm<profileValues>({
@@ -112,7 +110,7 @@ export default function EditProfileModa({ user, onClose, onSubmit }: Props) {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="username" className="text-content">
+                <FormLabel htmlFor="email" className="text-content">
                   البريد الالكتروني
                 </FormLabel>
                 <FormControl>
@@ -148,26 +146,6 @@ export default function EditProfileModa({ user, onClose, onSubmit }: Props) {
               </FormItem>
             )}
           />
-          <FormField
-            name="image"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="image" className="text-content">
-                  الصورة الشخصية
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    className="bg-inputbg text-white w-full"
-                    onChange={field.onChange}
-                    placeholder="الصورة الشخصية"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <Button
             type="button"
             className="w-full bg-gcontent shadow-lg mt-2 text-content"
@@ -179,7 +157,6 @@ export default function EditProfileModa({ user, onClose, onSubmit }: Props) {
                 name: form.getValues("name"),
                 email: form.getValues("email"),
                 overview: form.getValues("overview"),
-                user_image: form.getValues("image") ?? null,
               };
               form.setValue("name", "");
               form.setValue("username", "");

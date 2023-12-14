@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { z } from "zod";
 import { useState } from "react";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function CommentSection({ article }: { article: Article }) {
   const { data: session } = useSession();

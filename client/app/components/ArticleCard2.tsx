@@ -21,8 +21,7 @@ export default function ArticleCard(props: { article: Article }) {
           <object>
             <Link href={`/profile/${props.article!.user!.username}`}>
               <Image
-                priority
-                src="/profile_default.png"
+                src={props.article!.user!.user_image!}
                 alt="avatar"
                 className="shadow-lg rounded-full"
                 height={40}

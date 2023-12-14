@@ -8,9 +8,9 @@ import { queryClient } from "@/app/components/QueryProvider";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import EditCommentModal from "./EditCommentModal";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
-import { Avatar } from "@material-tailwind/react";
+import Image from "next/image";
 
 export default function CommentCard({
   comment,
@@ -91,13 +91,12 @@ export default function CommentCard({
           <div className="flex items-center">
             <object>
               <Link href={`/profile/${comment.user!.username}`}>
-                <Avatar
-                  src="/profile_default.png"
+                <Image
+                  src={comment.user!.user_image!}
                   alt="avatar"
-                  size="md"
-                  className="shadow-lg"
-                  withBorder={true}
-                  variant="circular"
+                  className="shadow-lg rounded-full"
+                  width={40}
+                  height={40}
                 />
               </Link>
             </object>
