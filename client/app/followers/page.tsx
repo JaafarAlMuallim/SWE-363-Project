@@ -20,24 +20,34 @@ export default function FollowingPage() {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const {
     data: users,
     isLoading,
     isSuccess,
   } = useQuery({
-    enabled: session !== undefined && session?.user !== null,
+    enabled:
+      session !== undefined &&
+      session?.user !== null &&
+      session?.user.user_id !== undefined,
     queryKey: "follower",
-    queryFn: () => {
-      return fetch("http://localhost:8080/user/follower", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user.user_id}`,
-        },
-        cache: "no-cache",
-      }).then((res) => res.json() as Promise<UserFollow[]>);
+    queryFn: async () => {
+      try {
+        const res = await fetch("http://localhost:8080/user/follower", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user.user_id}`,
+          },
+          cache: "no-cache",
+        });
+        return res.json() as Promise<UserFollow[]>;
+      } catch (error) {}
     },
   });
+  //filter by using search bar state
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserFollow[]>(
     isLoading ? [] : users!,
@@ -54,10 +64,15 @@ export default function FollowingPage() {
       const filtered = isLoading
         ? []
         : users?.filter((following) => {
-            const usernameMatch =
-              following.user!.username.includes(currentSearchValue);
-            const nameMatch = following.user!.name.includes(currentSearchValue);
-            const roleMatch = following.user!.role.includes(currentSearchValue);
+            const usernameMatch = following
+              .user!.username.toLowerCase()
+              .includes(currentSearchValue.toLowerCase());
+            const nameMatch = following
+              .user!.name.toLowerCase()
+              .includes(currentSearchValue.toLowerCase());
+            const roleMatch = following
+              .user!.role.toLowerCase()
+              .includes(currentSearchValue.toLowerCase());
             return usernameMatch || nameMatch || roleMatch;
           });
       setFilteredUsers(filtered!);
@@ -82,7 +97,7 @@ export default function FollowingPage() {
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

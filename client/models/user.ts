@@ -5,7 +5,7 @@ export default interface User {
   username: string;
   role: string;
   verified: boolean;
-  user_image?: string;
+  user_image?: File;
   x_account?: string;
   linkdin_account?: string;
   website?: string;

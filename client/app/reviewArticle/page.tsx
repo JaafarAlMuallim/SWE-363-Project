@@ -22,6 +22,9 @@ export default function ReviewArticle() {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   if (
     session != null &&
     session?.user?.role !== "admin" &&
@@ -41,21 +44,23 @@ export default function ReviewArticle() {
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: "inReview",
     enabled:
-      session !== null && session !== undefined && session?.user !== null,
-    queryFn: () => {
-      return fetch("http://localhost:8080/article/inReview", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        cache: "no-cache",
-      })
-        .then((res) => res.json())
-        .then((data) => data)
-        .catch((err) => {
-          console.log(err);
+      session !== undefined &&
+      session?.user !== null &&
+      session?.user.user_id !== undefined,
+    queryFn: async () => {
+      try {
+        const res = await fetch("http://localhost:8080/article/inReview", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+          cache: "no-cache",
         });
+        return res.json();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
@@ -92,7 +97,7 @@ export default function ReviewArticle() {
       <div className="my-8 text-2xl font-semibold text-right mx-10 text-content">
         <p>اخر المقالات</p>
       </div>
-      <div className="h-auto flex flex-col gap-10">
+      <div className="h-screen flex flex-col gap-10">
         {isSuccess && data?.length > 0 ? (
           data!.map((article: Article) => {
             return (

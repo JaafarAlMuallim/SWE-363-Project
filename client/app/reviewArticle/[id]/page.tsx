@@ -26,22 +26,24 @@ export default function Article({ params }: { params: { id: string } }) {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const { data: article, isLoading } = useQuery({
     queryKey: "inReview",
-    queryFn: () => {
-      return fetch(`http://localhost:8080/article/${params.id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    queryFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/article/${params.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.log(err);
+      }
     },
   });
   const handleChange = (newStatus: string) => {
