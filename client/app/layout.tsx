@@ -7,6 +7,7 @@ import { AuthProvider } from "./components/AuthProvider";
 import Navbar from "./components/Navbar";
 import QueryProvider from "./components/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { EdgeStoreProvider } from "@/lib/edgeStore";
 const cairo = Cairo({ subsets: ["arabic"] });
 const local_theme = "dark";
 
@@ -27,16 +28,18 @@ export default function RootLayout({
           dir="rtl"
           className={`${cairo.className} bg-gradient-to-br from-primaryDark to-secondaryDark`}
         >
-          <AuthProvider>
-            <Navbar />
-            <div id="backdrop" />
-            <div id="modal-root" />
-            <main className="flex flex-col justify-center items-center w-full">
-              {children}
-            </main>
-            <Toaster />
-            <Footer />
-          </AuthProvider>
+          <EdgeStoreProvider>
+            <AuthProvider>
+              <Navbar />
+              <div id="backdrop" />
+              <div id="modal-root" />
+              <main className="flex flex-col justify-center items-center w-full">
+                {children}
+              </main>
+              <Toaster />
+              <Footer />
+            </AuthProvider>
+          </EdgeStoreProvider>
         </body>
       </QueryProvider>
     </html>

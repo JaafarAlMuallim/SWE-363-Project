@@ -1,8 +1,8 @@
 "use client";
 import { Label } from "@/components/ui/label";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useQuery, useMutation, useQueries } from "react-query";
+import Image from "next/image";
+import { useMutation, useQueries } from "react-query";
 import User from "@/models/user";
 import { Skeleton } from "@/components/ui/skeleton";
 import { queryClient } from "../components/QueryProvider";
@@ -13,12 +13,16 @@ import Link from "next/link";
 import Article from "@/models/article";
 import ArticleCard from "../components/ArticleCard2";
 import ProfileStats from "@/models/profile_stats";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import EditImageModal from "../components/EditImageModal";
+import { useEdgeStore } from "@/lib/edgeStore";
 
-export default function Profile({ params }: { params: { username: string } }) {
+export default function Profile() {
   const { data: profile } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
+  const [file, setFile] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
   const handleEditProfile = () => {
@@ -27,6 +31,14 @@ export default function Profile({ params }: { params: { username: string } }) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const handleImageOpen = () => {
+    setImageModal(true);
+  };
+  const handleImageCancel = () => {
+    setImageModal(false);
+  };
+  const { edgestore } = useEdgeStore();
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!profile) router.push(`/auth?callbackUrl=/profile/`);
@@ -35,10 +47,9 @@ export default function Profile({ params }: { params: { username: string } }) {
       clearTimeout(timeout);
     };
   }, [profile]);
-  //fetch profile data
   const [
     { data: userProfile, isLoading, isSuccess },
-    { data: stats, isLoading: statsLoading, isSuccess: statsSuccess },
+    { data: stats, isSuccess: statsSuccess },
     { data: articles, isLoading: articleLoading },
   ] = useQueries([
     {
@@ -155,19 +166,66 @@ export default function Profile({ params }: { params: { username: string } }) {
       queryClient.invalidateQueries("userProfile");
     },
   });
-
+  const { mutate: handleEditImageMutation } = useMutation({
+    mutationKey: "userProfile",
+    mutationFn: async (url: string) => {
+      console.log(url);
+      try {
+        const res = await fetch(`http://localhost:8080/profile/image`, {
+          method: "PATCH",
+          body: JSON.stringify({ user_image: url }),
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${profile?.user.user_id}`,
+          },
+        });
+        return res.json() as Promise<User>;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تعديل الصورة الشخصية بنجاح",
+        description: "تم حفظ الصورة الشخصية الجديدة بنجاح",
+        className: "bg-green-700 text-white",
+        duration: 3000,
+      });
+      queryClient.invalidateQueries("userProfile");
+    },
+    onError: (error) => {
+      toast({
+        title: "حدث خطأ أثناء تعديل الصورة الشخصية",
+        description: "حدث خطأ أثناء تعديل الصورة الشخصية",
+        className: "bg-red-700 text-white",
+        duration: 3000,
+      });
+      queryClient.invalidateQueries("userProfile");
+    },
+  });
   return (
     <div className="min-h-screen flex flex-col justify-center items-center w-full">
-      <div className=" text-content hidden md:flex">
+      <div className="text-content hidden md:flex">
         <div className="w-1/4 m-10 flex flex-col items-center gap-8">
           <div className="flex flex-col w-96 items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-            <Image
-              className="rounded-full my-2"
-              src={"/profile_default.png"}
-              alt="profile"
-              height={228}
-              width={228}
-            />
+            <button onClick={() => handleImageOpen()}>
+              <Image
+                className="rounded-full my-2 hover:filter hover:grayscale hover:contrast-200 trasition-all duration-300"
+                src={userProfile?.user_image!}
+                alt="profile"
+                height={228}
+                width={228}
+              />
+            </button>
+            {imageModal && (
+              <EditImageModal
+                width={300}
+                height={300}
+                onClose={() => handleImageCancel()}
+                onMutation={handleEditImageMutation}
+              />
+            )}
+
             <div className="flex flex-col items-center justify-center gap-4">
               {isLoading ? (
                 <>
@@ -282,14 +340,24 @@ export default function Profile({ params }: { params: { username: string } }) {
 
       <div className=" text-content flex flex-col items-center md:hidden">
         <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-          <Image
-            priority
-            className="rounded-full my-2"
-            src={"/profile_default.png"}
-            alt="profile"
-            height={128}
-            width={128}
-          />
+          <button onClick={() => handleImageOpen()}>
+            <Image
+              className="rounded-full my-2 hover:bg-black bg-opacity-50"
+              src={userProfile?.user_image!}
+              alt="profile"
+              height={128}
+              width={128}
+            />
+          </button>
+          {imageModal && (
+            <EditImageModal
+              width={300}
+              height={300}
+              onClose={() => handleImageCancel()}
+              onMutation={handleEditImageMutation}
+            />
+          )}
+
           <div className="flex flex-col items-center justify-center gap-2">
             {isLoading ? (
               <>
@@ -306,7 +374,12 @@ export default function Profile({ params }: { params: { username: string } }) {
                   {userProfile?.name}
                 </Label>
                 <Label className="text-lg">{userProfile?.role}</Label>
-                <button className="bg-cbtn text-content rounded-lg px-4 py-2 m-2">
+                <button
+                  className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
+                  onClick={() => {
+                    handleEditProfile();
+                  }}
+                >
                   تعديل الملف الشخصي
                 </button>
                 <div className="flex flex-row gap-2 my-4">

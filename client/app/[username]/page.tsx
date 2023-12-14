@@ -176,9 +176,8 @@ export default function Profile({ params }: { params: { username: string } }) {
               <Skeleton className="bg-gray-400 rounded-full m-2" />
             ) : (
               <Image
-                priority
                 className="rounded-full m-2"
-                src={"/../profile_default.png"}
+                src={profile.data?.user_image!}
                 alt="profile"
                 height={228}
                 width={228}
@@ -307,7 +306,7 @@ export default function Profile({ params }: { params: { username: string } }) {
             <Image
               priority
               className="rounded-full m-2"
-              src={"/profile_default.png"}
+              src={profile.data?.user_image!}
               alt="profile"
               height={128}
               width={128}

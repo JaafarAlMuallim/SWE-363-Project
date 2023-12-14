@@ -177,6 +177,7 @@ export default function Article({ params }: { params: { id: string } }) {
         priority
         src={`../next.svg`}
         alt={"Image"}
+        className="my-4"
         width={400}
         height={400}
       />

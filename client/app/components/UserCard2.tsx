@@ -8,7 +8,7 @@ export default function UserCard({ user }: { user: User }) {
       <div className="bg-gradient-to-br from-crd to-crd2 p-5 w-64 rounded-lg flex flex-col gap-2 m-3">
         <Image
           priority
-          src={"/profile_default.png"}
+          src={user.user_image!}
           alt="profile"
           width={800}
           height={800}
