@@ -27,10 +27,12 @@ import { useEffect } from "react";
 export default function Page() {
   const { data: session } = useSession();
   const router = useRouter();
+  // Redirect the user to the home page if he is not an admin
   useEffect(() => {
     if (session && session!.user.role === "user") {
       router.push("/");
     }
+    // Redirect the user back if the session is finished
     const timeout = setTimeout(() => {
       if (!session) router.push(`/auth?callbackUrl=/writeOrg/`);
     }, 1250);
@@ -41,6 +43,7 @@ export default function Page() {
   if (!session) {
     return <div className="h-screen"></div>;
   }
+  // Form validation schema
   const formSchema = z.object({
     name: z
       .string()
@@ -60,6 +63,7 @@ export default function Page() {
     main_sector: z.string().min(3, { message: "الموقع يجب أن يكون رابط" }),
     founders: z.string().min(3, { message: "الموقع يجب أن يكون رابط" }),
   });
+  // Form hook
   type FormValues = z.infer<typeof formSchema>;
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -75,6 +79,7 @@ export default function Page() {
       founders: "",
     },
   });
+  // Mutation hook
   const { mutate: postOrg } = useMutation({
     mutationKey: "article",
     mutationFn: async () => {

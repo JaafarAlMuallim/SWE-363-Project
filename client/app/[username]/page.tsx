@@ -13,6 +13,7 @@ import User from "@/models/user";
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: session } = useSession();
   const { toast } = useToast();
+  // fetch user's data
   const [profile, isFollowing] = useQueries([
     {
       queryKey: "profile",

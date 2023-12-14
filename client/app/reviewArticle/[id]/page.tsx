@@ -17,6 +17,7 @@ export default function Article({ params }: { params: { id: string } }) {
     },
   });
   const router = useRouter();
+  // Redirect the user back if the session is finished
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!session)
@@ -29,6 +30,7 @@ export default function Article({ params }: { params: { id: string } }) {
   if (!session) {
     return <div className="h-screen"></div>;
   }
+  // Fetch the article that is in review
   const { data: article, isLoading } = useQuery({
     queryKey: "inReview",
     queryFn: async () => {
@@ -47,6 +49,7 @@ export default function Article({ params }: { params: { id: string } }) {
       }
     },
   });
+  // Function to change the status of the article\
   const handleChange = (newStatus: string) => {
     fetch(
       `http://localhost:8080/article/${article?.article_id}/changeArticleStatus`,
@@ -79,13 +82,14 @@ export default function Article({ params }: { params: { id: string } }) {
           height={400}
         />
         <>
+          
           <Skeleton className="w-96 h-6" />
           <Skeleton className="w-1/2 h-4" />
           <Skeleton className="w-1/2 h-4" />
           <Skeleton className="w-96 h-48" />
           <section className="flex justify-center gap-2">
             <button
-              className="bg-crd2 text-white px-4 py-1 rounded-full inline w-24 text-center"
+              className="bg-crd2 text-content px-4 py-1 rounded-full inline w-24 text-center"
               onClick={() => {
                 handleChange("published");
                 router.push("/articles");
@@ -94,7 +98,7 @@ export default function Article({ params }: { params: { id: string } }) {
               قبول
             </button>
             <button
-              className="bg-crd2 text-white px-4 py-1 rounded-full inline w-24 text-center"
+              className="bg-crd2 text-content px-4 py-1 rounded-full inline w-24 text-center"
               onClick={() => {
                 handleChange("rejected");
                 router.push("/reviewArticle");
@@ -125,7 +129,7 @@ export default function Article({ params }: { params: { id: string } }) {
             return (
               <div
                 key={index}
-                className={`bg-crd2 text-white px-4 py-1 rounded-full inline w-24 text-center`}
+                className={`bg-crd2 text-content px-4 py-1 rounded-full inline w-24 text-center`}
               >
                 {tag.tag}
               </div>
