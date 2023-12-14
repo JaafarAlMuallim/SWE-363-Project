@@ -175,7 +175,7 @@ export default function CommentSection({ article }: { article: Article }) {
         </Form>
       )}
       <div className="overflow-y-scroll h-80">
-        <h1 className="border-b text-xl my-4">التعليقات</h1>
+        <h1 className="border-b border-content text-xl my-4">التعليقات</h1>
         {comments &&
           comments!.map((comment, index) => {
             return (
