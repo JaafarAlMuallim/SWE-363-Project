@@ -16,6 +16,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
 
 export default function LoginForm() {
+  // Form validation schema
   const loginSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
     password: z
@@ -38,6 +39,7 @@ export default function LoginForm() {
     },
   });
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

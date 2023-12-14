@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+// Font setup
 const sriracha = Sriracha({
   subsets: ["latin"],
   weight: "400",

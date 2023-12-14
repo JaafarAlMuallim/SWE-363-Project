@@ -22,6 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    // Manage the theme of the website
     <html lang="ar" local_theme={local_theme}>
       <QueryProvider>
         <body

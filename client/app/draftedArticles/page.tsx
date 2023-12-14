@@ -21,6 +21,7 @@ export default function Articles() {
   if (!profile) {
     return <div className="h-screen"></div>;
   }
+  // Fetch the user's drafted articles
   const {
     data: articles,
     isLoading,

@@ -18,6 +18,7 @@ export default function Organization({
   params: { org_id: string };
 }) {
   const { data: session } = useSession();
+  // fetch the organization's data
   const [
     { data: org, isLoading: orgLoading },
     { data: articles, isLoading: articleLoading },
@@ -101,6 +102,7 @@ export default function Organization({
     },
   });
 
+  // If the session is not loaded yet, display the skeleton
   if (orgLoading) {
     return (
       <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
@@ -119,7 +121,9 @@ export default function Organization({
 
   return (
     <>
+      {/*desktop view*/}
       <div className="h-screen w-screen text-content hidden md:flex">
+        {/*organization info card*/}
         <div className="w-1/4 m-10 flex flex-col items-center gap-8">
           <div className="flex flex-col items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
             {orgLoading ? (
@@ -185,6 +189,7 @@ export default function Organization({
             </div>
           </div>
         </div>
+        {/*overview here*/}
         <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
           <div className="w-full h-fit rounded-lg bg-white bg-opacity-5 p-5">
             <div className="flex flex-col whitespace-normal text-right">
@@ -203,7 +208,7 @@ export default function Organization({
               </ul>
             </div>
           </div>
-          <h1 className="text-2xl">Articles Related to {org?.name}</h1>
+          <h1 className="text-2xl">المقالات المتعلقة بـ {org?.name}</h1>
           <div className="container mx-auto px-4 md:px-12">
             <div className="flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
@@ -228,6 +233,7 @@ export default function Organization({
           </div>
         </div>
       </div>
+      {/*mobile view*/}
       <div className="h-screen w-screen text-content flex flex-col items-center md:hidden">
         <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
           {orgLoading ? (

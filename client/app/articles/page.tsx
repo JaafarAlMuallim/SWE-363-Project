@@ -65,6 +65,7 @@ export default function Articles() {
                 </Link>
               </Button>
             )}
+            {/* Search for articles based on input */}
             <Input
               onChange={(e) => handleSearch(e)}
               value={search}

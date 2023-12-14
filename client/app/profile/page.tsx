@@ -25,9 +25,11 @@ export default function Profile() {
   const [file, setFile] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  // Show the edit profile modal
   const handleEditProfile = () => {
     setIsModalOpen(true);
   };
+  // Hide the edit profile modal
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -39,6 +41,7 @@ export default function Profile() {
   };
   const { edgestore } = useEdgeStore();
 
+  // Redirect the user back if the session is finished
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!profile) router.push(`/auth?callbackUrl=/profile/`);
@@ -204,255 +207,267 @@ export default function Profile() {
     },
   });
   return (
+    // Main container
     <div className="min-h-screen flex flex-col justify-center items-center w-full">
       <div className="text-content hidden md:flex">
         <div className="w-1/4 m-10 flex flex-col items-center gap-8">
-          <div className="flex flex-col w-96 items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-            <button onClick={() => handleImageOpen()}>
-              <Image
-                className="rounded-full my-2 hover:filter hover:grayscale hover:contrast-200 trasition-all duration-300"
-                src={userProfile?.user_image!}
-                alt="profile"
-                height={228}
-                width={228}
-              />
-            </button>
-            {imageModal && (
-              <EditImageModal
-                width={300}
-                height={300}
-                onClose={() => handleImageCancel()}
-                onMutation={handleEditImageMutation}
-              />
-            )}
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              {isLoading ? (
-                <>
-                  <Skeleton className="w-40 h-6" />
-                  <Skeleton className="w-40 h-6" />
-                  <Skeleton className="w-40 h-6" />
-                </>
-              ) : isSuccess ? (
-                <>
-                  <Label className="font-bold text-2xl" dir="ltr">
-                    @{userProfile!.username}
-                  </Label>
-                  <Label className="text-xl">{userProfile!.name}</Label>
-                  <Label className="text-xl m-2">{userProfile!.role}</Label>
-                  <button
-                    className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
-                    onClick={() => {
-                      handleEditProfile();
-                    }}
-                  >
-                    تعديل الملف الشخصي
-                  </button>
-                  <div className="flex flex-row">
-                    <Link
-                      className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
-                      href="/bookmarks"
-                    >
-                      المقالات المرجعية
-                    </Link>
-                    <Link
-                      className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
-                      href="/draftedArticles"
-                    >
-                      المقالات المسودة
-                    </Link>
-                  </div>
-                </>
-              ) : (
-                <></>
-              )}
-              {isModalOpen && (
-                <EditProfileModal
-                  onClose={handleCancel}
-                  onSubmit={handleEditProfileMutation}
-                  user={userProfile!}
-                />
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-cbtn">
-            <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">
-                {statsSuccess ? stats!.followers : 0}
-              </Label>
-              <Link href={"/following"}>
-                <Label className="m-1 text-cbtn">المُتابَعون</Label>
-              </Link>
-            </div>
-            <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">
-                {statsSuccess ? stats!.following : 0}
-              </Label>
-              <Link href={"/followers"}>
-                <Label className="m-1 text-cbtn">المُتابعين</Label>
-              </Link>
-            </div>
-            <div className="flex flex-col m-4 justify-center items-center">
-              <Label className="font-bold m-1">
-                {statsSuccess ? stats!.articles : 0}
-              </Label>
-              <Label className="m-1 text-cbtn">مقال</Label>
-            </div>
-          </div>
-        </div>
-        <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
-          <div className="w-full h-fit rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
-            {isLoading ? (
-              <Skeleton className="w-80 h-8" />
-            ) : isSuccess ? (
-              userProfile?.overview
-            ) : (
-              <>لا توجد معلومات هنا</>
-            )}
-          </div>
-          <h1 className="text-2xl">مقالات كتبت بواسطة {profile?.user.name} </h1>
-          <div className="container my-12 mx-auto px-4 md:px-12">
-            <div className="h-screen flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
-              {articleLoading ? (
-                <>
-                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                  <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                </>
-              ) : isSuccess ? (
-                articles!.map((article) => {
-                  return (
-                    <Link
-                      key={article.article_id}
-                      href={`/articles/${article.article_id}`}
-                    >
-                      <ArticleCard article={article} />
-                    </Link>
-                  );
-                })
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className=" text-content flex flex-col items-center md:hidden">
-        <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
-          <button onClick={() => handleImageOpen()}>
-            <Image
-              className="rounded-full my-2 hover:bg-black bg-opacity-50"
-              src={userProfile?.user_image!}
-              alt="profile"
-              height={128}
-              width={128}
-            />
-          </button>
-          {imageModal && (
-            <EditImageModal
-              width={300}
-              height={300}
-              onClose={() => handleImageCancel()}
-              onMutation={handleEditImageMutation}
-            />
-          )}
-
-          <div className="flex flex-col items-center justify-center gap-2">
-            {isLoading ? (
-              <>
-                <Skeleton className="w-40 h-8" />
-                <Skeleton className="w-40 h-8" />
-                <Skeleton className="w-40 h-8" />
-              </>
-            ) : (
-              <>
-                <Label className="font-bold text-xl" dir="ltr">
-                  @{userProfile?.username}
-                </Label>
-                <Label className="font-bold text-2xl">
-                  {userProfile?.name}
-                </Label>
-                <Label className="text-lg">{userProfile?.role}</Label>
-                <button
-                  className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
-                  onClick={() => {
-                    handleEditProfile();
-                  }}
-                >
-                  تعديل الملف الشخصي
+          {/* Desktop view */}
+          <div className=" text-content hidden md:flex">
+            {/* The user's profile section */}
+            <section className="w-1/4 m-10 flex flex-col items-center gap-8">
+              <div className="flex flex-col w-96 items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
+                <button onClick={() => handleImageOpen()}>
+                  <Image
+                    className="rounded-full my-2 hover:filter hover:grayscale hover:contrast-200 trasition-all duration-300"
+                    src={userProfile?.user_image!}
+                    alt="profile"
+                    height={228}
+                    width={228}
+                  />
                 </button>
-                <div className="flex flex-row gap-2 my-4">
-                  <Link
-                    className="bg-cbtn text-content rounded-lg px-4 py-2"
-                    href="/bookmarks"
-                  >
-                    المقالات المرجعية
-                  </Link>
-                  <Link
-                    className="bg-cbtn text-content rounded-lg px-4 py-2"
-                    href="/draftedArticles"
-                  >
-                    المقالات المسودة
+                {imageModal && (
+                  <EditImageModal
+                    width={300}
+                    height={300}
+                    onClose={() => handleImageCancel()}
+                    onMutation={handleEditImageMutation}
+                  />
+                )}
+
+                <div className="flex flex-col items-center justify-center gap-4">
+                  {/* If the user is still loading, show a skeleton */}
+                  {isLoading ? (
+                    <>
+                      <Skeleton className="w-40 h-6" />
+                      <Skeleton className="w-40 h-6" />
+                      <Skeleton className="w-40 h-6" />
+                    </>
+                  ) : isSuccess ? (
+                    <>
+                      <Label className="font-bold text-2xl" dir="ltr">
+                        @{userProfile!.username}
+                      </Label>
+                      <Label className="text-xl">{userProfile!.name}</Label>
+                      <Label className="text-xl m-2">{userProfile!.role}</Label>
+                      <button
+                        className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
+                        onClick={() => {
+                          handleEditProfile();
+                        }}
+                      >
+                        تعديل الملف الشخصي
+                      </button>
+                      <div className="flex flex-row">
+                        <Link
+                          className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
+                          href="/bookmarks"
+                        >
+                          المقالات المرجعية
+                        </Link>
+                        <Link
+                          className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
+                          href="/draftedArticles"
+                        >
+                          المقالات المسودة
+                        </Link>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                  {isModalOpen && (
+                    <EditProfileModal
+                      onClose={handleCancel}
+                      onSubmit={handleEditProfileMutation}
+                      user={userProfile!}
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-3 w-fit text-content items-center gap-4 border rounded-lg border-cbtn">
+                <div className="flex flex-col m-4 justify-center items-center">
+                  <Label className="font-bold m-1">
+                    {statsSuccess ? stats!.followers : 0}
+                  </Label>
+                  <Link href={"/following"}>
+                    <Label className="m-1 text-cbtn">المُتابَعون</Label>
                   </Link>
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-cbtn">
-          <div className="flex flex-col m-4 justify-center items-center">
-            <Label className="font-bold m-1">
-              {statsSuccess ? stats!.articles : 0}
-            </Label>
-            <Label className="m-1 text-cbtn">متابَعون</Label>
-          </div>
-          <div className="flex flex-col m-4 justify-center items-center">
-            <Label className="font-bold m-1">
-              {statsSuccess ? stats!.following : 0}
-            </Label>
-            <Label className="m-1 text-cbtn">متابعا</Label>
-          </div>
-          <div className="flex flex-col m-4 justify-center items-center">
-            <Label className="font-bold m-1">
-              {statsSuccess ? stats!.articles : 0}
-            </Label>
-            <Label className="m-1 text-cbtn">مقال</Label>
-          </div>
-        </div>
-        <div className="w-80 h-fit m-8 rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
-          {isLoading ? (
-            <Skeleton className="w-80 h-8" />
-          ) : isSuccess ? (
-            userProfile?.overview
-          ) : (
-            <>لا توجد معلومات هنا</>
-          )}
-        </div>
-
-        <h1>Articles By {profile?.user.name}</h1>
-        <div className="container my-12 mx-auto px-4 md:px-12">
-          <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
-            {articleLoading ? (
-              <>
-                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-                <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
-              </>
-            ) : isSuccess ? (
-              articles!.map((article) => {
-                return (
-                  <Link
-                    key={article.article_id}
-                    href={`/articles/${article.article_id}`}
-                  >
-                    <ArticleCard article={article} />
+                <div className="flex flex-col m-4 justify-center items-center">
+                  <Label className="font-bold m-1">
+                    {statsSuccess ? stats!.following : 0}
+                  </Label>
+                  <Link href={"/followers"}>
+                    <Label className="m-1 text-cbtn">المُتابعين</Label>
                   </Link>
-                );
-              })
-            ) : (
-              <></>
-            )}
+                </div>
+                <div className="flex flex-col m-4 justify-center items-center">
+                  <Label className="font-bold m-1">
+                    {statsSuccess ? stats!.articles : 0}
+                  </Label>
+                  <Label className="m-1 text-cbtn">مقال</Label>
+                </div>
+              </div>
+            </section>
+            {/* The user's overview & related articles section */}
+            <section className="w-3/4 p-4 m-8 flex flex-col gap-8">
+              <div className="w-full h-fit rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
+                {isLoading ? (
+                  <Skeleton className="w-80 h-8" />
+                ) : isSuccess ? (
+                  userProfile?.overview
+                ) : (
+                  <>لا توجد معلومات هنا</>
+                )}
+              </div>
+              <h1 className="text-2xl">
+                مقالات كتبت بواسطة {profile?.user.name}{" "}
+              </h1>
+              {/* Display Related articles */}
+              <div className="container my-12 mx-auto px-4 md:px-12">
+                <div className="h-screen flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+                  {articleLoading ? (
+                    <>
+                      <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                      <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                      <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                    </>
+                  ) : isSuccess ? (
+                    articles!.map((article) => {
+                      return (
+                        <Link
+                          key={article.article_id}
+                          href={`/articles/${article.article_id}`}
+                        >
+                          <ArticleCard article={article} />
+                        </Link>
+                      );
+                    })
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
+            </section>
+          </div>
+          {/* Mobile view */}
+          <div className=" text-content flex flex-col items-center md:hidden">
+            <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
+              <button onClick={() => handleImageOpen()}>
+                <Image
+                  className="rounded-full my-2 hover:bg-black bg-opacity-50"
+                  src={userProfile?.user_image!}
+                  alt="profile"
+                  height={128}
+                  width={128}
+                />
+              </button>
+              {imageModal && (
+                <EditImageModal
+                  width={300}
+                  height={300}
+                  onClose={() => handleImageCancel()}
+                  onMutation={handleEditImageMutation}
+                />
+              )}
+
+              <div className="flex flex-col items-center justify-center gap-2">
+                {isLoading ? (
+                  <>
+                    <Skeleton className="w-40 h-8" />
+                    <Skeleton className="w-40 h-8" />
+                    <Skeleton className="w-40 h-8" />
+                  </>
+                ) : (
+                  <>
+                    <Label className="font-bold text-xl" dir="ltr">
+                      @{userProfile?.username}
+                    </Label>
+                    <Label className="font-bold text-2xl">
+                      {userProfile?.name}
+                    </Label>
+                    <Label className="text-lg">{userProfile?.role}</Label>
+                    <button
+                      className="bg-cbtn text-white rounded-lg px-4 py-2 m-2"
+                      onClick={() => {
+                        handleEditProfile();
+                      }}
+                    >
+                      تعديل الملف الشخصي
+                    </button>
+                    <div className="flex flex-row gap-2 my-4">
+                      <Link
+                        className="bg-cbtn text-content rounded-lg px-4 py-2"
+                        href="/bookmarks"
+                      >
+                        المقالات المرجعية
+                      </Link>
+                      <Link
+                        className="bg-cbtn text-content rounded-lg px-4 py-2"
+                        href="/draftedArticles"
+                      >
+                        المقالات المسودة
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-cbtn">
+              <div className="flex flex-col m-4 justify-center items-center">
+                <Label className="font-bold m-1">
+                  {statsSuccess ? stats!.articles : 0}
+                </Label>
+                <Label className="m-1 text-cbtn">متابَعون</Label>
+              </div>
+              <div className="flex flex-col m-4 justify-center items-center">
+                <Label className="font-bold m-1">
+                  {statsSuccess ? stats!.following : 0}
+                </Label>
+                <Label className="m-1 text-cbtn">متابعا</Label>
+              </div>
+              <div className="flex flex-col m-4 justify-center items-center">
+                <Label className="font-bold m-1">
+                  {statsSuccess ? stats!.articles : 0}
+                </Label>
+                <Label className="m-1 text-cbtn">مقال</Label>
+              </div>
+            </div>
+            <div className="w-80 h-fit m-8 rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
+              {isLoading ? (
+                <Skeleton className="w-80 h-8" />
+              ) : isSuccess ? (
+                userProfile?.overview
+              ) : (
+                <>لا توجد معلومات هنا</>
+              )}
+            </div>
+
+            <h1>Articles By {profile?.user.name}</h1>
+            <div className="container my-12 mx-auto px-4 md:px-12">
+              <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+                {articleLoading ? (
+                  <>
+                    <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                    <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                    <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />
+                  </>
+                ) : isSuccess ? (
+                  articles!.map((article) => {
+                    return (
+                      <Link
+                        key={article.article_id}
+                        href={`/articles/${article.article_id}`}
+                      >
+                        <ArticleCard article={article} />
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 export default function Organizations() {
   const { data: session } = useSession();
   const { data: orgs, isLoading } = useQuery("organizations", async () => {
+    // Fetch the organizations
     try {
       const res = await fetch("http://localhost:8080/org", {
         method: "GET",
@@ -34,6 +35,7 @@ export default function Organizations() {
   const [filteredOrgs, setFilteredOrgs] = useState<Org[]>(
     isLoading ? [] : orgs!,
   );
+  // Filter the organizations based on the search value
   const [orgsList, setOrgsList] = useState<"all" | "failure" | "success">(
     "all",
   );
@@ -46,6 +48,7 @@ export default function Organizations() {
     } else {
       newListState = "all";
     }
+    // Set the new list state
     setOrgsList(newListState);
     const filtered = isLoading
       ? []
@@ -66,10 +69,12 @@ export default function Organizations() {
         : filtered!.filter((org) => org.org_status === newListState);
     });
   };
+  // Set the filtered orgs to the orgs when the orgs are loaded
   useEffect(() => {
     setFilteredOrgs(isLoading ? [] : orgs!);
   }, [orgs, isLoading]);
 
+  // Filter the organizations based on the search value
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const currentSearchValue = e.target.value;
     setSearch(currentSearchValue);

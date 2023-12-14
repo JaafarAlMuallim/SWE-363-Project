@@ -23,6 +23,7 @@ export default function FollowingPage() {
   if (!session) {
     return <div className="h-screen"></div>;
   }
+  // Fetch the user's followers
   const {
     data: users,
     isLoading,
