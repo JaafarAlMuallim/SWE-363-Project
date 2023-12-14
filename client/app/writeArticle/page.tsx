@@ -28,6 +28,10 @@ export default function Page() {
       clearTimeout(timeout);
     };
   }, [session]);
+
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const formSchema = z.object({
     title: z
       .string()
@@ -56,57 +60,54 @@ export default function Page() {
   });
   const { mutate: postArticle } = useMutation({
     mutationKey: "article",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/article/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        body: JSON.stringify({
-          title: form.getValues("title"),
-          subtitle: form.getValues("subtitle"),
-          content: form.getValues("content"),
-          tags: form.getValues("tags").split("،"),
-          article_status:
-            session!.user.role === "admin" || session!.user.role === "reviewer"
-              ? "published"
-              : "in_review",
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/article/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+          body: JSON.stringify({
+            title: form.getValues("title"),
+            subtitle: form.getValues("subtitle"),
+            content: form.getValues("content"),
+            tags: form.getValues("tags").split("،"),
+            article_status:
+              session!.user.role === "admin" ||
+              session!.user.role === "reviewer"
+                ? "published"
+                : "in_review",
+          }),
         });
+        return res.json();
+      } catch (err) {
+        console.log(err);
+      }
     },
   });
   const { mutate: draftArticle } = useMutation({
     mutationKey: "article",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/article/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        body: JSON.stringify({
-          title: form.getValues("title"),
-          subtitle: form.getValues("subtitle"),
-          content: form.getValues("content"),
-          tags: form.getValues("tags").split("،"),
-          article_status: "draft",
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/article/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+          body: JSON.stringify({
+            title: form.getValues("title"),
+            subtitle: form.getValues("subtitle"),
+            content: form.getValues("content"),
+            tags: form.getValues("tags").split("،"),
+            article_status: "draft",
+          }),
         });
+        return res.json();
+      } catch (err) {
+        console.log(err);
+      }
     },
   });
 

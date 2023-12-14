@@ -10,11 +10,16 @@ import ArticleCard from "../components/ArticleCard2";
 import { Button } from "@/components/ui/button";
 export default function Articles() {
   const { data: session } = useSession();
-  const { data: articles, isLoading } = useQuery("articles", () => {
-    return fetch("http://localhost:8080/article/published", {
-      method: "GET",
-      cache: "no-cache",
-    }).then((res) => res.json() as Promise<Article[]>);
+  const { data: articles, isLoading } = useQuery("articles", async () => {
+    try {
+      const res = await fetch("http://localhost:8080/article/published", {
+        method: "GET",
+        cache: "force-cache",
+      });
+      return res.json() as Promise<Article[]>;
+    } catch (err) {
+      console.log(err);
+    }
   });
   const [search, setSearch] = useState("");
   const [filteredArticles, setFilteredArticles] = useState<Article[]>(

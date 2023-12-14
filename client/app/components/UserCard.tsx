@@ -20,6 +20,7 @@ export const UserCard = ({
     <>
       <div className="bg-gradient-to-br from-crd to-crd2 p-5 w-64 rounded-lg flex flex-col gap-2 m-3">
         <Image
+          priority
           src={iconPath}
           alt="Bukha's image"
           width={800}
@@ -31,6 +32,7 @@ export const UserCard = ({
           {twitter && (
             <a href={twitter}>
               <Image
+                priority
                 src={"/twitter-x-logo-42554.png"}
                 alt="twitter"
                 width={45}
@@ -41,11 +43,12 @@ export const UserCard = ({
           {linkedIn && (
             <a href={linkedIn}>
               <Image
+                priority
                 src={"/linkedin-square-icon.png"}
                 alt="twitter"
                 width={45}
                 height={45}
-              ></Image>
+              />
             </a>
           )}
         </div>

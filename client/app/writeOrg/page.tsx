@@ -38,6 +38,9 @@ export default function Page() {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const formSchema = z.object({
     name: z
       .string()
@@ -74,31 +77,29 @@ export default function Page() {
   });
   const { mutate: postOrg } = useMutation({
     mutationKey: "article",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/org/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        body: JSON.stringify({
-          name: form.getValues("name"),
-          founding_date: form.getValues("founding_date"),
-          description: form.getValues("description"),
-          website: form.getValues("website"),
-          hq_location: form.getValues("hq_location"),
-          org_status: form.getValues("org_status"),
-          main_sector: form.getValues("main_sector"),
-          founders: form.getValues("founders").split("،"),
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/org/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.user?.user_id}`,
+          },
+          body: JSON.stringify({
+            name: form.getValues("name"),
+            founding_date: form.getValues("founding_date"),
+            description: form.getValues("description"),
+            website: form.getValues("website"),
+            hq_location: form.getValues("hq_location"),
+            org_status: form.getValues("org_status"),
+            main_sector: form.getValues("main_sector"),
+            founders: form.getValues("founders").split("،"),
+          }),
         });
+        return res.json();
+      } catch (err) {
+        console.log(err);
+      }
     },
   });
 

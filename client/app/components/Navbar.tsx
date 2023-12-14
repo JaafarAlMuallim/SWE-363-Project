@@ -37,12 +37,13 @@ export default function Navbar() {
               {session && session.user ? (
                 <li>
                   <Link
-                    href={`/${session.user.username}`}
+                    href={`/profile`}
                     className="flex flex-row justify-center items-center"
                   >
                     @{session.user.username}
                     {session?.user.user_image && (
                       <Image
+                        priority
                         src={"/profile_default.png"}
                         alt="avatar"
                         className="shadow-lg mr-2"
@@ -154,6 +155,7 @@ export default function Navbar() {
                 >
                   @{session.user.username || "X"}
                   <Image
+                    priority
                     src={"/profile_default.png"}
                     alt="avatar"
                     className="shadow-lg mr-2"

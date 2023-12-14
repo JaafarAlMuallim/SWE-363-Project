@@ -26,22 +26,25 @@ export default function Article({ params }: { params: { id: string } }) {
       clearTimeout(timeout);
     };
   }, [session]);
+  if (!session) {
+    return <div className="h-screen"></div>;
+  }
   const { data: article, isLoading } = useQuery({
     queryKey: "inReview",
-    queryFn: () => {
-      return fetch(`http://localhost:8080/article/${params.id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((err) => {
-          console.log(err);
+    queryFn: async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/article/${params.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "force-cache",
         });
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.log(err);
+      }
     },
   });
   const handleChange = (newStatus: string) => {
@@ -68,7 +71,13 @@ export default function Article({ params }: { params: { id: string } }) {
   if (isLoading) {
     return (
       <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
-        <Image src={`../next.svg`} alt={"Image"} width={400} height={400} />
+        <Image
+          priority
+          src={`../next.svg`}
+          alt={"Image"}
+          width={400}
+          height={400}
+        />
         <>
           <Skeleton className="w-96 h-6" />
           <Skeleton className="w-1/2 h-4" />

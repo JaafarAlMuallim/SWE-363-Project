@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import User from "@/models/user";
 export default function RegisterForm() {
   const signUpSchema = z.object({
     email: z.string().email({ message: "البريد الالكتروني غير صحيح" }).trim(),
@@ -44,9 +45,9 @@ export default function RegisterForm() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetch("http://localhost:8080/user/signup", {
+    const res = await fetch("http://localhost:8080/user/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,14 +59,16 @@ export default function RegisterForm() {
         username: form.getValues("username"),
       }),
     });
-    // TODO Sign User in with NextAuth
-    signIn("credentials", {
-      email: form.getValues("email"),
-      password: form.getValues("password"),
-      callbackUrl: url!,
-    }).then((res) => {
-      if (res!.status === 200) router.back();
-    });
+    const data = (await res.json()) as User;
+    if (data.user_id !== null) {
+      const response = await signIn("credentials", {
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+        callbackUrl: url! || "/",
+        redirect: false,
+      });
+      if (response!.status === 200) router.push(response!.url!);
+    }
   };
 
   return (

@@ -18,22 +18,33 @@ export default function Articles() {
       clearTimeout(timeout);
     };
   }, [profile]);
+  if (!profile) {
+    return <div className="h-screen"></div>;
+  }
   const {
     data: articles,
     isLoading,
     isSuccess,
   } = useQuery({
-    enabled: profile !== undefined && profile?.user !== null,
+    enabled:
+      profile !== undefined &&
+      profile?.user !== null &&
+      profile?.user.user_id !== undefined,
     queryKey: "articles",
-    queryFn: () => {
-      return fetch("http://localhost:8080/follower", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${profile?.user.user_id}`,
-        },
-        cache: "no-cache",
-      }).then((res) => res.json() as Promise<Article[]>);
+    queryFn: async () => {
+      try {
+        const res = await fetch("http://localhost:8080/follower", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${profile?.user.user_id}`,
+          },
+          cache: "no-cache",
+        });
+        return res.json() as Promise<Article[]>;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
@@ -47,7 +58,7 @@ export default function Articles() {
         <hr />
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

@@ -2,7 +2,7 @@
 import Article from "@/models/article";
 import Image from "next/image";
 import DOMPurify from "dompurify";
-import { useQuery } from "react-query";
+import { useQueries, useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import CommentSection from "./CommentSection";
 import { useSession } from "next-auth/react";
@@ -15,35 +15,71 @@ export default function Article({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
   const { toast } = useToast();
   const router = useRouter();
-  const { data: article, isLoading } = useQuery({
-    queryKey: "article",
-    queryFn: () =>
-      fetch(`http://localhost:8080/article/${params.id}`, {
-        method: "GET",
-      }).then((res) => res.json() as Promise<Article>),
-  });
-  const { data: isBookmarked, isLoading: isBookmarkedLoading } = useQuery({
-    enabled: session !== undefined && session?.user !== null,
-    queryKey: "isBookmarked",
-    queryFn: () => {
-      return fetch(`http://localhost:8080/user/isbookmarked/${params.id}`, {
-        method: "GET",
-        headers: {
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-        cache: "no-cache",
-      }).then((res) => res.json() as Promise<boolean>);
+
+  const [
+    { data: article, isLoading },
+    { data: isBookmarked, isLoading: isBookmarkedLoading },
+  ] = useQueries([
+    {
+      queryKey: "article",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/article/${params.id}`,
+            {
+              method: "GET",
+              cache: "force-cache",
+            },
+          );
+          return res.json() as Promise<Article>;
+        } catch (error) {
+          console.log(error);
+        }
+      },
     },
-  });
+    {
+      enabled:
+        session !== undefined &&
+        session?.user !== null &&
+        session?.user.user_id !== undefined,
+      queryKey: "isBookmarked",
+      queryFn: async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/user/isbookmarked/${params.id}`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `Bearer ${session?.user?.user_id}`,
+              },
+              cache: "no-cache",
+            },
+          );
+          return res.json() as Promise<boolean>;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
+  ]);
+
   const { mutate: bookmark } = useMutation({
     mutationKey: "isBookmarked",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/user/bookmark/${params.id}`, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
-      }).then((res) => res.json() as Promise<boolean>);
+    mutationFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/user/bookmark/${params.id}`,
+          {
+            method: "POST",
+            headers: {
+              authorization: `Bearer ${session?.user?.user_id}`,
+            },
+          },
+        );
+        return res.json() as Promise<boolean>;
+      } catch (error) {
+        console.log(error);
+      }
     },
     onSuccess: () => {
       toast({
@@ -64,15 +100,23 @@ export default function Article({ params }: { params: { id: string } }) {
   });
   const { mutate: unbookmark } = useMutation({
     mutationKey: "isBookmarked",
-    mutationFn: () => {
-      return fetch(`http://localhost:8080/user/unbookmark/${params.id}`, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${session?.user?.user_id}`,
-        },
+    mutationFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/user/unbookmark/${params.id}`,
+          {
+            method: "POST",
+            headers: {
+              authorization: `Bearer ${session?.user?.user_id}`,
+            },
 
-        cache: "no-cache",
-      }).then((res) => res.json() as Promise<boolean>);
+            cache: "no-cache",
+          },
+        );
+        return res.json() as Promise<boolean>;
+      } catch (err) {
+        console.log(err);
+      }
     },
     onSuccess: () => {
       toast({
@@ -129,9 +173,15 @@ export default function Article({ params }: { params: { id: string } }) {
   });
   return (
     <div className="my-20 px-6 w-full text-content flex flex-col justify-start items-center gap-5">
-      <Image src={`../next.svg`} alt={"Image"} width={400} height={400} />
+      <Image
+        priority
+        src={`../next.svg`}
+        alt={"Image"}
+        width={400}
+        height={400}
+      />
       <h1 className="text-4xl text-center">{article!.title}</h1>
-      <p>{article!.subtitle}</p>
+      <h2 className="text-2xl text-center">{article!.subtitle}</h2>
       <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
       <p>{date.toString().substring(0, 10)}</p>
       <section className="flex justify-center gap-2">
@@ -147,31 +197,33 @@ export default function Article({ params }: { params: { id: string } }) {
             );
           })}
       </section>
-      <div className="flex gap-4">
-        {isBookmarkedLoading ? (
-          <Skeleton className="bg-gray-400 h-30 w-30" />
-        ) : (
-          <button
-            className="flex bg-blue-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
-            onClick={isBookmarked ? () => unbookmark() : () => bookmark()}
-          >
-            {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
-          </button>
-        )}
-        {session &&
-          session.user &&
-          (session!.user?.user_id === article!.user_id ||
-            session!.user.role === "admin") && (
+      {session && session.user && (
+        <div className="flex gap-4">
+          {isBookmarkedLoading ? (
+            <Skeleton className="bg-gray-400 h-30 w-30" />
+          ) : (
             <button
-              className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
-              onClick={() => {
-                onDeleteArticle();
-              }}
+              className="flex bg-blue-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+              onClick={isBookmarked ? () => unbookmark() : () => bookmark()}
             >
-              حذف المقال
+              {isBookmarked ? "عدم الحفظ" : "حفظ المقال"}
             </button>
           )}
-      </div>
+          {session &&
+            session.user &&
+            (session!.user?.user_id === article!.user_id ||
+              session!.user.role === "admin") && (
+              <button
+                className="flex bg-red-700 text-white px-4 py-1 rounded-full w-32 text-center justify-center"
+                onClick={() => {
+                  onDeleteArticle();
+                }}
+              >
+                حذف المقال
+              </button>
+            )}
+        </div>
+      )}
       <CommentSection article={article!} />
     </div>
   );

@@ -7,6 +7,7 @@ export default function OrganizationCard(props: { org: Org }) {
   return (
     <article className="bg-gradient-to-br from-crd to-crd2 overflow-hidden rounded-lg shadow-lg mx-8 my-4 w-80">
       <Image
+        priority
         alt="Placeholder"
         className="rounded-t-lg"
         src="/test.jpg"

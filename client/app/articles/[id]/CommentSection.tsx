@@ -28,34 +28,45 @@ export default function CommentSection({ article }: { article: Article }) {
   const [showModal, setShowModal] = useState(false);
   const { data: comments, isLoading: loadingComments } = useQuery({
     queryKey: "comments",
-    queryFn: () => {
-      return fetch(
-        `http://localhost:8080/article/comment/${article.article_id}`,
-        {
-          method: "GET",
-          next: {
-            revalidate: 5,
+    queryFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/article/comment/${article.article_id}`,
+          {
+            method: "GET",
+            next: {
+              revalidate: 20,
+            },
           },
-        },
-      ).then((res) => res.json() as Promise<Comment[]>);
+        );
+        return res.json() as Promise<Comment[]>;
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
   const { mutate: handleComment } = useMutation({
     mutationKey: "comments",
-    mutationFn: (comment: Comment) => {
-      return fetch(
-        `http://localhost:8080/article/comment/${article.article_id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${session!.user.user_id}`,
+    mutationFn: async (comment: Comment) => {
+      try {
+        form.setValue("content", "");
+        const res = await fetch(
+          `http://localhost:8080/article/comment/${article.article_id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session!.user.user_id}`,
+            },
+            body: JSON.stringify({
+              content: comment.content,
+            }),
           },
-          body: JSON.stringify({
-            content: comment.content,
-          }),
-        },
-      );
+        );
+        return res.json() as Promise<Comment>;
+      } catch (error) {
+        console.log(error);
+      }
     },
     onSuccess: () => {
       toast({
@@ -85,17 +96,25 @@ export default function CommentSection({ article }: { article: Article }) {
   };
   const { mutate: deleteComment } = useMutation({
     mutationKey: "comments",
-    mutationFn: (comment: Comment) => {
-      return fetch(`http://localhost:8080/comment/${comment.comment_id!}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session!.user.user_id}`,
-        },
-        body: JSON.stringify({
-          comment,
-        }),
-      });
+    mutationFn: async (comment: Comment) => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/comment/${comment.comment_id!}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session!.user.user_id}`,
+            },
+            body: JSON.stringify({
+              comment,
+            }),
+          },
+        );
+        return res.json();
+      } catch (err) {
+        console.log(err);
+      }
     },
     onSuccess: () => {
       toast({
@@ -162,7 +181,7 @@ export default function CommentSection({ article }: { article: Article }) {
                 const newComment: Comment = {
                   content: form.getValues("content"),
                   date: new Date().toISOString(),
-                  user: session.user,
+                  user_id: session!.user.user_id,
                   article_id: article.article_id,
                 };
                 form.setValue("content", "");

@@ -21,9 +21,7 @@ export default function Home() {
         <div className=" text-3xl mx-5 mt-10">
           <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
         </div>
-        <div>
-          <Animation />
-        </div>
+        <div></div>
         <div className=" text-white-500 text-3xl mx-5 mt-10">
           مهتمون بجميع المشاريع في قطاع
           <span className="text-special inline-flex flex-col h-[calc(theme(fontSize.3xl)*theme(lineHeight.tight))] md:h-[calc(theme(fontSize.4xl)*theme(lineHeight.tight))] overflow-hidden">

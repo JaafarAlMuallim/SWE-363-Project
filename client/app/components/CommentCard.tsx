@@ -34,21 +34,24 @@ export default function CommentCard({
   };
 
   const updateCommentMutation = useMutation(
-    (updatedComment: Comment) => {
-      handleModalClose();
-      return fetch(
-        `http://localhost:8080/comment/${updatedComment.comment_id!}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${session!.user.user_id}`,
+    async (updatedComment: Comment) => {
+      try {
+        handleModalClose();
+        const res = await fetch(
+          `http://localhost:8080/comment/${updatedComment.comment_id!}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session!.user.user_id}`,
+            },
+            body: JSON.stringify(updatedComment),
           },
-          body: JSON.stringify(updatedComment),
-        },
-      )
-        .then((res) => res.json())
-        .catch((err) => console.log(err));
+        );
+        return res.json();
+      } catch (err) {
+        console.log(err);
+      }
     },
     {
       onMutate: async (newComment) => {
@@ -87,51 +90,55 @@ export default function CommentCard({
         <div className="w-full flex items-center justify-between p-4">
           <div className="flex items-center">
             <object>
-                <Link href={`/profile/${comment.user.username}`}>
-                  <Avatar
-                    src="/profile_default.png"
-                    alt="avatar"
-                    size="md"
-                    className="shadow-lg"
-                    withBorder={true}
-                    variant="circular"
-                  />
-                </Link>
-              </object>
-              <div className="mr-2">
-                <span>
-                  <object>
-                    <Link
-                      href={`/profile/${comment.user.username}`}
-                      className="hover:underline"
-                    >
-                      {comment.user.username}
-                    </Link>
-                  </object>
-                </span>
-                <span className="block text-gcontent2 text-sm">
-                  {comment.date}
-                </span>
-              </div>
+              <Link href={`/profile/${comment.user!.username}`}>
+                <Avatar
+                  src="/profile_default.png"
+                  alt="avatar"
+                  size="md"
+                  className="shadow-lg"
+                  withBorder={true}
+                  variant="circular"
+                />
+              </Link>
+            </object>
+            <div className="mr-2">
+              <span>
+                <object>
+                  <Link
+                    href={`/profile/${comment.user!.username}`}
+                    className="hover:underline"
+                  >
+                    {comment.user!.username}
+                  </Link>
+                </object>
+              </span>
+              <span className="block text-gcontent2 text-sm">
+                {comment.date}
+              </span>
             </div>
-            <div className="flex flex-col justify-center items-center">
-              <GoHeartFill />
-              {comment.comment_likes}
-            </div>
+          </div>
+          <div className="flex flex-col justify-center items-center">
+            <GoHeartFill />
+            {comment.comment_likes}
+          </div>
         </div>
         <div className="flex flex-col mb-8 mx-6">
           <Label className="text-right">{comment.content}</Label>
         </div>
         <div className="flex my-2 gap-6 mx-4">
-          <Button
-            type="button"
-            className="bg-orange-400"
-            onClick={(evt) => {
-              handleEdit();
-            }}
-          >
-            تعديل
-          </Button>
+          {session &&
+            session.user &&
+            session.user.user_id === comment.user_id && (
+              <Button
+                type="button"
+                className="bg-orange-400"
+                onClick={(evt) => {
+                  handleEdit();
+                }}
+              >
+                تعديل
+              </Button>
+            )}
           {isModalOpen && (
             <EditCommentModal
               comment={comment}
@@ -139,15 +146,20 @@ export default function CommentCard({
               onSubmit={updateCommentMutation.mutate}
             />
           )}
-          <Button
-            type="button"
-            className="bg-red-800"
-            onClick={(evt) => {
-              onDelete(comment);
-            }}
-          >
-            حذف
-          </Button>
+          {session &&
+            session.user &&
+            (session.user.user_id === comment.user_id ||
+              session.user.role === "admin") && (
+              <Button
+                type="button"
+                className="bg-red-800"
+                onClick={(evt) => {
+                  onDelete(comment);
+                }}
+              >
+                حذف
+              </Button>
+            )}
         </div>
       </div>
     </div>

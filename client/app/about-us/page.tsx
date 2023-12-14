@@ -1,9 +1,5 @@
 "use client";
 import React from "react";
-import Image from "next/image";
-import Lottie from "lottie-react";
-import animationData from "./AboutUsAnimation.json";
-
 import { UserCard } from "../components/UserCard";
 
 const AboutUsPage = () => {
@@ -16,10 +12,6 @@ const AboutUsPage = () => {
             قطاع ريادة الأعمال في تطور
             <span className="font-bold"> مبهر</span>
           </div>
-          <Lottie
-            className="w-7/8 h-7/8 lg:w-2/6"
-            animationData={animationData}
-          />
 
           <div className=" text-2xl mt-3">
             لذلك قررنا ننشئ <strong>Pitfall</strong> <br />
