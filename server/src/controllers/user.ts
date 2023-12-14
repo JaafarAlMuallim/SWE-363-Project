@@ -11,10 +11,7 @@ import {
   UserBookmark,
   user_bookmarks,
 } from "../schema";
-type UserType = Omit<
-  User,
-  "user_id" | "x_account" | "linkdin_account" | "website" | "user_image"
->;
+type UserType = Omit<User, "user_id">;
 type UserBookmarkType = Omit<UserBookmark, "bookmark_id">;
 type UserFollowType = Omit<UserFollow, "follow_id">;
 export async function signUp(req: Request, res: Response, next: NextFunction) {
@@ -25,8 +22,9 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
       email: req.body.email,
       password: encryptedPassword,
       username: req.body.username,
+      user_image:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png",
       role: "user",
-      verified: false,
       overview: "",
     };
     const insertedData = await db.insert(users).values([user]).returning();

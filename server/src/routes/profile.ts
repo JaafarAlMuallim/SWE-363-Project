@@ -4,7 +4,6 @@ import {
   updateUserProfile,
   updateUserProfileImage,
   updateUserProfilePassword,
-  updateVerifiedStatus,
   updateRole,
   getOtherUserProfile,
   getStatsInProfile,
@@ -22,6 +21,5 @@ router.route("/stats").get(isLoggedIn, wrapAsync(getStatsInProfile));
 router.route("/stats:id").get(isLoggedIn, wrapAsync(getOthersStatsInProfile));
 router.get("/:username", wrapAsync(getOtherUserProfile));
 router.patch("/password/:id", isLoggedIn, wrapAsync(updateUserProfilePassword));
-router.patch("/verfied/:id", isLoggedIn, wrapAsync(updateVerifiedStatus));
 router.patch("/role/:id", isLoggedIn, wrapAsync(updateRole));
 export { router as profileRoute };

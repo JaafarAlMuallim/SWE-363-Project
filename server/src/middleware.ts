@@ -74,11 +74,7 @@ export async function canPublish(
   const currentUser = await db.query.users.findFirst({
     where: eq(users.user_id, req.headers.authorization.split(" ")[1]),
   });
-  if (
-    currentUser.role === "admin" ||
-    currentUser.role === "reviewer" ||
-    currentUser.verified
-  ) {
+  if (currentUser.role === "admin" || currentUser.role === "reviewer") {
     next();
   } else {
     res.status(403).send("You are not authorized");

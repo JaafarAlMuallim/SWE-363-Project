@@ -182,22 +182,6 @@ export async function getFailedOrgs(
   }
 }
 
-export async function getOrgInterviews(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const interviews = await db.query.interviews.findMany({
-      with: { org: true, user: true },
-      where: eq(orgs.org_id, req.params.id),
-    });
-    res.send(interviews);
-  } catch (e) {
-    next(e);
-  }
-}
-
 export async function getOrgArticles(
   req: Request,
   res: Response,
@@ -220,22 +204,6 @@ export async function getOrgArticles(
       ),
     });
     res.send(articles);
-  } catch (e) {
-    next(e);
-  }
-}
-
-export async function getOrgInterviewsBySector(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const interviews = await db.query.interviews.findMany({
-      with: { org: true, user: true },
-      where: eq(orgs.main_sector, req.params.sector),
-    });
-    res.send(interviews);
   } catch (e) {
     next(e);
   }

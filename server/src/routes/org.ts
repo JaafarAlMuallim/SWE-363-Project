@@ -7,7 +7,6 @@ import {
   getOrgArticles,
   getOrgBySector,
   getOrgFounders,
-  getOrgInterviews,
   getOrgs,
   getSuccessfulOrgs,
   updateOrg,
@@ -30,6 +29,5 @@ router
   .put(isLoggedIn, isAdmin, wrapAsync(updateOrg))
   .patch(isLoggedIn, canReview, wrapAsync(updateOrgStatus));
 router.route("/:id/founders").get(wrapAsync(getOrgFounders));
-router.route("/:id/interviews").get(wrapAsync(getOrgInterviews));
 router.route("/:id/articles").get(wrapAsync(getOrgArticles));
 export { router as orgRoute };

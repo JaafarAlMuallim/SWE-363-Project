@@ -85,25 +85,6 @@ export async function updateUserProfilePassword(
     next(e);
   }
 }
-export async function updateVerifiedStatus(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const user = await db
-      .update(users)
-      .set({
-        verified: req.body.verified,
-      })
-      .where(eq(users.user_id, req.params.id))
-      .returning();
-    res.send(user);
-  } catch (e) {
-    next(e);
-  }
-}
-
 export async function updateRole(
   req: Request,
   res: Response,
