@@ -16,6 +16,7 @@ export default function Article({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const router = useRouter();
 
+  // Fetch the article's data
   const [
     { data: article, isLoading },
     { data: isBookmarked, isLoading: isBookmarkedLoading },
@@ -150,6 +151,7 @@ export default function Article({ params }: { params: { id: string } }) {
       });
   };
 
+  // If the data is loading, show the skeleton
   if (isLoading) {
     return (
       <div className="h-screen my-20 text-content flex flex-col justify-start items-center gap-5">
@@ -172,6 +174,7 @@ export default function Article({ params }: { params: { id: string } }) {
     USE_PROFILES: { html: true },
   });
   return (
+    // Article page
     <div className="my-20 px-6 w-full text-content flex flex-col justify-start items-center gap-5">
       <Image
         priority
@@ -224,6 +227,7 @@ export default function Article({ params }: { params: { id: string } }) {
             )}
         </div>
       )}
+      {/* comments section */}
       <CommentSection article={article!} />
     </div>
   );

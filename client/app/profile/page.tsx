@@ -21,12 +21,15 @@ export default function Profile({ params }: { params: { username: string } }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  // Show the edit profile modal
   const handleEditProfile = () => {
     setIsModalOpen(true);
   };
+  // Hide the edit profile modal
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  // Redirect the user back if the session is finished
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!profile) router.push(`/auth?callbackUrl=/profile/`);
@@ -157,9 +160,12 @@ export default function Profile({ params }: { params: { username: string } }) {
   });
 
   return (
+    // Main container
     <div className="min-h-screen flex flex-col justify-center items-center w-full">
+      {/* Desktop view */}
       <div className=" text-content hidden md:flex">
-        <div className="w-1/4 m-10 flex flex-col items-center gap-8">
+        {/* The user's profile section */}
+        <section className="w-1/4 m-10 flex flex-col items-center gap-8">
           <div className="flex flex-col w-96 items-center justify-center shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
             <Image
               className="rounded-full my-2"
@@ -169,6 +175,7 @@ export default function Profile({ params }: { params: { username: string } }) {
               width={228}
             />
             <div className="flex flex-col items-center justify-center gap-4">
+              {/* If the user is still loading, show a skeleton */}
               {isLoading ? (
                 <>
                   <Skeleton className="w-40 h-6" />
@@ -241,8 +248,9 @@ export default function Profile({ params }: { params: { username: string } }) {
               <Label className="m-1 text-cbtn">مقال</Label>
             </div>
           </div>
-        </div>
-        <div className="w-3/4 p-4 m-8 flex flex-col gap-8">
+        </section>
+        {/* The user's overview & related articles section */}
+        <section className="w-3/4 p-4 m-8 flex flex-col gap-8">
           <div className="w-full h-fit rounded-lg border border-cbtn bg-white bg-opacity-5 p-5">
             {isLoading ? (
               <Skeleton className="w-80 h-8" />
@@ -253,6 +261,7 @@ export default function Profile({ params }: { params: { username: string } }) {
             )}
           </div>
           <h1 className="text-2xl">مقالات كتبت بواسطة {profile?.user.name} </h1>
+          {/* Display Related articles */}
           <div className="container my-12 mx-auto px-4 md:px-12">
             <div className="h-screen flex flex-wrap justify-start gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
               {articleLoading ? (
@@ -277,9 +286,9 @@ export default function Profile({ params }: { params: { username: string } }) {
               )}
             </div>
           </div>
-        </div>
+        </section>
       </div>
-
+      {/* Mobile view */}
       <div className=" text-content flex flex-col items-center md:hidden">
         <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
           <Image

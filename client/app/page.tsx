@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import Animation from "./components/Animation";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/Accordion";
 import Link from "next/link";
 export default function Home() {
+  // Function to navigate to a specific section on the page
   const navigateToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -17,13 +19,16 @@ export default function Home() {
   };
   return (
     <>
+      {/* Main container */}
       <div className="flex flex-col items-center justify-center text-content">
+        {/* Title */}
         <div className=" text-3xl mx-5 mt-10">
           <h1>مكانك الأول لمعرفة كل ما يخص المشاريع الناشئة</h1>
         </div>
         <div></div>
         <div className=" text-white-500 text-3xl mx-5 mt-10">
           مهتمون بجميع المشاريع في قطاع
+          {/* Animated text */}
           <span className="text-special inline-flex flex-col h-[calc(theme(fontSize.3xl)*theme(lineHeight.tight))] md:h-[calc(theme(fontSize.4xl)*theme(lineHeight.tight))] overflow-hidden">
             <ul className="block animate-text-slide-5 text-right leading-tight [&_li]:block">
               <li className="mx-3 mb-1">المالية</li>
@@ -39,11 +44,12 @@ export default function Home() {
         </div>
         <div className="flex items-center justify-between gap-4">
           <Link href="/auth">
+            {/* Button to navigate to the login page */}
             <Button className="bg-cbtn text-content shadow-lg my-10 w-50">
               انضم لنا
             </Button>
           </Link>
-
+          {/* Button to navigate to the next section */}
           <Button
             className="bg-cbtn text-content shadow-lg my-10 w-50"
             onClick={() => navigateToSection("section2")}
@@ -59,6 +65,7 @@ export default function Home() {
               الأحلام الريادية. إليك لماذا يجب عليك اختيارنا للحصول على رؤى
               فريدة، وتوجيه شامل، ودعم لا مثيل له
             </p>
+            {/* Accordion component */}
             <Accordion className="  mb-10 ml-2 mr-1" type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger>

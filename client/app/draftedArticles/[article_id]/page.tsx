@@ -40,6 +40,7 @@ export default function ArticlePage({
   if (!session) {
     return <div className="h-screen"></div>;
   }
+  // Form validation schema
   const formSchema = z.object({
     title: z
       .string()
@@ -154,6 +155,7 @@ export default function ArticlePage({
   }
   if (isSuccess) {
     const { content } = article!;
+    // Sanitize the content to prevent XSS & SQL injection attacks
     const cleanContent = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
     });
@@ -173,13 +175,13 @@ export default function ArticlePage({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">العنوان</FormLabel>
+                    <FormLabel className="text-content">العنوان</FormLabel>
                     <FormControl>
                       <Input
                         value={article!.title}
                         placeholder="عنوان مقالتك"
                         onChange={field.onChange}
-                        className="bg-inputbg w-64 text-white"
+                        className="bg-inputbg w-64 text-content"
                       ></Input>
                     </FormControl>
                     <FormMessage />
@@ -191,13 +193,13 @@ export default function ArticlePage({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">العنوان الفرعي</FormLabel>
+                    <FormLabel className="text-content">العنوان الفرعي</FormLabel>
                     <FormControl>
                       <Input
                         value={article!.subtitle}
                         placeholder="عنوان مقالتك الفرعي"
                         onChange={field.onChange}
-                        className="bg-inputbg w-64 text-white"
+                        className="bg-inputbg w-64 text-content"
                       ></Input>
                     </FormControl>
                     <FormMessage />
@@ -210,7 +212,7 @@ export default function ArticlePage({
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">المحتوى</FormLabel>
+                  <FormLabel className="text-content">المحتوى</FormLabel>
                   <FormControl>
                     <TipTap
                       content={DOMPurify.sanitize(article!.content, {
@@ -228,13 +230,13 @@ export default function ArticlePage({
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">المحتوى</FormLabel>
+                  <FormLabel className="text-content">المحتوى</FormLabel>
                   <FormControl>
                     <Input
                       value={tags}
                       placeholder="كلمات مفتاحية، مثال : تقنية، تطوير، برمجة"
                       onChange={field.onChange}
-                      className="bg-inputbg w-64 text-white"
+                      className="bg-inputbg w-64 text-content"
                     ></Input>
                   </FormControl>
                   <FormMessage />
