@@ -35,13 +35,11 @@ export default function Profile({ params }: { params: { username: string } }) {
       clearTimeout(timeout);
     };
   }, [profile]);
-  if (!profile) {
-    return <div className="h-screen"></div>;
-  }
   //fetch profile data
   const [
     { data: userProfile, isLoading, isSuccess },
     { data: stats, isLoading: statsLoading, isSuccess: statsSuccess },
+    { data: articles, isLoading: articleLoading },
   ] = useQueries([
     {
       enabled:
@@ -57,6 +55,7 @@ export default function Profile({ params }: { params: { username: string } }) {
               "Content-Type": "application/json",
               authorization: `Bearer ${profile?.user.user_id}`,
             },
+            next: { revalidate: 60 },
           });
           return res.json() as Promise<User>;
         } catch (error) {
@@ -78,8 +77,31 @@ export default function Profile({ params }: { params: { username: string } }) {
               "Content-Type": "application/json",
               authorization: `Bearer ${profile?.user.user_id}`,
             },
+            next: { revalidate: 60 },
           });
           return res.json() as Promise<ProfileStats>;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
+    {
+      enabled:
+        profile !== undefined &&
+        profile?.user !== null &&
+        profile?.user.user_id !== undefined,
+      queryKey: "articlesByUser",
+      queryFn: async () => {
+        try {
+          const res = await fetch(`http://localhost:8080/article/user/`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${profile?.user.user_id}`,
+            },
+            next: { revalidate: 60 },
+          });
+          return res.json() as Promise<Article[]>;
         } catch (error) {
           console.log(error);
         }
@@ -131,27 +153,6 @@ export default function Profile({ params }: { params: { username: string } }) {
         duration: 3000,
       });
       queryClient.invalidateQueries("userProfile");
-    },
-  });
-  const { data: articles, isLoading: articleLoading } = useQuery({
-    enabled:
-      profile !== undefined &&
-      profile?.user !== null &&
-      profile?.user.user_id !== undefined,
-    queryKey: "articlesByUser",
-    queryFn: async () => {
-      try {
-        const res = await fetch(`http://localhost:8080/article/user/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${profile?.user.user_id}`,
-          },
-        });
-        return res.json() as Promise<Article[]>;
-      } catch (error) {
-        console.log(error);
-      }
     },
   });
 
@@ -282,6 +283,7 @@ export default function Profile({ params }: { params: { username: string } }) {
       <div className=" text-content flex flex-col items-center md:hidden">
         <div className="flex flex-col justify-center items-center w-80 m-10 shadow-lg bg-gradient-to-br from-crd to-crd2 rounded-lg text-center">
           <Image
+            priority
             className="rounded-full my-2"
             src={"/profile_default.png"}
             alt="profile"
@@ -327,15 +329,21 @@ export default function Profile({ params }: { params: { username: string } }) {
         </div>
         <div className="grid grid-cols-3 w-80 mx-4 text-base items-center gap-4 border rounded-lg border-gcontent2">
           <div className="flex flex-col m-4 justify-center items-center">
-            <Label className="font-bold m-1">3</Label>
+            <Label className="font-bold m-1">
+              {statsSuccess ? stats!.articles : 0}
+            </Label>
             <Label className="m-1 text-gcontent2">متابَعون</Label>
           </div>
           <div className="flex flex-col m-4 justify-center items-center">
-            <Label className="font-bold m-1">3220</Label>
+            <Label className="font-bold m-1">
+              {statsSuccess ? stats!.following : 0}
+            </Label>
             <Label className="m-1 text-gcontent2">متابعا</Label>
           </div>
           <div className="flex flex-col m-4 justify-center items-center">
-            <Label className="font-bold m-1">70</Label>
+            <Label className="font-bold m-1">
+              {statsSuccess ? stats!.articles : 0}
+            </Label>
             <Label className="m-1 text-gcontent2">مقال</Label>
           </div>
         </div>

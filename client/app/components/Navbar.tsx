@@ -43,6 +43,7 @@ export default function Navbar() {
                     @{session.user.username}
                     {session?.user.user_image && (
                       <Image
+                        priority
                         src={"/profile_default.png"}
                         alt="avatar"
                         className="shadow-lg mr-2"
@@ -154,6 +155,7 @@ export default function Navbar() {
                 >
                   @{session.user.username || "X"}
                   <Image
+                    priority
                     src={"/profile_default.png"}
                     alt="avatar"
                     className="shadow-lg mr-2"

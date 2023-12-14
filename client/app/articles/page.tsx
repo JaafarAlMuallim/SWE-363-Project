@@ -14,7 +14,7 @@ export default function Articles() {
     try {
       const res = await fetch("http://localhost:8080/article/published", {
         method: "GET",
-        cache: "no-cache",
+        cache: "force-cache",
       });
       return res.json() as Promise<Article[]>;
     } catch (err) {
@@ -75,7 +75,7 @@ export default function Articles() {
         </div>
       </div>
       <div className="container my-12 mx-auto px-4 md:px-12">
-        <div className="h-screen flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
+        <div className="h-auto flex flex-wrap justify-center gap-10 md:gap-4 mx-1 lg:-mx-4 text-content">
           {isLoading ? (
             <>
               <Skeleton className="bg-gray-400 h-96 w-96 rounded-lg shadow-lg" />

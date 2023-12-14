@@ -28,6 +28,7 @@ export default function Article({ params }: { params: { id: string } }) {
             `http://localhost:8080/article/${params.id}`,
             {
               method: "GET",
+              cache: "force-cache",
             },
           );
           return res.json() as Promise<Article>;
@@ -172,7 +173,13 @@ export default function Article({ params }: { params: { id: string } }) {
   });
   return (
     <div className="my-20 px-6 w-full text-content flex flex-col justify-start items-center gap-5">
-      <Image src={`../next.svg`} alt={"Image"} width={400} height={400} />
+      <Image
+        priority
+        src={`../next.svg`}
+        alt={"Image"}
+        width={400}
+        height={400}
+      />
       <h1 className="text-4xl text-center">{article!.title}</h1>
       <h2 className="text-2xl text-center">{article!.subtitle}</h2>
       <div dangerouslySetInnerHTML={{ __html: cleanContent }} />

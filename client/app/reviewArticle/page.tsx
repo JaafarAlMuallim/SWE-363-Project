@@ -55,7 +55,7 @@ export default function ReviewArticle() {
             "Content-Type": "application/json",
             authorization: `Bearer ${session?.user?.user_id}`,
           },
-          cache: "no-cache",
+          next: { revalidate: 60 },
         });
         return res.json();
       } catch (error) {

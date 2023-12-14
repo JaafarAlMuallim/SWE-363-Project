@@ -8,7 +8,7 @@ import { queryClient } from "@/app/components/QueryProvider";
 import Article from "@/models/article";
 import Link from "next/link";
 import ArticleCard from "@/app/components/ArticleCard2";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import User from "@/models/user";
 export default function Profile({ params }: { params: { username: string } }) {
   const { data: session } = useSession();
@@ -23,6 +23,7 @@ export default function Profile({ params }: { params: { username: string } }) {
             {
               method: "GET",
               credentials: "include",
+              next: { revalidate: 60 },
             },
           );
           return res.json() as Promise<User>;
@@ -47,7 +48,7 @@ export default function Profile({ params }: { params: { username: string } }) {
               },
             },
           );
-          const data! = await res.json();
+          const data = await res.json();
           return data!;
         } catch (err) {
           console.log(err);
@@ -175,6 +176,7 @@ export default function Profile({ params }: { params: { username: string } }) {
               <Skeleton className="bg-gray-400 rounded-full m-2" />
             ) : (
               <Image
+                priority
                 className="rounded-full m-2"
                 src={"/../profile_default.png"}
                 alt="profile"
@@ -303,6 +305,7 @@ export default function Profile({ params }: { params: { username: string } }) {
             <Skeleton className="rounded-full m-2 bg-gray-400" />
           ) : (
             <Image
+              priority
               className="rounded-full m-2"
               src={"/profile_default.png"}
               alt="profile"

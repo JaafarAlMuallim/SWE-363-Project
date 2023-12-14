@@ -38,6 +38,7 @@ export default function Article({ params }: { params: { id: string } }) {
           headers: {
             "Content-Type": "application/json",
           },
+          cache: "force-cache",
         });
         const data = await res.json();
         return data;
@@ -70,7 +71,13 @@ export default function Article({ params }: { params: { id: string } }) {
   if (isLoading) {
     return (
       <div className="h-screen my-20 text-white flex flex-col justify-start items-center gap-5">
-        <Image src={`../next.svg`} alt={"Image"} width={400} height={400} />
+        <Image
+          priority
+          src={`../next.svg`}
+          alt={"Image"}
+          width={400}
+          height={400}
+        />
         <>
           <Skeleton className="w-96 h-6" />
           <Skeleton className="w-1/2 h-4" />

@@ -3,13 +3,13 @@
 import Article from "@/models/article";
 import Link from "next/link";
 import { GoHeartFill } from "react-icons/go";
-import { Avatar } from "@material-tailwind/react";
 import Image from "next/image";
 
 export default function ArticleCard(props: { article: Article }) {
   return (
     <article className="bg-gradient-to-br from-crd to-crd2 overflow-hidden rounded-lg w-80 shadow-lg">
       <Image
+        priority
         alt="Placeholder"
         className="rounded-t-lg"
         src="/test.jpg"
@@ -20,13 +20,11 @@ export default function ArticleCard(props: { article: Article }) {
         <div className="flex items-center">
           <object>
             <Link href={`/profile/${props.article!.user!.username}`}>
-              <Avatar
+              <Image
+                priority
                 src="/profile_default.png"
                 alt="avatar"
-                size="md"
-                className="shadow-lg"
-                withBorder={true}
-                variant="circular"
+                className="shadow-lg rounded-full"
               />
             </Link>
           </object>

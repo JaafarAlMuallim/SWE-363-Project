@@ -31,6 +31,7 @@ export default function Organization({
             `http://localhost:8080/org/${params.org_id}`,
             {
               method: "GET",
+              next: { revalidate: 60 },
             },
           );
           return res.json() as Promise<Org>;
@@ -125,6 +126,7 @@ export default function Organization({
               <Skeleton className="bg-gray-400 rounded-full m-2" />
             ) : (
               <Image
+                priority
                 className="rounded-lg"
                 src={"/test.jpg"}
                 alt="profile"
@@ -232,6 +234,7 @@ export default function Organization({
             <Skeleton className="rounded-full m-2 bg-gray-400" />
           ) : (
             <Image
+              priority
               className="rounded-lg mb-2"
               src={"/test.jpg"}
               alt="profile"

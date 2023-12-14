@@ -35,7 +35,7 @@ export default function CommentSection({ article }: { article: Article }) {
           {
             method: "GET",
             next: {
-              revalidate: 5,
+              revalidate: 20,
             },
           },
         );
