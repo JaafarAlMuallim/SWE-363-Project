@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Select,
   SelectContent,
@@ -41,13 +40,7 @@ export default function Organizations() {
   );
   const handleListChange = (value: string) => {
     let newListState: "all" | "failure" | "success";
-    if (orgsList === "all") {
-      newListState = "success";
-    } else if (orgsList === "success") {
-      newListState = "failure";
-    } else {
-      newListState = "all";
-    }
+    newListState = value as "all" | "failure" | "success";
     // Set the new list state
     setOrgsList(newListState);
     const filtered = isLoading
@@ -56,9 +49,8 @@ export default function Organizations() {
           const nameMatch = org.name
             .toLowerCase()
             .includes(search.toLowerCase());
-          const orgFounder = org.org_founders?.some(
-            (founder) =>
-              founder.founder?.toLowerCase().includes(search.toLowerCase()),
+          const orgFounder = org.org_founders?.some((founder) =>
+            founder.founder?.toLowerCase().includes(search.toLowerCase()),
           );
           return nameMatch || orgFounder;
         });
@@ -85,8 +77,8 @@ export default function Organizations() {
         ? []
         : orgs?.filter((org) => {
             const nameMatch = org.name.includes(currentSearchValue);
-            const orgFounder = org.org_founders?.some(
-              (founder) => founder.founder?.includes(currentSearchValue),
+            const orgFounder = org.org_founders?.some((founder) =>
+              founder.founder?.includes(currentSearchValue),
             );
             return nameMatch || orgFounder;
           });

@@ -40,8 +40,8 @@ export default function Articles() {
             const titleMatch = article.title.includes(currentSearchValue);
             const subtitleMatch =
               article.subtitle?.includes(currentSearchValue);
-            const tagMatch = article.article_tags?.some(
-              (tag) => tag.tag?.includes(currentSearchValue),
+            const tagMatch = article.article_tags?.some((tag) =>
+              tag.tag?.includes(currentSearchValue),
             );
             const orgMatch = article.org?.name.includes(currentSearchValue);
             return titleMatch || subtitleMatch || tagMatch || orgMatch;

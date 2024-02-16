@@ -9,7 +9,6 @@ import QueryProvider from "./components/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { EdgeStoreProvider } from "@/lib/edgeStore";
 const cairo = Cairo({ subsets: ["arabic"] });
-const local_theme = "dark";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     // Manage the theme of the website
-    <html lang="ar" local_theme={local_theme}>
+    <html lang="ar">
       <QueryProvider>
         <body
           dir="rtl"

@@ -33,7 +33,7 @@ export const UserCard = ({
             <a href={twitter}>
               <Image
                 priority
-                src={"/twitter-x-logo-42554.png"}
+                src={"/x.png"}
                 alt="twitter"
                 width={45}
                 height={45}
